@@ -11,7 +11,7 @@ export default function ShopPage() {
       {collections.map((collection) => (
         <section key={collection.slug}>
           <h2>
-            <Link href={`/shop/${collection.slug}`}>{collection.name}</Link>
+            <Link href={`/shop/${collection.slug}`} prefetch>{collection.name}</Link>
           </h2>
           <p>{collection.description}</p>
         </section>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
+import SnowBackground from "@/components/SnowBackground";
 import { collections, getCollection, getCollectionProducts } from "@/lib/products";
 
 export function generateStaticParams() {
@@ -22,6 +23,7 @@ export default async function CollectionPage({ params }: PageProps<"/shop/[colle
 
   return (
     <>
+      {collection.snow && <SnowBackground />}
       <Link href="/shop">&larr; Back to shop</Link>
       <h1>{collection.name}</h1>
       <p>{collection.description}</p>

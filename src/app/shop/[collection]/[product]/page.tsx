@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AddToCartButton from "@/components/AddToCartButton";
+import SnowBackground from "@/components/SnowBackground";
 import { formatPrice, getCollection, getProduct, products } from "@/lib/products";
 
 export function generateStaticParams() {
@@ -23,6 +24,7 @@ export default async function ProductPage({ params }: PageProps<"/shop/[collecti
 
   return (
     <article>
+      {collection.snow && <SnowBackground />}
       <Link href={`/shop/${collection.slug}`}>&larr; Back to {collection.name}</Link>
       <h1>{product.name}</h1>
       <p>{formatPrice(product.price)}</p>

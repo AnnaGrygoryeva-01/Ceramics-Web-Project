@@ -2,6 +2,7 @@ export type Collection = {
   slug: string;
   name: string;
   description: string;
+  snow?: boolean; // Show the falling snow background on this collection's pages
 };
 
 export type Product = {
@@ -18,6 +19,7 @@ export const collections: Collection[] = [
     slug: "christmas-collection",
     name: "Christmas Collection",
     description: "Handmade ornaments, mugs and festive pieces for the holiday season.",
+    snow: true,
   },
   {
     slug: "brushes",

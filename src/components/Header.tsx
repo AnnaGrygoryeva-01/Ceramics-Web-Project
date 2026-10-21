@@ -1,11 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/lib/cart";
 import { getProduct } from "@/lib/products";
-import topBar from "./UI/top-bar.png";
 
 const links = [
   { href: "/", label: "Home" },
@@ -29,16 +27,13 @@ export default function Header() {
 
   return (
     <header>
-      <div className="top-bar">
-        <Image className="top-bar__frame" src={topBar} alt="" priority />
-        <nav className="top-bar__nav">
-          {links.map(({ href, label }) => (
-            <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined}>
-              {label}
-            </Link>
-          ))}
-        </nav>
-      </div>
+      <nav className="top-bar">
+        {links.map(({ href, label }) => (
+          <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined}>
+            {label}
+          </Link>
+        ))}
+      </nav>
       <Link
         href="/cart"
         className="cart-link"

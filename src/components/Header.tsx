@@ -26,7 +26,11 @@ export default function Header() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header>
+    <header className="site-header">
+      <Link href="/" className="logo">
+        <span className="logo__name">Handmade Ceramics</span>
+        <span className="logo__tagline">Shaped by hand, one piece at a time</span>
+      </Link>
       <nav className="top-bar">
         {links.map(({ href, label }) => (
           <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined}>

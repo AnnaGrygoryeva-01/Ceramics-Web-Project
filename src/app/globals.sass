@@ -1,6 +1,9 @@
 // Colours sampled from the design mockup
-$sky-top: #c9ddfd
-$sky-bottom: #7590b5
+$sky-top: #c2dcff
+$sky-bottom: #7690a2
+// The Christmas collection keeps the original, bluer gradient
+$christmas-sky-top: #c9ddfd
+$christmas-sky-bottom: #7590b5
 $ink: #0d2d5e
 
 // Shared so the cart icon can line up with the nav and the corner flowers
@@ -27,13 +30,32 @@ body
   font-family: Georgia, "Times New Roman", serif
   line-height: 1.5
 
-  // Gradient fixed to the screen so it looks the same however long the page is
-  &::before
+  // Gradients fixed to the screen so they look the same however long the page is.
+  // Gradients can't be animated, so the Christmas one sits on top and fades in.
+  &::before,
+  &::after
     content: ""
     position: fixed
     inset: 0
     z-index: -1
+
+  &::before
     background: linear-gradient(to bottom, $sky-top, $sky-bottom)
+
+  &::after
+    background: linear-gradient(to bottom, $christmas-sky-top, $christmas-sky-bottom)
+    opacity: 0
+    // Fades both ways when moving to or from a Christmas page. Transitions
+    // don't run on the first paint, so a direct page load shows no fade.
+    transition: opacity 4s ease
+
+// Pages that show the snow (the Christmas collection). Ignore snow left behind
+// on a hidden page after navigating away (see SnowBackground).
+body:has(.snow:not(.snow--hidden))
+  background: $christmas-sky-bottom
+
+  &::after
+    opacity: 1
 
 a
   color: inherit
@@ -58,28 +80,52 @@ footer
   text-align: center
   font-size: 0.875rem
 
-// Navigation
-.top-bar
+// Header: logo on the left, nav centred. The side columns are equal so the nav
+// stays in the middle of the page; the cart is positioned separately.
+.site-header
   position: relative
   z-index: 2
+  display: grid
+  grid-template-columns: 1fr auto 1fr
+  align-items: center
+  min-height: var(--nav-height)
+  margin-top: var(--nav-top)
+  padding: 0 clamp(16px, 3vw, 40px)
+
+.logo
+  justify-self: start
+  display: flex
+  flex-direction: column
+  line-height: 1.2
+
+.logo__name
+  font-size: 1.5rem
+  font-style: italic
+  letter-spacing: 0.02em
+
+.logo__tagline
+  font-size: 0.7rem
+  letter-spacing: 0.15em
+  text-transform: uppercase
+
+// Navigation
+.top-bar
   display: flex
   align-items: center
   justify-content: center
-  gap: clamp(16px, 4vw, 56px)
-  height: var(--nav-height)
-  margin: var(--nav-top) auto 0
-  padding: 0 64px
+  gap: clamp(16px, 3vw, 56px)
   font-size: 1.125rem
   letter-spacing: 0.05em
 
   a
     white-space: nowrap
 
-// Vertically centred on the nav, horizontally on the vine of the bottom-right corner flower
+// Vertically centred on the nav, horizontally on the vine of the bottom-right corner flower.
+// Positioned against .site-header, which spans the full page width.
 .cart-link
   --icon-size: 2rem
   position: absolute
-  top: calc(var(--nav-top) + var(--nav-height) / 2 - var(--icon-size) / 2)
+  top: calc(50% - var(--icon-size) / 2)
   // The vine sits about 8% in from the right edge of the corner image
   right: max(8px, var(--corner-width) * 0.083 - var(--icon-size) / 2)
   z-index: 2
@@ -103,12 +149,30 @@ footer
   line-height: 1.5em
   text-align: center
 
+// Not enough room for the logo beside the nav: stack them
+@media (max-width: 1100px)
+  .site-header
+    grid-template-columns: 1fr
+    justify-items: center
+    gap: 16px
+    padding: 0 56px
+
+  .logo
+    justify-self: center
+    align-items: center
+    text-align: center
+
+  // Line the cart up with the logo instead of the nav
+  .cart-link
+    top: calc(1.8rem / 2 - var(--icon-size) / 2)
+
 @media (max-width: 700px)
+  .site-header
+    padding: 0 16px
+
   .top-bar
     flex-wrap: wrap
-    height: auto
     gap: 8px 20px
-    padding: 0 56px 0 16px
     font-size: 1rem
 
 // Decorations
@@ -138,3 +202,12 @@ footer
   height: max(100vw * 1269 / 4269, 45vh)
   object-fit: cover
   object-position: top
+  opacity: 0.7
+
+// Added by SnowBackground when arriving from another page, in step with the gradient
+.snow--fade-in
+  animation: snow-fade-in 4s ease
+
+@keyframes snow-fade-in
+  from
+    opacity: 0

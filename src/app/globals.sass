@@ -1,10 +1,28 @@
-// Colours sampled from the design mockup
-$sky-top: #c2dcff
-$sky-bottom: #7690a2
-// The Christmas collection keeps the original, bluer gradient
-$christmas-sky-top: #c9ddfd
-$christmas-sky-bottom: #7590b5
-$ink: #0d2d5e
+// Colours, sampled from the design mockups. The theme is set on <html> as
+// data-theme="day" or "night" (see src/lib/theme.ts and ThemeToggle).
+:root
+  --sky-top: #c2dcff
+  --sky-bottom: #7690a2
+  // The Christmas collection keeps the original, bluer gradient
+  --christmas-sky-top: #c9ddfd
+  --christmas-sky-bottom: #7590b5
+  --ink: #0d2d5e
+  // Nav link of the page being viewed: a warm clay colour against the blue
+  --nav-current: #7f320b
+  --badge-text: var(--sky-top)
+  color-scheme: light
+
+:root[data-theme="night"]
+  --sky-top: #0d406b
+  --sky-bottom: #0a1020
+  // No separate Christmas sky at night: the snow shows up well on the dark blue
+  --christmas-sky-top: var(--sky-top)
+  --christmas-sky-bottom: var(--sky-bottom)
+  --ink: #dce6f5
+  --nav-current: #e59a6f
+  --badge-text: var(--sky-bottom)
+  // Dark form controls and scrollbars
+  color-scheme: dark
 
 // Shared so the cart icon can line up with the nav and the corner flowers
 :root
@@ -25,8 +43,8 @@ body
   flex-direction: column
   min-height: 100vh
   min-height: 100dvh
-  background: $sky-bottom
-  color: $ink
+  background: var(--sky-bottom)
+  color: var(--ink)
   font-family: Georgia, "Times New Roman", serif
   line-height: 1.5
 
@@ -40,10 +58,10 @@ body
     z-index: -1
 
   &::before
-    background: linear-gradient(to bottom, $sky-top, $sky-bottom)
+    background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom))
 
   &::after
-    background: linear-gradient(to bottom, $christmas-sky-top, $christmas-sky-bottom)
+    background: linear-gradient(to bottom, var(--christmas-sky-top), var(--christmas-sky-bottom))
     opacity: 0
     // Fades both ways when moving to or from a Christmas page. Transitions
     // don't run on the first paint, so a direct page load shows no fade.
@@ -52,7 +70,7 @@ body
 // Pages that show the snow (the Christmas collection). Ignore snow left behind
 // on a hidden page after navigating away (see SnowBackground).
 body:has(.snow:not(.snow--hidden))
-  background: $christmas-sky-bottom
+  background: var(--christmas-sky-bottom)
 
   &::after
     opacity: 1
@@ -92,6 +110,11 @@ footer
   min-height: var(--nav-height)
   margin-top: var(--nav-top)
   padding: 0 clamp(16px, 3vw, 40px)
+  // Header icons (cart, theme switch)
+  --icon-size: 2.25rem
+  // The cart sits about 8% in from the right edge of the corner image, based on
+  // the vine of the bottom-right corner flower, then nudged a little further left
+  --cart-right: calc(max(8px, var(--corner-width) * 0.083 - var(--icon-size) / 2) + 24px)
 
 .logo
   justify-self: start
@@ -103,7 +126,6 @@ footer
 
 .logo__name
   font-size: 1.5rem
-  font-style: italic
   letter-spacing: 0.02em
 
 .logo__tagline
@@ -131,6 +153,10 @@ footer
   a
     white-space: nowrap
 
+  // The page being viewed (Header sets aria-current)
+  a[aria-current="page"]
+    color: var(--nav-current)
+
 // One gap wider than the links on each side, so its curled ends sit as far from
 // the outer links as the links are from each other. `width: 0` stops the image's
 // natural size from stretching the nav; min-width then sets the real width.
@@ -143,18 +169,49 @@ footer
   margin-top: -43px
   pointer-events: none
 
+  // The brace is drawn in a dark line; turn it light against the night sky
+  :root[data-theme="night"] &
+    filter: invert(1) brightness(0.9)
+
 // Vertically centred on the nav, horizontally on the vine of the bottom-right corner flower.
 // Positioned against .site-header, which spans the full page width.
 .cart-link
-  --icon-size: 2.25rem
   position: absolute
   top: calc(var(--nav-height) / 2 - var(--icon-size) / 2)
-  // Based on the vine, about 8% in from the right edge of the corner image,
-  // then nudged a little further left
-  right: calc(max(8px, var(--corner-width) * 0.083 - var(--icon-size) / 2) + 24px)
+  right: var(--cart-right)
   z-index: 2
   display: inline-flex
   font-size: 1.125rem
+
+// Day/night switch, just left of the cart and lined up with it
+.theme-toggle
+  position: absolute
+  top: calc(var(--nav-height) / 2 - var(--icon-size) / 2)
+  right: calc(var(--cart-right) + var(--icon-size) + 20px)
+  z-index: 2
+  display: inline-flex
+  padding: 0
+  border: 0
+  background: none
+  color: inherit
+  cursor: pointer
+
+  svg
+    width: var(--icon-size)
+    height: var(--icon-size)
+    fill: none
+    stroke: currentColor
+    stroke-width: 1.5
+    stroke-linecap: round
+    stroke-linejoin: round
+
+// Show the moon by day (switch to night) and the sun at night (switch to day)
+.theme-toggle__sun,
+:root[data-theme="night"] .theme-toggle__moon
+  display: none
+
+:root[data-theme="night"] .theme-toggle__sun
+  display: block
 
 .cart-link__icon
   width: var(--icon-size)
@@ -167,8 +224,8 @@ footer
   min-width: 1.5em
   padding: 0 0.3em
   border-radius: 999px
-  background: $ink
-  color: $sky-top
+  background: var(--ink)
+  color: var(--badge-text)
   font-size: 0.65em
   line-height: 1.5em
   text-align: center
@@ -185,6 +242,11 @@ footer
     justify-self: center
     align-items: center
     text-align: center
+
+  // The logo now fills the middle of the top row: mirror the cart on the left
+  .theme-toggle
+    right: auto
+    left: var(--cart-right)
 
 @media (max-width: 700px)
   .site-header

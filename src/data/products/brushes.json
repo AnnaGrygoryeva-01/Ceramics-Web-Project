@@ -1,0 +1,42 @@
+[
+  {
+    "slug": "small-brush",
+    "name": "Small Brush",
+    "price": 1900,
+    "description": "Small brush with a matte white ceramic handle.",
+    "stock": 6,
+    "image": "/products/brushes/white-background.jpg"
+  },
+  {
+    "slug": "medium-brush",
+    "name": "Medium Brush",
+    "price": 1900,
+    "description": "Medium brush with a matte white ceramic handle.",
+    "stock": 6,
+    "image": "/products/brushes/white-background.jpg"
+  },
+  {
+    "slug": "large-brush",
+    "name": "Large Brush",
+    "price": 2400,
+    "description": "Large brush with a speckled glazed ceramic handle.",
+    "stock": 1,
+    "image": "/products/brushes/white-background.jpg"
+  },
+  {
+    "slug": "brush-set-two",
+    "name": "Set of Two",
+    "price": 5500,
+    "description": "Set of three brushes in different sizes with matching handles.",
+    "stock": 2,
+    "image": "/products/brushes/white-background.jpg"
+  },
+  {
+    "slug": "brush-set-tree",
+    "name": "Set of Three",
+    "price": 5500,
+    "description": "Set of three brushes in different sizes with matching handles.",
+    "stock": 2,
+    "image": "/products/brushes/white-background.jpg"
+  }
+]

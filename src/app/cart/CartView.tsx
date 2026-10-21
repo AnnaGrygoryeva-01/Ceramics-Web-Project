@@ -37,7 +37,7 @@ export default function CartView() {
           {items.map(({ product, qty }) => (
             <tr key={product.slug}>
               <td>
-                <Link href={productUrl(product)}>{product.name}</Link>
+                <Link href={productUrl(product)} prefetch>{product.name}</Link>
               </td>
               <td>{formatPrice(product.price)}</td>
               <td>

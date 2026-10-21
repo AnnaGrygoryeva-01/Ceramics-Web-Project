@@ -268,6 +268,7 @@ footer
   z-index: 0
   height: auto
   pointer-events: none
+ 
 
 .corner
   bottom: 0
@@ -297,3 +298,39 @@ footer
 @keyframes snow-fade-in
   from
     opacity: 0
+
+// Sort control on collection pages
+.sort
+  display: inline-flex
+  align-items: center
+  gap: 8px
+  margin-bottom: 16px
+
+  select
+    padding: 4px 8px
+    border: 1px solid currentColor
+    border-radius: 4px
+    background: transparent
+    color: inherit
+    font: inherit
+
+// Product photos (see ProductImage)
+.product-image
+  position: relative
+  width: 240px
+  max-width: 100%
+  aspect-ratio: 4 / 5
+  overflow: hidden
+  border-radius: 6px
+  // Shown when there's no photo yet
+  background: color-mix(in srgb, var(--ink) 10%, transparent)
+
+  img
+    object-fit: cover
+
+.product-image--large
+  width: 420px
+  margin: 16px 0
+
+.product-card
+  margin-bottom: 32px

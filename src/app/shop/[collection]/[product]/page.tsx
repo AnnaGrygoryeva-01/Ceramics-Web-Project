@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import AddToCartButton from "@/components/AddToCartButton";
+import ProductImage from "@/components/ProductImage";
 import SnowBackground from "@/components/SnowBackground";
 import { formatPrice, getCollection, getProduct, products } from "@/lib/products";
 
@@ -16,7 +18,17 @@ export async function generateMetadata({
   return { title: getProduct(product)?.name ?? "Not found" };
 }
 
-export default async function ProductPage({ params }: PageProps<"/shop/[collection]/[product]">) {
+// Reading the URL (params) has to happen inside <Suspense> so navigations can start
+// instantly. Links here use `prefetch`, so the content is usually ready before the click.
+export default function ProductPage({ params }: PageProps<"/shop/[collection]/[product]">) {
+  return (
+    <Suspense fallback={<p>Loading…</p>}>
+      <Product params={params} />
+    </Suspense>
+  );
+}
+
+async function Product({ params }: Pick<PageProps<"/shop/[collection]/[product]">, "params">) {
   const { collection: collectionSlug, product: productSlug } = await params;
   const product = getProduct(productSlug);
   const collection = getCollection(collectionSlug);
@@ -25,7 +37,8 @@ export default async function ProductPage({ params }: PageProps<"/shop/[collecti
   return (
     <article>
       {collection.snow && <SnowBackground />}
-      <Link href={`/shop/${collection.slug}`}>&larr; Back to {collection.name}</Link>
+      <Link href={`/shop/${collection.slug}`} prefetch>&larr; Back to {collection.name}</Link>
+      <ProductImage product={product} sizes="(max-width: 480px) 100vw, 420px" className="product-image--large" priority />
       <h1>{product.name}</h1>
       <p>{formatPrice(product.price)}</p>
       <p>{product.description}</p>

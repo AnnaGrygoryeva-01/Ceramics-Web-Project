@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/lib/cart";
 import { getProduct } from "@/lib/products";
+import brace from "./UI/nav-bar-line.png";
 
 const links = [
   { href: "/", label: "Home" },
@@ -32,11 +34,14 @@ export default function Header() {
         <span className="logo__tagline">Shaped by hand, one piece at a time</span>
       </Link>
       <nav className="top-bar">
-        {links.map(({ href, label }) => (
-          <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined}>
-            {label}
-          </Link>
-        ))}
+        <div className="top-bar__links">
+          {links.map(({ href, label }) => (
+            <Link key={href} href={href} aria-current={isActive(href) ? "page" : undefined}>
+              {label}
+            </Link>
+          ))}
+        </div>
+        <Image className="top-bar__brace" src={brace} alt="" aria-hidden="true" sizes="700px" />
       </nav>
       <Link
         href="/cart"

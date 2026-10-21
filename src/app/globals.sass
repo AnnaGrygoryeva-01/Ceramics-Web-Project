@@ -87,7 +87,8 @@ footer
   z-index: 2
   display: grid
   grid-template-columns: 1fr auto 1fr
-  align-items: center
+  // Line everything up with the row of links, not the brace hanging below it
+  align-items: start
   min-height: var(--nav-height)
   margin-top: var(--nav-top)
   padding: 0 clamp(16px, 3vw, 40px)
@@ -96,6 +97,8 @@ footer
   justify-self: start
   display: flex
   flex-direction: column
+  justify-content: center
+  min-height: var(--nav-height)
   line-height: 1.2
 
 .logo__name
@@ -108,26 +111,47 @@ footer
   letter-spacing: 0.15em
   text-transform: uppercase
 
-// Navigation
+// Navigation: the row of links with the brace underneath
 .top-bar
+  // Space between links, and between the outer links and the ends of the brace
+  --nav-gap: clamp(18px, 3vw, 48px)
+  display: flex
+  flex-direction: column
+  align-items: center
+
+.top-bar__links
   display: flex
   align-items: center
   justify-content: center
-  gap: clamp(16px, 3vw, 56px)
-  font-size: 1.125rem
+  gap: var(--nav-gap)
+  min-height: var(--nav-height)
+  font-size: 1.25rem
   letter-spacing: 0.05em
 
   a
     white-space: nowrap
 
+// One gap wider than the links on each side, so its curled ends sit as far from
+// the outer links as the links are from each other. `width: 0` stops the image's
+// natural size from stretching the nav; min-width then sets the real width.
+// Pulled up so the links sit inside it, just above its horizontal line.
+.top-bar__brace
+  width: 0
+  min-width: calc(100% + 2 * var(--nav-gap))
+  max-width: calc(100vw - 32px)
+  height: auto
+  margin-top: -43px
+  pointer-events: none
+
 // Vertically centred on the nav, horizontally on the vine of the bottom-right corner flower.
 // Positioned against .site-header, which spans the full page width.
 .cart-link
-  --icon-size: 2rem
+  --icon-size: 2.25rem
   position: absolute
-  top: calc(50% - var(--icon-size) / 2)
-  // The vine sits about 8% in from the right edge of the corner image
-  right: max(8px, var(--corner-width) * 0.083 - var(--icon-size) / 2)
+  top: calc(var(--nav-height) / 2 - var(--icon-size) / 2)
+  // Based on the vine, about 8% in from the right edge of the corner image,
+  // then nudged a little further left
+  right: calc(max(8px, var(--corner-width) * 0.083 - var(--icon-size) / 2) + 24px)
   z-index: 2
   display: inline-flex
   font-size: 1.125rem
@@ -162,18 +186,18 @@ footer
     align-items: center
     text-align: center
 
-  // Line the cart up with the logo instead of the nav
-  .cart-link
-    top: calc(1.8rem / 2 - var(--icon-size) / 2)
-
 @media (max-width: 700px)
   .site-header
     padding: 0 16px
 
-  .top-bar
+  .top-bar__links
     flex-wrap: wrap
     gap: 8px 20px
-    font-size: 1rem
+    font-size: 1.0625rem
+
+  // The links can wrap onto two lines here, so keep the brace below them
+  .top-bar__brace
+    margin-top: 4px
 
 // Decorations
 .corner,

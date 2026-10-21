@@ -1,0 +1,148 @@
+// Colours sampled from the design assets
+$background: #cfe1fe
+$ink: #00478c
+
+// Inner box of top-bar.png, as a fraction of the image size (2865 x 206)
+$box-left: 15.2%
+$box-right: 15.5%
+$box-top: 15%
+$box-bottom: 15.5%
+
+// Shared so the cart icon can line up with the top bar and the corner flowers
+:root
+  --bar-width: min(1000px, 100vw - 32px)
+  --bar-top: 24px
+  --corner-width: clamp(90px, 14vw, 200px)
+  --corner-inset: 8px
+
+*, *::before, *::after
+  box-sizing: border-box
+
+html, body
+  margin: 0
+
+// Column layout so the footer is pushed to the bottom even on short pages
+body
+  display: flex
+  flex-direction: column
+  min-height: 100vh
+  min-height: 100dvh
+  background: $background
+  color: $ink
+  font-family: Georgia, "Times New Roman", serif
+  line-height: 1.5
+
+a
+  color: inherit
+  text-decoration: none
+
+main, footer
+  position: relative
+  z-index: 1
+  width: 100%
+  max-width: 900px
+  margin: 0 auto
+  padding: 0 16px
+
+main
+  flex: 1
+  padding-top: 32px
+  // Leave room so the bottom of the page isn't hidden behind the corner flowers
+  padding-bottom: clamp(100px, 15vw, 210px)
+
+footer
+  padding-bottom: 24px
+  text-align: center
+  font-size: 0.875rem
+
+// Top bar
+.top-bar
+  // No z-index here: it would isolate the frame and stop the white from blending away
+  position: relative
+  width: var(--bar-width)
+  margin: var(--bar-top) auto 0
+
+.top-bar__frame
+  display: block
+  width: 100%
+  height: auto
+  mix-blend-mode: multiply
+  pointer-events: none
+
+.top-bar__nav
+  position: absolute
+  inset: $box-top $box-right $box-bottom $box-left
+  display: flex
+  align-items: center
+  justify-content: space-evenly
+  gap: 8px
+  font-size: clamp(0.75rem, 1.6vw, 1.125rem)
+  letter-spacing: 0.05em
+
+  a
+    white-space: nowrap
+
+// Top right of the page: vertically centred on the top bar,
+// horizontally centred on the bottom-right corner flower
+.cart-link
+  --icon-size: 2rem
+  position: absolute
+  // Top bar image is 2865 x 206
+  top: calc(var(--bar-top) + var(--bar-width) * 206 / 2865 / 2 - var(--icon-size) / 2)
+  right: calc(var(--corner-inset) + var(--corner-width) / 2 - var(--icon-size) / 2)
+  z-index: 2
+  display: inline-flex
+  font-size: 1.125rem
+
+.cart-link__icon
+  width: var(--icon-size)
+  height: var(--icon-size)
+
+.cart-link__count
+  position: absolute
+  top: -0.4em
+  right: -0.7em
+  min-width: 1.5em
+  padding: 0 0.3em
+  border-radius: 999px
+  background: $ink
+  color: $background
+  font-size: 0.65em
+  line-height: 1.5em
+  text-align: center
+
+// On narrow screens the box in the image is too small to hold the links,
+// so swap it for a plain outlined box in the same colour.
+@media (max-width: 700px)
+  .top-bar__frame
+    display: none
+
+  .top-bar__nav
+    position: static
+    flex-wrap: wrap
+    padding: 10px 12px
+    border: 2px solid $ink
+    font-size: 0.95rem
+
+  // The bar fills the full width here, so drop it below the cart icon
+  .top-bar
+    margin-top: 64px
+
+  .cart-link
+    top: 16px
+
+// Corner flowers
+.corner
+  position: fixed
+  bottom: var(--corner-inset)
+  z-index: 0
+  width: var(--corner-width)
+  height: auto
+  mix-blend-mode: multiply
+  pointer-events: none
+
+.corner--left
+  left: var(--corner-inset)
+
+.corner--right
+  right: var(--corner-inset)

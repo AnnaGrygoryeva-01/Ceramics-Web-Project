@@ -3,7 +3,7 @@
 import { useLayoutEffect } from "react";
 import { getPreferredTheme, THEME_STORAGE_KEY } from "@/lib/theme";
 
-export default function ThemeToggle() {
+export default function ThemeToggle({ className }: { className?: string }) {
   // In development React clears the attribute the inline script set when it remounts <html>,
   // so apply the theme again. Does nothing visible in production.
   useLayoutEffect(() => {
@@ -22,7 +22,7 @@ export default function ThemeToggle() {
   // Both icons are rendered and CSS shows the right one, so the server HTML
   // never disagrees with the theme the inline script picked
   return (
-    <button type="button" className="theme-toggle" onClick={toggle} aria-label="Switch between day and night theme">
+    <button type="button" className={["theme-toggle", className].filter(Boolean).join(" ")} onClick={toggle} aria-label="Switch between day and night theme">
       <svg className="theme-toggle__moon" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" />
       </svg>

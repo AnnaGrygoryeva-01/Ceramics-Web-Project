@@ -248,18 +248,92 @@ footer
     right: auto
     left: var(--cart-right)
 
+// Hamburger menu button: phones only
+.menu-button
+  display: none
+
+// The copy of the theme switch inside the phone menu
+.theme-toggle--menu
+  display: none
+
+// Phones: logo in the middle with the menu button and cart either side. The nav
+// becomes a full-screen menu opened by the button.
 @media (max-width: 700px)
   .site-header
     padding: 0 16px
 
-  .top-bar__links
-    flex-wrap: wrap
-    gap: 8px 20px
-    font-size: 1.0625rem
+  .logo
+    position: relative
+    z-index: 2
 
-  // The links can wrap onto two lines here, so keep the brace below them
+  .logo__name
+    font-size: 1.3rem
+
+  // Where the theme switch was, mirroring the cart
+  .menu-button
+    position: absolute
+    top: calc(var(--nav-height) / 2 - var(--icon-size) / 2)
+    left: var(--cart-right)
+    z-index: 2
+    display: inline-flex
+    padding: 0
+    border: 0
+    background: none
+    color: inherit
+    cursor: pointer
+
+  .menu-button__icon
+    width: var(--icon-size)
+    height: var(--icon-size)
+
+  .menu-button__line
+    transform-origin: center
+    transition: transform 0.25s ease
+
+  .menu-button[aria-expanded="true"]
+    .menu-button__line--top
+      transform: rotate(45deg) translateY(4px)
+
+    .menu-button__line--bottom
+      transform: rotate(-45deg) translateY(-4px)
+
+  // The header's switch moves into the menu
+  .theme-toggle:not(.theme-toggle--menu)
+    display: none
+
+  // Full-screen menu, behind the logo, menu button and cart so they stay usable
+  .top-bar
+    position: fixed
+    inset: 0
+    z-index: 1
+    justify-content: center
+    gap: 40px
+    background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom))
+    visibility: hidden
+    opacity: 0
+    transition: opacity 0.25s ease, visibility 0s 0.25s
+
+    &[data-open]
+      visibility: visible
+      opacity: 1
+      transition: opacity 0.25s ease
+
+  .top-bar__links
+    flex-direction: column
+    gap: 24px
+    font-size: 1.5rem
+
+  // Made for a row of links, so it doesn't suit the stacked menu
   .top-bar__brace
-    margin-top: 4px
+    display: none
+
+  .theme-toggle--menu
+    position: static
+    display: inline-flex
+
+  // Don't scroll the page behind the open menu
+  body:has(.top-bar[data-open])
+    overflow: hidden
 
 // Decorations
 .corner,
@@ -332,21 +406,26 @@ footer
   max-width: 100%
   margin: 16px 0
 
-// Product cards on collection pages: up to 4 per row, fewer as the screen narrows.
-// Each column is at least a quarter of the row (so never more than 4) and at least
-// --card-min wide (so they wrap onto fewer columns on small screens).
+// Product cards on collection pages: 4 per row on desktop, then 3, 2, and 1 on
+// phones (breakpoints below). A flex row rather than a grid so that a row that
+// isn't full (e.g. 3 products with room for 4) sits in the middle.
 .product-grid
+  --columns: 4
   --gap: 40px
-  --card-min: 180px
   // Wider than the 900px text column (up to 1080px) on large screens, and the
   // normal content width on small ones. The margin below keeps it centred.
   // 100vw includes the scrollbar, hence the generous 64px.
   --grid-width: max(100%, min(1080px, 100vw - 64px))
-  display: grid
-  grid-template-columns: repeat(auto-fill, minmax(max(var(--card-min), (100% - 3 * var(--gap)) / 4), 1fr))
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
   gap: 48px var(--gap)
   width: var(--grid-width)
   margin: 0 0 32px calc((100% - var(--grid-width)) / 2)
+
+  // Every card is one column wide
+  > *
+    width: calc((100% - (var(--columns) - 1) * var(--gap)) / var(--columns))
 
 // Stacked: photo, name, price, button. The button sits at the bottom so the
 // buttons line up across a row even when a name wraps onto two lines.
@@ -369,9 +448,34 @@ footer
     margin-top: auto
     align-self: start
 
-// Two narrower cards per row on phones instead of one wide one
-@media (max-width: 440px)
+// Tablets (an iPad is 1024px wide in landscape)
+@media (max-width: 1100px)
   .product-grid
-    --card-min: 140px
-    --gap: 16px
-    row-gap: 32px
+    --columns: 3
+    --gap: 32px
+
+@media (max-width: 760px)
+  .product-grid
+    --columns: 2
+    --gap: 24px
+    row-gap: 40px
+
+// Phones: bigger corner flowers, since a quarter of a narrow screen is very small
+@media (max-width: 560px)
+  :root
+    --corner-width: min(32vw, 43vh)
+
+// Phones: one card per row. Capped in width so the photo doesn't fill the whole
+// screen height, and the button spans the card for an easier tap.
+@media (max-width: 560px)
+  .product-grid
+    --columns: 1
+    row-gap: 40px
+
+  .product-card
+    width: 100%
+    max-width: 320px
+
+    button
+      align-self: stretch
+      padding: 10px

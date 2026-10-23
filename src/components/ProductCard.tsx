@@ -7,7 +7,7 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <article className="product-card">
       <Link href={productUrl(product)} prefetch tabIndex={-1} aria-hidden="true">
-        <ProductImage product={product} sizes="(max-width: 700px) 50vw, 260px" />
+        <ProductImage product={product} sizes="(max-width: 560px) 320px, (max-width: 760px) 50vw, (max-width: 1100px) 33vw, 260px" />
       </Link>
       <h3>
         <Link href={productUrl(product)} prefetch>{product.name}</Link>

@@ -29,9 +29,11 @@ export default function SortedProductList({ products }: { products: Product[] })
           ))}
         </select>
       </label>
-      {sorted.map((product) => (
-        <ProductCard key={product.slug} product={product} />
-      ))}
+      <div className="product-grid">
+        {sorted.map((product) => (
+          <ProductCard key={product.slug} product={product} />
+        ))}
+      </div>
     </>
   );
 }

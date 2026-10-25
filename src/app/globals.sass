@@ -536,9 +536,10 @@ footer
     margin-top: auto
     align-self: start
 
-// Add to cart (see AddToCartButton): outlined like the dropdowns, filling with
-// the ink colour on hover
-.add-to-cart
+// Add to cart (see AddToCartButton) and other buttons (.button, e.g. the
+// contact form): outlined like the dropdowns, filling with the ink colour on hover
+.add-to-cart,
+.button
   padding: 8px 18px
   border: 1px solid currentColor
   border-radius: 0
@@ -603,6 +604,81 @@ footer
     &:disabled
       opacity: 0.35
       cursor: not-allowed
+
+// Contact form (see src/app/contact/ContactForm.tsx): fields outlined like the
+// dropdowns, Name and Email side by side, one column on phones
+.contact-form
+  display: flex
+  flex-direction: column
+  align-items: start
+  gap: 20px
+  max-width: 600px
+  margin-top: 32px
+
+.contact-form__row
+  display: grid
+  grid-template-columns: 1fr 1fr
+  gap: 20px
+  width: 100%
+
+.field
+  display: flex
+  flex-direction: column
+  gap: 6px
+  width: 100%
+
+  // Small capitals, like the old tagline under the logo
+  label
+    font-size: 0.75rem
+    letter-spacing: 0.15em
+    text-transform: uppercase
+
+  input,
+  textarea
+    width: 100%
+    padding: 10px 12px
+    border: 1px solid color-mix(in srgb, var(--ink) 45%, transparent)
+    border-radius: 0
+    background: color-mix(in srgb, var(--surface) 35%, transparent)
+    color: var(--ink)
+    font: inherit
+    transition: border-color 0.2s ease, background-color 0.2s ease
+
+    &:hover
+      border-color: var(--ink)
+
+    &:focus
+      border-color: var(--ink)
+      background: color-mix(in srgb, var(--surface) 60%, transparent)
+      outline: 2px solid var(--nav-current)
+      outline-offset: 2px
+
+  textarea
+    min-height: 160px
+    resize: vertical
+
+// The honeypot field. Off-screen rather than display: none, which some bots
+// know to skip.
+.contact-form__trap
+  position: absolute
+  left: -10000px
+  width: 1px
+  height: 1px
+  overflow: hidden
+
+.contact-form__error
+  margin: 0
+  color: var(--nav-current)
+
+.contact-form__sent
+  margin-top: 32px
+  padding: 16px 20px
+  max-width: 600px
+  border: 1px solid currentColor
+
+@media (max-width: 560px)
+  .contact-form__row
+    grid-template-columns: 1fr
 
 // Collections on the Shop page (see src/app/shop/page.tsx): one row of cards,
 // a single column on phones. The picture flips over to the description on

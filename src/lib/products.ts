@@ -39,19 +39,20 @@ export const collections: Collection[] = [
     slug: 'christmas-collection',
     name: 'Christmas Collection',
     description:
-      'Handmade ornaments, mugs and festive pieces for the holiday season.',
+      'Handmade ornaments, mugs and festive pieces for the holiday season',
     snow: true
   },
   {
     slug: 'floral-collection',
     name: 'Floral Collection',
     description:
-      'Vases, plates and cups decorated with hand-painted and pressed flowers.'
+      'Vases, plates and cups decorated with hand-painted and pressed flowers'
   },
   {
     slug: 'brushes',
     name: 'Brushes',
-    description: 'Brushes with handmade ceramic handles.'
+    description:
+      'Experience the authentic soul of Ukrainian folk art with the traditional Koshashka brush. Hand-bound by master artisans and crafted from ethically gathered, ultra-soft cat fur, this indispensable tool is the secret behind the fluid, mesmerizing strokes of UNESCO-recognized Petrykivka painting.'
   }
 ]
 

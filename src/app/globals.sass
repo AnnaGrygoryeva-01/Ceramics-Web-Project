@@ -129,14 +129,14 @@ footer
   min-height: var(--nav-height)
   line-height: 1.2
 
-.logo__name
-  font-size: 1.5rem
-  letter-spacing: 0.02em
-
-.logo__tagline
-  font-size: 0.7rem
-  letter-spacing: 0.15em
-  text-transform: uppercase
+// public/logo-mark.png is a transparent cut-out of public/mainLogo.png, used as
+// a mask so the logo is drawn in the ink colour (dark by day, light at night)
+.logo__mark
+  display: block
+  height: 56px
+  aspect-ratio: 452 / 240
+  background: var(--ink)
+  mask: url("/logo-mark.png") center / contain no-repeat
 
 // Navigation: the row of links with the brace underneath
 .top-bar
@@ -271,8 +271,8 @@ footer
     position: relative
     z-index: 2
 
-  .logo__name
-    font-size: 1.3rem
+  .logo__mark
+    height: 44px
 
   // Where the theme switch was, mirroring the cart
   .menu-button

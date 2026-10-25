@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense, type CSSProperties } from "react";
+import BrushCare from "@/components/BrushCare";
 import SnowBackground from "@/components/SnowBackground";
 import SortedProductList from "@/components/SortedProductList";
 import { collections, getCollection, getCollectionProducts } from "@/lib/products";
@@ -42,6 +43,7 @@ async function Collection({ params }: Pick<PageProps<"/shop/[collection]">, "par
       <h1>{collection.name}</h1>
       <p>{collection.description}</p>
       <SortedProductList products={products} />
+      {collection.slug === "brushes" && <BrushCare />}
     </div>
   );
 }

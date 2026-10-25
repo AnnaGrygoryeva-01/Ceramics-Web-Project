@@ -6,6 +6,7 @@ export type Collection = {
   slug: string
   name: string
   description: string
+  image?: string // Card photo on the Shop page, a path inside /public
   snow?: boolean // Show the falling snow background on this collection's pages
 }
 
@@ -39,19 +40,20 @@ export const collections: Collection[] = [
     slug: 'christmas-collection',
     name: 'Christmas Collection',
     description:
-      'Handmade ornaments, mugs and festive pieces for the holiday season.',
+      'Hand-painted Christmas tree ornaments, made one at a time. Every piece has its own small differences, so yours will be truly one of a kind.',
     snow: true
   },
   {
     slug: 'floral-collection',
     name: 'Floral Collection',
     description:
-      'Vases, plates and cups decorated with hand-painted and pressed flowers.'
+      'Ceramic pieces decorated with hand-painted flowers inspired by Petrykivka art. Each piece carries its own small differences, so no two are exactly the same.'
   },
   {
     slug: 'brushes',
     name: 'Brushes',
-    description: 'Brushes with handmade ceramic handles.'
+    description:
+      'Experience the authentic soul of Ukrainian folk art with the traditional Koshashka brush. Hand-bound by master artisans and crafted from ethically gathered, ultra-soft cat fur, this indispensable tool is the secret behind the fluid, mesmerizing strokes of UNESCO-recognized Petrykivka painting.'
   }
 ]
 

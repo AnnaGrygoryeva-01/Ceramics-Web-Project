@@ -23,7 +23,7 @@ export default function RootLayout ({ children }: LayoutProps<'/'>) {
         <Header />
         <main>{children}</main>
         <footer>
-          <p>&copy; Handmade Ceramics by Anna Grygoryeva</p>
+          <p>&copy; 2026 Anna Grygoryeva</p>
         </footer>
       </body>
     </html>

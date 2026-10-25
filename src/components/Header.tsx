@@ -59,9 +59,9 @@ export default function Header () {
       >
         <MenuIcon />
       </button>
-      <Link href='/' className='logo'>
-        <span className='logo__name'>Handmade Ceramics</span>
-        <span className='logo__tagline'>by Anna Grygoryeva</span>
+      <Link href='/' className='logo' aria-label='Handmade Ceramics by Anna Grygoryeva, home'>
+        {/* Drawn in the text colour from a cut-out of the logo, so it follows the theme */}
+        <span className='logo__mark' />
       </Link>
       <nav id='site-menu' className='top-bar' data-open={menuOpen || undefined}>
         <div className='top-bar__links'>

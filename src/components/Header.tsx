@@ -10,8 +10,8 @@ import ThemeToggle from './ThemeToggle'
 import brace from './UI/nav-bar-line.png'
 
 const links = [
-  { href: '/', label: 'Home' },
   { href: '/shop', label: 'Shop' },
+  { href: '/', label: 'Gallery' },
   { href: '/faq', label: 'FAQ' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' }

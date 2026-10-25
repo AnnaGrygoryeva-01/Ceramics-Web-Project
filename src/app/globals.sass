@@ -605,6 +605,11 @@ footer
       opacity: 0.35
       cursor: not-allowed
 
+// Contact page: heading, intro and form in one 600px column, centred on the page
+.contact-page
+  max-width: 600px
+  margin-inline: auto
+
 // Contact form (see src/app/contact/ContactForm.tsx): fields outlined like the
 // dropdowns, Name and Email side by side, one column on phones
 .contact-form
@@ -679,6 +684,188 @@ footer
 @media (max-width: 560px)
   .contact-form__row
     grid-template-columns: 1fr
+
+// Gallery on the home page (see src/app/page.tsx): a mosaic of photos in
+// different sizes. Each tile is placed on a 13 × 12 grid by the page, leaving
+// some cells empty so the outer edges are uneven.
+.gallery
+  // Wider than the 900px text column on large screens (up to 1200px), leaving
+  // 80px each side for the corner flowers; the normal width on smaller screens
+  --width: max(100%, min(1200px, 100vw - 160px))
+  display: grid
+  grid-template-columns: repeat(13, 1fr)
+  grid-template-rows: repeat(12, 1fr)
+  // Grows a little with the mosaic
+  gap: clamp(10px, 1vw, 16px)
+  aspect-ratio: 13 / 11
+  width: var(--width)
+  // Centred, extending past the text column equally on both sides
+  margin: 40px 0 0 calc((100% - var(--width)) / 2)
+  padding: 0
+  list-style: none
+
+.gallery__tile
+  position: relative
+  grid-column: var(--col) / span var(--cols)
+  grid-row: var(--row) / span var(--rows)
+  overflow: hidden
+  // Shown until the tile has a photo
+  background: color-mix(in srgb, var(--ink) 14%, transparent)
+  // A little shade under the frame
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.25)
+  transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease
+
+  img
+    object-fit: cover
+
+// Thin brushed-silver frame on the gallery tiles and the enlarged picture: soft
+// greys with only a slight sheen at the corners. A gradient cut down to a 3px
+// ring by the mask; drawn over the photo, and clicks pass through it.
+.gallery__tile::after,
+.lightbox__frame::after
+  content: ""
+  position: absolute
+  inset: 0
+  z-index: 1
+  padding: 3px
+  background: conic-gradient(#a9adb3 0deg, #c3c6ca 45deg, #aeb2b8 90deg, #c3c6ca 135deg, #a9adb3 180deg, #c3c6ca 225deg, #aeb2b8 270deg, #c3c6ca 315deg, #a9adb3 360deg)
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)
+  -webkit-mask-composite: xor
+  mask-composite: exclude
+  pointer-events: none
+
+// The whole tile is a button that opens the enlarged view (see Gallery)
+.gallery__open
+  position: absolute
+  inset: 0
+  padding: 0
+  border: 0
+  background: none
+  cursor: zoom-in
+
+  &:focus-visible
+    outline: 2px solid var(--nav-current)
+    outline-offset: -2px
+
+// Hovered (or reached with the keyboard): the tile grows a little and lifts
+// above its neighbours, which soften. Not while a picture is enlarged, and
+// only with a mouse, so a tap on a phone just opens the picture.
+@media (hover: hover)
+  .gallery:not(.gallery--dimmed)
+    .gallery__tile:hover,
+    .gallery__tile:has(.gallery__open:focus-visible)
+      z-index: 2
+      transform: scale(1.08)
+      box-shadow: 0 16px 40px rgb(0 0 0 / 0.4), 0 3px 8px rgb(0 0 0 / 0.3)
+
+    &:has(.gallery__tile:hover) .gallery__tile:not(:hover)
+      opacity: 0.7
+      filter: blur(1.5px)
+
+// While a picture is enlarged
+.gallery--dimmed .gallery__tile
+  filter: blur(6px)
+  opacity: 0.4
+
+// Enlarged picture: a see-through dialog covering the screen, with the picture
+// in the middle. Clicking beside it, the × or Esc closes it.
+.lightbox
+  width: 100vw
+  height: 100dvh
+  max-width: none
+  max-height: none
+  margin: 0
+  padding: 64px 24px
+  border: 0
+  background: transparent
+  color: var(--ink)
+
+  &[open]
+    display: flex
+    align-items: center
+    justify-content: center
+
+  // No dark overlay: the blurred, faded mosaic is the backdrop
+  &::backdrop
+    background: transparent
+
+// Stop the page scrolling behind it
+html:has(.lightbox[open])
+  overflow: hidden
+
+.lightbox__frame
+  position: relative
+  // Placeholders keep their tile's shape, as large as fits on screen
+  aspect-ratio: var(--ratio)
+  width: min(90vw, 1000px, (100dvh - 128px) * var(--ratio))
+  background: color-mix(in srgb, var(--ink) 22%, var(--surface))
+  box-shadow: 0 20px 60px rgb(0 0 0 / 0.3), 0 2px 6px rgb(0 0 0 / 0.25)
+  animation: lightbox-in 0.3s ease
+
+// Photos are shown whole, as large as fits, whatever their shape. The frame
+// shrinks to the photo so the silver edge sits right on it.
+.lightbox__frame--photo
+  aspect-ratio: auto
+  width: auto
+  background: none
+
+  img
+    display: block
+    width: auto
+    height: auto
+    max-width: min(90vw, 1100px)
+    max-height: calc(100dvh - 128px)
+
+.lightbox__close
+  position: fixed
+  top: 20px
+  right: 20px
+  width: 44px
+  height: 44px
+  padding: 0
+  border: 1px solid currentColor
+  background: var(--surface)
+  color: inherit
+  font: inherit
+  font-size: 1.5rem
+  line-height: 1
+  cursor: pointer
+  transition: background-color 0.2s ease, color 0.2s ease
+
+  &:hover
+    background: var(--ink)
+    color: var(--badge-text)
+
+  &:focus-visible
+    outline: 2px solid var(--nav-current)
+    outline-offset: 2px
+
+@keyframes lightbox-in
+  from
+    opacity: 0
+    transform: scale(0.96)
+
+@media (prefers-reduced-motion: reduce)
+  .gallery__tile
+    transition: none
+
+  .lightbox__frame
+    animation: none
+
+// Phones: too narrow for the mosaic, so the tiles flow in 2 columns instead,
+// still in a mix of sizes, with gaps filled in where they fit
+@media (max-width: 560px)
+  .gallery
+    grid-template-columns: repeat(2, 1fr)
+    grid-template-rows: none
+    grid-auto-rows: 80px
+    grid-auto-flow: dense
+    gap: 8px
+    aspect-ratio: auto
+
+  .gallery__tile
+    grid-column: span var(--phone-cols)
+    grid-row: span var(--phone-rows)
 
 // Collections on the Shop page (see src/app/shop/page.tsx): one row of cards,
 // a single column on phones. The picture flips over to the description on

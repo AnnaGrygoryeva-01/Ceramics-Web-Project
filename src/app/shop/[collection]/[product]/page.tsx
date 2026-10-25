@@ -42,7 +42,8 @@ async function Product({ params }: Pick<PageProps<"/shop/[collection]/[product]"
       <h1>{product.name}</h1>
       <p>{formatPrice(product.price)}</p>
       <p>{product.description}</p>
-      <p>{product.stock > 0 ? `${product.stock} in stock` : "Sold out"}</p>
+      {/* Sets have no stock of their own, it depends on the brushes picked */}
+      {!product.options && <p>{product.stock ? `${product.stock} in stock` : "Sold out"}</p>}
       <AddToCartButton product={product} />
     </article>
   );

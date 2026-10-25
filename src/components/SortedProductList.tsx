@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Product } from "@/lib/products";
+import type { Collection, Product } from "@/lib/products";
 import ProductCard from "./ProductCard";
 import Dropdown from "./Dropdown";
 
@@ -14,20 +14,45 @@ const sortOptions = {
 type SortKey = keyof typeof sortOptions;
 const sortKeys = Object.keys(sortOptions) as SortKey[];
 
-export default function SortedProductList({ products }: { products: Product[] }) {
+const ALL = "all";
+
+// Pass `collections` to also show a "Collection" filter (Shop All page only)
+export default function SortedProductList({
+  products,
+  collections,
+}: {
+  products: Product[];
+  collections?: Collection[];
+}) {
   const [sort, setSort] = useState<SortKey>("default");
+  const [collection, setCollection] = useState(ALL);
   const { compare } = sortOptions[sort];
-  const sorted = compare ? products.toSorted(compare) : products;
+  const filtered = collection === ALL ? products : products.filter((p) => p.collection === collection);
+  const sorted = compare ? filtered.toSorted(compare) : filtered;
 
   return (
     <>
-      <Dropdown
-        className="sort"
-        label="Sort by"
-        options={sortKeys.map((key) => ({ value: key, label: sortOptions[key].label }))}
-        value={sort}
-        onChange={setSort}
-      />
+      <div className="list-controls">
+        {collections && (
+          <Dropdown
+            className="sort"
+            label="Collection"
+            options={[
+              { value: ALL, label: "All collections" },
+              ...collections.map((c) => ({ value: c.slug, label: c.name })),
+            ]}
+            value={collection}
+            onChange={setCollection}
+          />
+        )}
+        <Dropdown
+          className="sort"
+          label="Sort by"
+          options={sortKeys.map((key) => ({ value: key, label: sortOptions[key].label }))}
+          value={sort}
+          onChange={setSort}
+        />
+      </div>
       <div className="product-grid">
         {sorted.map((product) => (
           <ProductCard key={product.slug} product={product} />

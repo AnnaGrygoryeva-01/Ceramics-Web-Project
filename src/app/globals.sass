@@ -31,6 +31,8 @@
 :root
   --nav-top: 24px
   --nav-height: 48px
+  // Space at the bottom of every page, see main
+  --page-bottom: 160px
   // Corner images are about 2:3; fit them to the width but keep them under ~65% of the screen height
   --corner-width: min(24.5vw, 43vh)
 
@@ -94,7 +96,7 @@ main
   flex: 1
   padding-top: 32px
   // Leave room so the bottom of the page isn't hidden behind the corner flowers
-  padding-bottom: 160px
+  padding-bottom: var(--page-bottom)
 
 footer
   padding-bottom: 24px
@@ -602,9 +604,104 @@ footer
       opacity: 0.35
       cursor: not-allowed
 
+// Collections on the Shop page (see src/app/shop/page.tsx): one row of cards,
+// a single column on phones. The picture flips over to the description on
+// hover, or when the card is reached with the keyboard.
+.collection-cards
+  display: grid
+  grid-template-columns: repeat(3, 1fr)
+  gap: 64px
+  margin: 32px 0 0
+  padding: 0
+  list-style: none
+
+.collection-card
+  display: flex
+  flex-direction: column
+  gap: 12px
+
+  &:focus-visible
+    outline: 2px solid var(--nav-current)
+    outline-offset: 4px
+
+.collection-card__flip
+  position: relative
+  aspect-ratio: 4 / 5
+  transform-style: preserve-3d
+  transition: transform 0.6s ease
+  // Perspective in the transform, so each card flips around its own centre
+  transform: perspective(1000px) rotateY(0)
+
+  &:hover,
+  .collection-card:focus-visible &
+    transform: perspective(1000px) rotateY(180deg)
+
+.collection-card__front,
+.collection-card__back
+  position: absolute
+  inset: 0
+  overflow: hidden
+  border-radius: 6px
+  backface-visibility: hidden
+
+.collection-card__front
+  // Shown until the collection has a photo
+  background: color-mix(in srgb, var(--ink) 10%, transparent)
+
+  img
+    object-fit: cover
+
+.collection-card__back
+  display: flex
+  align-items: center
+  padding: 20px
+  overflow-y: auto
+  background: var(--ink)
+  color: var(--badge-text)
+  font-size: 0.95rem
+  transform: rotateY(180deg)
+
+  p
+    margin: auto 0
+
+.collection-card__name
+  margin: 0
+  font-size: 1.3rem
+  text-align: center
+
+// Without motion: fade between the two sides instead of turning
+@media (prefers-reduced-motion: reduce)
+  .collection-card__flip
+    transition: none
+
+    &:hover,
+    .collection-card:focus-visible &
+      transform: none
+
+      .collection-card__back
+        opacity: 1
+
+  .collection-card__back
+    transform: none
+    opacity: 0
+    transition: opacity 0.3s ease
+
+@media (max-width: 700px)
+  .collection-cards
+    grid-template-columns: 1fr
+    max-width: 320px
+    // Centred on the page, like the product cards on phones
+    margin-inline: auto
+
 // Care guide at the end of the Brushes page (see BrushCare)
 .brush-care
-  margin-top: 48px
+  // Centred between the products and the footer: the same space as below it
+  // (the page's bottom space + the footer's top margin), less the product
+  // grid's own 32px bottom margin
+  margin-top: calc(var(--page-bottom) + 0.875rem - 32px)
+
+  > :last-child
+    margin-bottom: 0
 
   ul
     padding-left: 1.25em

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { Product } from "@/lib/products";
 import ProductCard from "./ProductCard";
-import SortSelect from "./SortSelect";
+import Dropdown from "./Dropdown";
 
 const sortOptions = {
   default: { label: "Featured", compare: null },
@@ -21,7 +21,8 @@ export default function SortedProductList({ products }: { products: Product[] })
 
   return (
     <>
-      <SortSelect
+      <Dropdown
+        className="sort"
         label="Sort by"
         options={sortKeys.map((key) => ({ value: key, label: sortOptions[key].label }))}
         value={sort}

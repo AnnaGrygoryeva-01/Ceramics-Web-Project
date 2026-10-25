@@ -10,7 +10,7 @@
   // Nav link of the page being viewed: a warm clay colour against the blue
   --nav-current: #7f320b
   --badge-text: var(--sky-top)
-  // Background for pop-up panels such as the sort dropdown
+  // Background for pop-up panels such as the dropdowns
   --surface: #eaf2ff
   color-scheme: light
 
@@ -376,17 +376,18 @@ footer
   from
     opacity: 0
 
-// Sort control on collection pages (see SortSelect)
+// Sort control on collection pages (see Dropdown)
 .sort
   display: inline-flex
   align-items: center
   gap: 8px
   margin-bottom: 16px
 
-.sort-select
+// Dropdowns (see Dropdown): sorting, and the brushes in a set
+.dropdown
   position: relative
 
-.sort-select__button
+.dropdown__button
   display: inline-flex
   align-items: center
   justify-content: space-between
@@ -394,7 +395,6 @@ footer
   min-width: 190px
   padding: 4px 8px 4px 12px
   border: 1px solid currentColor
-  border-radius: 6px
   cursor: pointer
   user-select: none
 
@@ -402,7 +402,7 @@ footer
     outline: 2px solid var(--nav-current)
     outline-offset: 2px
 
-.sort-select__chevron
+.dropdown__chevron
   width: 1em
   height: 1em
   fill: none
@@ -415,7 +415,7 @@ footer
   [aria-expanded="true"] &
     transform: rotate(180deg)
 
-.sort-select__list
+.dropdown__list
   position: absolute
   top: calc(100% + 4px)
   left: 0
@@ -425,16 +425,14 @@ footer
   padding: 4px
   list-style: none
   border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent)
-  border-radius: 6px
   background: var(--surface)
   box-shadow: 0 8px 24px rgb(0 0 0 / 0.18)
 
   &[hidden]
     display: none
 
-.sort-select__option
+.dropdown__option
   padding: 6px 10px
-  border-radius: 4px
   white-space: nowrap
   cursor: pointer
 
@@ -445,6 +443,12 @@ footer
   // The current choice, in the same colour as the current page in the nav
   &[aria-selected="true"]
     color: var(--nav-current)
+
+  // Not enough of that one left
+  &[aria-disabled]
+    opacity: 0.4
+    text-decoration: line-through
+    cursor: not-allowed
 
 // Product photos (see ProductImage)
 .product-image
@@ -522,6 +526,41 @@ footer
   button
     margin-top: auto
     align-self: start
+
+// Picks for products with options, e.g. "Brush 1 [Small]" for each brush in a
+// set: the label, then a dropdown
+.option-picker
+  display: flex
+  flex-direction: column
+  gap: 6px
+  // As wide as the photo: the card's on a card, the large one on a product page
+  max-width: 420px
+  margin-bottom: 4px
+
+.option-picker__pick
+  display: flex
+  align-items: center
+  gap: 8px
+  font-size: 0.9rem
+
+  // Same width for every label, so the dropdowns line up
+  > span
+    min-width: 4em
+
+  // The dropdown fills the rest of the row, up to the edge of the photo
+  .dropdown
+    flex: 1
+
+  .dropdown__button
+    display: flex
+    min-width: 0
+    padding: 2px 6px 2px 10px
+
+// The picked options under a product's name in the cart
+.cart-choices
+  display: block
+  font-size: 0.85rem
+  opacity: 0.8
 
 // Tablets (an iPad is 1024px wide in landscape)
 @media (max-width: 1100px)

@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { useCart } from '@/lib/cart'
+import { parseCartKey, useCart } from '@/lib/cart'
 import { getProduct } from '@/lib/products'
 import ThemeToggle from './ThemeToggle'
 import brace from './UI/nav-bar-line.png'
@@ -22,7 +22,7 @@ export default function Header () {
   const cart = useCart()
   // Skip slugs of products that no longer exist, same as the cart page does
   const count = Object.entries(cart).reduce(
-    (sum, [slug, qty]) => (getProduct(slug) ? sum + qty : sum),
+    (sum, [key, qty]) => (getProduct(parseCartKey(key).slug) ? sum + qty : sum),
     0
   )
 

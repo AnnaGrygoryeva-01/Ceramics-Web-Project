@@ -9,6 +9,8 @@
   --ink: #0d2d5e
   // Nav link of the page being viewed: a warm clay colour against the blue
   --nav-current: #7f320b
+  // Text on a clay background, e.g. a picked brush size
+  --on-current: #fff
   --badge-text: var(--sky-top)
   // Background for pop-up panels such as the sort dropdown
   --surface: #eaf2ff
@@ -22,6 +24,7 @@
   --christmas-sky-bottom: var(--sky-bottom)
   --ink: #dce6f5
   --nav-current: #e59a6f
+  --on-current: var(--sky-bottom)
   --badge-text: var(--sky-bottom)
   --surface: #12294a
   // Dark form controls and scrollbars
@@ -522,6 +525,73 @@ footer
   button
     margin-top: auto
     align-self: start
+
+// Picks for products with options, e.g. "Brush 1", then Small / Medium / Large, for a set
+// of brushes. Each value is a radio button drawn as a pill.
+.option-picker
+  display: flex
+  flex-direction: column
+  gap: 6px
+  margin-bottom: 4px
+
+.option-picker__pick
+  margin: 0
+  padding: 0
+  border: 0
+
+  legend
+    padding: 0
+    margin-bottom: 4px
+    font-size: 0.9rem
+
+.option-picker__values
+  display: flex
+  flex-wrap: wrap
+  gap: 4px
+
+  label
+    cursor: pointer
+
+  // Hidden but still focusable and read out
+  input
+    position: absolute
+    opacity: 0
+    width: 1px
+    height: 1px
+
+  span
+    display: block
+    padding: 2px 9px
+    border: 1px solid currentColor
+    border-radius: 999px
+    font-size: 0.85rem
+    opacity: 0.75
+    transition: background-color 0.15s, color 0.15s, opacity 0.15s
+
+  label:hover span
+    opacity: 1
+
+  // Not enough of that one left
+  input:disabled + span
+    opacity: 0.35
+    text-decoration: line-through
+    cursor: not-allowed
+
+  input:checked + span
+    background: var(--nav-current)
+    border-color: var(--nav-current)
+    color: var(--on-current)
+    opacity: 1
+
+  input:focus-visible + span
+    outline: 2px solid var(--nav-current)
+    outline-offset: 2px
+
+// The picked options under a product's name in the cart
+.cart-choices
+  display: block
+  font-size: 0.85rem
+  opacity: 0.8
 
 // Tablets (an iPad is 1024px wide in landscape)
 @media (max-width: 1100px)

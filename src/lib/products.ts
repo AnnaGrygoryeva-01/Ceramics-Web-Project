@@ -13,7 +13,7 @@ export type Product = {
   slug: string
   collection: string // Collection slug
   name: string
-  price: number // in cents
+  price: number // in pence (4800 = £48.00)
   description: string
   stock: number
   image?: string // Path inside /public, e.g. "/products/brushes/brush-set.jpg"
@@ -68,9 +68,9 @@ export function productUrl (product: Product) {
   return `/shop/${product.collection}/${product.slug}`
 }
 
-export function formatPrice (cents: number) {
-  return new Intl.NumberFormat('en-US', {
+export function formatPrice (pence: number) {
+  return new Intl.NumberFormat('en-GB', {
     style: 'currency',
-    currency: 'USD'
-  }).format(cents / 100)
+    currency: 'GBP'
+  }).format(pence / 100)
 }

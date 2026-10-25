@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, type CSSProperties } from "react";
 import SnowBackground from "@/components/SnowBackground";
 import SortedProductList from "@/components/SortedProductList";
 import { collections, getCollection, getCollectionProducts } from "@/lib/products";
@@ -32,13 +32,16 @@ async function Collection({ params }: Pick<PageProps<"/shop/[collection]">, "par
   const collection = getCollection(slug);
   if (!collection) notFound();
 
+  const products = getCollectionProducts(collection.slug);
+
+  // --count lets the section narrow to fit when there are fewer products than fit in a row
   return (
-    <>
+    <div className={`collection collection--${collection.slug}`} style={{ "--count": products.length } as CSSProperties}>
       {collection.snow && <SnowBackground />}
       <Link href="/shop">&larr; Back to shop</Link>
       <h1>{collection.name}</h1>
       <p>{collection.description}</p>
-      <SortedProductList products={getCollectionProducts(collection.slug)} />
-    </>
+      <SortedProductList products={products} />
+    </div>
   );
 }

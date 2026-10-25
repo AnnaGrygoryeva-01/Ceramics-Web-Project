@@ -2,19 +2,25 @@
 
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 
-type Option<T extends string> = { value: T; label: string };
+export type DropdownOption<T extends string> = {
+  value: T;
+  label: string;
+  disabled?: boolean; // Shown crossed out and can't be picked
+};
 
 type Props<T extends string> = {
   label: string;
-  options: Option<T>[];
+  options: DropdownOption<T>[];
   value: T;
   onChange: (value: T) => void;
+  className?: string; // For the whole thing: the label and the dropdown
 };
 
 // A styled replacement for <select>: the open list of a native select is drawn by
 // the operating system and can't be styled. Follows the ARIA "select-only
-// combobox" pattern so it works with the keyboard and screen readers.
-export default function SortSelect<T extends string>({ label, options, value, onChange }: Props<T>) {
+// combobox" pattern so it works with the keyboard and screen readers. Used for
+// sorting products and for picking the brushes in a set.
+export default function Dropdown<T extends string>({ label, options, value, onChange, className }: Props<T>) {
   const id = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -33,8 +39,18 @@ export default function SortSelect<T extends string>({ label, options, value, on
   }
 
   function choose(index: number) {
+    if (options[index].disabled) return;
     onChange(options[index].value);
     setOpen(false);
+  }
+
+  // The nearest option that can be picked from `from` in a direction (1 or -1),
+  // or `fallback` when there's none
+  function nextEnabled(from: number, step: number, fallback: number) {
+    for (let i = from; i >= 0 && i < options.length; i += step) {
+      if (!options[i].disabled) return i;
+    }
+    return fallback;
   }
 
   // Close when clicking anywhere else on the page
@@ -48,8 +64,6 @@ export default function SortSelect<T extends string>({ label, options, value, on
   }, [open]);
 
   function onKeyDown(e: KeyboardEvent) {
-    const last = options.length - 1;
-
     if (!open) {
       if (["Enter", " ", "ArrowDown", "ArrowUp"].includes(e.key)) {
         e.preventDefault();
@@ -61,19 +75,19 @@ export default function SortSelect<T extends string>({ label, options, value, on
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
-        setActive((i) => Math.min(i + 1, last));
+        setActive((i) => nextEnabled(i + 1, 1, i));
         break;
       case "ArrowUp":
         e.preventDefault();
-        setActive((i) => Math.max(i - 1, 0));
+        setActive((i) => nextEnabled(i - 1, -1, i));
         break;
       case "Home":
         e.preventDefault();
-        setActive(0);
+        setActive((i) => nextEnabled(0, 1, i));
         break;
       case "End":
         e.preventDefault();
-        setActive(last);
+        setActive((i) => nextEnabled(options.length - 1, -1, i));
         break;
       case "Enter":
       case " ":
@@ -91,13 +105,13 @@ export default function SortSelect<T extends string>({ label, options, value, on
   }
 
   return (
-    <div className="sort" ref={rootRef}>
+    <div className={className} ref={rootRef}>
       <span id={`${id}-label`}>{label}</span>
-      <div className="sort-select">
+      <div className="dropdown">
         <div
           role="combobox"
           tabIndex={0}
-          className="sort-select__button"
+          className="dropdown__button"
           aria-labelledby={`${id}-label ${id}-value`}
           aria-haspopup="listbox"
           aria-expanded={open}
@@ -107,20 +121,21 @@ export default function SortSelect<T extends string>({ label, options, value, on
           onKeyDown={onKeyDown}
         >
           <span id={`${id}-value`}>{options[selectedIndex].label}</span>
-          <svg className="sort-select__chevron" viewBox="0 0 24 24" aria-hidden="true">
+          <svg className="dropdown__chevron" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M6 9l6 6 6-6" />
           </svg>
         </div>
-        <ul id={`${id}-list`} role="listbox" aria-labelledby={`${id}-label`} className="sort-select__list" hidden={!open}>
+        <ul id={`${id}-list`} role="listbox" aria-labelledby={`${id}-label`} className="dropdown__list" hidden={!open}>
           {options.map((option, index) => (
             <li
               key={option.value}
               id={optionId(index)}
               role="option"
               aria-selected={index === selectedIndex}
+              aria-disabled={option.disabled || undefined}
               data-active={index === active || undefined}
-              className="sort-select__option"
-              onPointerEnter={() => setActive(index)}
+              className="dropdown__option"
+              onPointerEnter={() => !option.disabled && setActive(index)}
               // Keep focus on the combobox while clicking an option
               onPointerDown={(e) => e.preventDefault()}
               onClick={() => choose(index)}

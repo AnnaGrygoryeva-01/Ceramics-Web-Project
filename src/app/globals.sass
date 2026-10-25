@@ -9,10 +9,8 @@
   --ink: #0d2d5e
   // Nav link of the page being viewed: a warm clay colour against the blue
   --nav-current: #7f320b
-  // Text on a clay background, e.g. a picked brush size
-  --on-current: #fff
   --badge-text: var(--sky-top)
-  // Background for pop-up panels such as the sort dropdown
+  // Background for pop-up panels such as the dropdowns
   --surface: #eaf2ff
   color-scheme: light
 
@@ -24,7 +22,6 @@
   --christmas-sky-bottom: var(--sky-bottom)
   --ink: #dce6f5
   --nav-current: #e59a6f
-  --on-current: var(--sky-bottom)
   --badge-text: var(--sky-bottom)
   --surface: #12294a
   // Dark form controls and scrollbars
@@ -379,17 +376,18 @@ footer
   from
     opacity: 0
 
-// Sort control on collection pages (see SortSelect)
+// Sort control on collection pages (see Dropdown)
 .sort
   display: inline-flex
   align-items: center
   gap: 8px
   margin-bottom: 16px
 
-.sort-select
+// Dropdowns (see Dropdown): sorting, and the brushes in a set
+.dropdown
   position: relative
 
-.sort-select__button
+.dropdown__button
   display: inline-flex
   align-items: center
   justify-content: space-between
@@ -397,7 +395,6 @@ footer
   min-width: 190px
   padding: 4px 8px 4px 12px
   border: 1px solid currentColor
-  border-radius: 6px
   cursor: pointer
   user-select: none
 
@@ -405,7 +402,7 @@ footer
     outline: 2px solid var(--nav-current)
     outline-offset: 2px
 
-.sort-select__chevron
+.dropdown__chevron
   width: 1em
   height: 1em
   fill: none
@@ -418,7 +415,7 @@ footer
   [aria-expanded="true"] &
     transform: rotate(180deg)
 
-.sort-select__list
+.dropdown__list
   position: absolute
   top: calc(100% + 4px)
   left: 0
@@ -428,16 +425,14 @@ footer
   padding: 4px
   list-style: none
   border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent)
-  border-radius: 6px
   background: var(--surface)
   box-shadow: 0 8px 24px rgb(0 0 0 / 0.18)
 
   &[hidden]
     display: none
 
-.sort-select__option
+.dropdown__option
   padding: 6px 10px
-  border-radius: 4px
   white-space: nowrap
   cursor: pointer
 
@@ -448,6 +443,12 @@ footer
   // The current choice, in the same colour as the current page in the nav
   &[aria-selected="true"]
     color: var(--nav-current)
+
+  // Not enough of that one left
+  &[aria-disabled]
+    opacity: 0.4
+    text-decoration: line-through
+    cursor: not-allowed
 
 // Product photos (see ProductImage)
 .product-image
@@ -526,66 +527,34 @@ footer
     margin-top: auto
     align-self: start
 
-// Picks for products with options, e.g. "Brush 1", then Small / Medium / Large, for a set
-// of brushes. Each value is a radio button drawn as a pill.
+// Picks for products with options, e.g. "Brush 1 [Small]" for each brush in a
+// set: the label, then a dropdown
 .option-picker
   display: flex
   flex-direction: column
   gap: 6px
+  // As wide as the photo: the card's on a card, the large one on a product page
+  max-width: 420px
   margin-bottom: 4px
 
 .option-picker__pick
-  margin: 0
-  padding: 0
-  border: 0
-
-  legend
-    padding: 0
-    margin-bottom: 4px
-    font-size: 0.9rem
-
-.option-picker__values
   display: flex
-  flex-wrap: wrap
-  gap: 4px
+  align-items: center
+  gap: 8px
+  font-size: 0.9rem
 
-  label
-    cursor: pointer
+  // Same width for every label, so the dropdowns line up
+  > span
+    min-width: 4em
 
-  // Hidden but still focusable and read out
-  input
-    position: absolute
-    opacity: 0
-    width: 1px
-    height: 1px
+  // The dropdown fills the rest of the row, up to the edge of the photo
+  .dropdown
+    flex: 1
 
-  span
-    display: block
-    padding: 2px 9px
-    border: 1px solid currentColor
-    border-radius: 999px
-    font-size: 0.85rem
-    opacity: 0.75
-    transition: background-color 0.15s, color 0.15s, opacity 0.15s
-
-  label:hover span
-    opacity: 1
-
-  // Not enough of that one left
-  input:disabled + span
-    opacity: 0.35
-    text-decoration: line-through
-    cursor: not-allowed
-
-  input:checked + span
-    background: var(--nav-current)
-    border-color: var(--nav-current)
-    color: var(--on-current)
-    opacity: 1
-
-  input:focus-visible + span
-    outline: 2px solid var(--nav-current)
-    outline-offset: 2px
+  .dropdown__button
+    display: flex
+    min-width: 0
+    padding: 2px 6px 2px 10px
 
 // The picked options under a product's name in the cart
 .cart-choices

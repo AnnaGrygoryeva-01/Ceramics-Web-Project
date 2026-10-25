@@ -1,8 +1,9 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useState } from "react";
 import { addToCart, canAdd, countInCart, isSoldOut, stockLeft, useCart, type Cart } from "@/lib/cart";
 import type { Product, ProductOptions } from "@/lib/products";
+import Dropdown from "./Dropdown";
 
 // The add button, plus the option picker (e.g. brush sizes in a set) for products
 // that have options. Returned as siblings so the button can still sit at the
@@ -46,36 +47,22 @@ function OptionPicker({
   choices: string[];
   onChange: (choices: string[]) => void;
 }) {
-  const id = useId();
-
   return (
     <div className="option-picker">
       {choices.map((choice, index) => (
-        <fieldset key={index} className="option-picker__pick">
-          <legend>
-            {options.label} {index + 1}
-          </legend>
-          <div className="option-picker__values">
-            {Object.keys(options.values).map((value) => {
-              const picks = choices.with(index, value);
-              // Not enough of that brush left for these picks (after what's in the cart)
-              const tooMany = picks.filter((p) => p === value).length > stockLeft(cart, options.values[value]);
-              return (
-                <label key={value}>
-                  <input
-                    type="radio"
-                    name={`${id}-${index}`}
-                    value={value}
-                    checked={choice === value}
-                    disabled={choice !== value && tooMany}
-                    onChange={() => onChange(picks)}
-                  />
-                  <span>{value}</span>
-                </label>
-              );
-            })}
-          </div>
-        </fieldset>
+        <Dropdown
+          key={index}
+          className="option-picker__pick"
+          label={`${options.label} ${index + 1}`}
+          value={choice}
+          onChange={(value) => onChange(choices.with(index, value))}
+          options={Object.keys(options.values).map((value) => {
+            // Not enough of that brush left for these picks (after what's in the cart)
+            const picks = choices.with(index, value);
+            const tooMany = picks.filter((p) => p === value).length > stockLeft(cart, options.values[value]);
+            return { value, label: value, disabled: value !== choice && tooMany };
+          })}
+        />
       ))}
     </div>
   );

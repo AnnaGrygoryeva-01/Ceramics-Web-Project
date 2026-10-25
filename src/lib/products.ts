@@ -6,6 +6,7 @@ export type Collection = {
   slug: string
   name: string
   description: string
+  image?: string // Card photo on the Shop page, a path inside /public
   snow?: boolean // Show the falling snow background on this collection's pages
 }
 

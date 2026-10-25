@@ -8,6 +8,12 @@ export default function ShopPage() {
   return (
     <>
       <h1>Shop</h1>
+      <section>
+        <h2>
+          <Link href="/shop/all" prefetch>Shop All</Link>
+        </h2>
+        <p>A mix of everything from every collection</p>
+      </section>
       {collections.map((collection) => (
         <section key={collection.slug}>
           <h2>

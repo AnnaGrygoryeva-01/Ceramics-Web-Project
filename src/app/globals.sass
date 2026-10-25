@@ -376,12 +376,18 @@ footer
   from
     opacity: 0
 
-// Sort control on collection pages (see Dropdown)
+// Sort control on collection pages, plus the collection filter on Shop All
+// (see SortedProductList). Side by side, wrapping onto two lines on phones.
+.list-controls
+  display: flex
+  flex-wrap: wrap
+  gap: 12px 32px
+  margin-bottom: 16px
+
 .sort
   display: inline-flex
   align-items: center
   gap: 8px
-  margin-bottom: 16px
 
 // Dropdowns (see Dropdown): sorting, and the brushes in a set
 .dropdown

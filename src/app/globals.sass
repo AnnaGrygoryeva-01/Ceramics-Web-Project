@@ -523,9 +523,78 @@ footer
     font-weight: normal
     line-height: 1.3
 
-  button
+  > .add-to-cart,
+  > .cart-stepper
     margin-top: auto
     align-self: start
+
+// Add to cart (see AddToCartButton): outlined like the dropdowns, filling with
+// the ink colour on hover
+.add-to-cart
+  padding: 8px 18px
+  border: 1px solid currentColor
+  border-radius: 0
+  background: transparent
+  color: var(--ink)
+  font: inherit
+  font-size: 0.95rem
+  letter-spacing: 0.02em
+  cursor: pointer
+  transition: background-color 0.2s ease, color 0.2s ease
+
+  &:hover:not(:disabled)
+    background: var(--ink)
+    color: var(--badge-text)
+
+  &:active:not(:disabled)
+    transform: translateY(1px)
+
+  &:focus-visible
+    outline: 2px solid var(--nav-current)
+    outline-offset: 2px
+
+  // Sold out or all in the cart
+  &:disabled
+    opacity: 0.5
+    border-style: dashed
+    cursor: not-allowed
+
+// Replaces Add to cart once it's in the cart: − 3 in cart +, in one outline
+.cart-stepper
+  display: inline-flex
+  align-items: stretch
+  border: 1px solid currentColor
+  color: var(--ink)
+  font-size: 0.95rem
+
+  span
+    flex: 1
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 0 12px
+    white-space: nowrap
+
+  button
+    padding: 8px 14px
+    border: 0
+    background: transparent
+    color: inherit
+    font: inherit
+    cursor: pointer
+    transition: background-color 0.2s ease, color 0.2s ease
+
+    &:hover:not(:disabled)
+      background: var(--ink)
+      color: var(--badge-text)
+
+    &:focus-visible
+      outline: 2px solid var(--nav-current)
+      outline-offset: -2px
+
+    &:disabled
+      opacity: 0.35
+      cursor: not-allowed
 
 // Care guide at the end of the Brushes page (see BrushCare)
 .brush-care
@@ -606,6 +675,12 @@ footer
     width: 100%
     max-width: 320px
 
-    button
+    > .add-to-cart,
+    > .cart-stepper
       align-self: stretch
+
+    > .add-to-cart
       padding: 10px
+
+    .cart-stepper button
+      padding: 10px 16px

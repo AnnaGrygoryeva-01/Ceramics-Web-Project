@@ -1,11 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { addToCart, canAdd, countInCart, isSoldOut, stockLeft, useCart, type Cart } from "@/lib/cart";
+import {
+  addToCart,
+  canAdd,
+  cartKey,
+  countInCart,
+  isSoldOut,
+  setQuantity,
+  stockLeft,
+  useCart,
+  type Cart,
+} from "@/lib/cart";
 import type { Product, ProductOptions } from "@/lib/products";
 import Dropdown from "./Dropdown";
 
-// The add button, plus the option picker (e.g. brush sizes in a set) for products
+// The add button (a − / + stepper once it's in the cart), plus the option picker (e.g. brush sizes in a set) for products
 // that have options. Returned as siblings so the button can still sit at the
 // bottom of a product card.
 export default function AddToCartButton({ product }: { product: Product }) {
@@ -22,16 +32,38 @@ export default function AddToCartButton({ product }: { product: Product }) {
   const inCart = countInCart(cart, product.slug);
   const soldOut = isSoldOut(product);
   const available = canAdd(cart, product.slug, sorted);
+  // The cart line for these picks: a set with different picks is a separate line
+  const key = cartKey(product.slug, sorted);
+  const qty = cart[key] ?? 0;
 
   return (
     <>
       {options && !soldOut && (
         <OptionPicker options={options} cart={cart} choices={choices} onChange={setChoices} />
       )}
-      <button type="button" disabled={soldOut || !available} onClick={() => addToCart(product.slug, sorted)}>
-        {soldOut ? "Sold out" : available ? "Add to cart" : options ? "Not enough in stock" : "All in your cart"}
-        {inCart > 0 && !soldOut && ` (${inCart} in cart)`}
-      </button>
+      {qty > 0 ? (
+        <div className="cart-stepper" role="group" aria-label={`${product.name} in your cart`}>
+          <button type="button" aria-label="Remove one" onClick={() => setQuantity(key, qty - 1)}>
+            −
+          </button>
+          <span aria-live="polite">{qty} in your cart</span>
+          <button
+            type="button"
+            aria-label="Add one more"
+            title={available ? undefined : "No more in stock"}
+            disabled={!available}
+            onClick={() => addToCart(product.slug, sorted)}
+          >
+            +
+          </button>
+        </div>
+      ) : (
+        <button type="button" className="add-to-cart" disabled={soldOut || !available} onClick={() => addToCart(product.slug, sorted)}>
+          {soldOut ? "Sold out" : available ? "Add to cart" : options ? "Not enough in stock" : "All in your cart"}
+          {/* Other picks of a set already in the cart */}
+          {inCart > 0 && !soldOut && ` (${inCart} in your cart)`}
+        </button>
+      )}
     </>
   );
 }

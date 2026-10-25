@@ -10,6 +10,8 @@
   // Nav link of the page being viewed: a warm clay colour against the blue
   --nav-current: #7f320b
   --badge-text: var(--sky-top)
+  // Background for pop-up panels such as the sort dropdown
+  --surface: #eaf2ff
   color-scheme: light
 
 :root[data-theme="night"]
@@ -21,6 +23,7 @@
   --ink: #dce6f5
   --nav-current: #e59a6f
   --badge-text: var(--sky-bottom)
+  --surface: #12294a
   // Dark form controls and scrollbars
   color-scheme: dark
 
@@ -373,20 +376,75 @@ footer
   from
     opacity: 0
 
-// Sort control on collection pages
+// Sort control on collection pages (see SortSelect)
 .sort
   display: inline-flex
   align-items: center
   gap: 8px
   margin-bottom: 16px
 
-  select
-    padding: 4px 8px
-    border: 1px solid currentColor
-    border-radius: 4px
-    background: transparent
-    color: inherit
-    font: inherit
+.sort-select
+  position: relative
+
+.sort-select__button
+  display: inline-flex
+  align-items: center
+  justify-content: space-between
+  gap: 12px
+  min-width: 190px
+  padding: 4px 8px 4px 12px
+  border: 1px solid currentColor
+  border-radius: 6px
+  cursor: pointer
+  user-select: none
+
+  &:focus-visible
+    outline: 2px solid var(--nav-current)
+    outline-offset: 2px
+
+.sort-select__chevron
+  width: 1em
+  height: 1em
+  fill: none
+  stroke: currentColor
+  stroke-width: 2
+  stroke-linecap: round
+  stroke-linejoin: round
+  transition: transform 0.2s ease
+
+  [aria-expanded="true"] &
+    transform: rotate(180deg)
+
+.sort-select__list
+  position: absolute
+  top: calc(100% + 4px)
+  left: 0
+  z-index: 5
+  min-width: 100%
+  margin: 0
+  padding: 4px
+  list-style: none
+  border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent)
+  border-radius: 6px
+  background: var(--surface)
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18)
+
+  &[hidden]
+    display: none
+
+.sort-select__option
+  padding: 6px 10px
+  border-radius: 4px
+  white-space: nowrap
+  cursor: pointer
+
+  // Highlighted with the mouse or arrow keys
+  &[data-active]
+    background: color-mix(in srgb, var(--ink) 10%, transparent)
+
+  // The current choice, in the same colour as the current page in the nav
+  &[aria-selected="true"]
+    color: var(--nav-current)
 
 // Product photos (see ProductImage)
 .product-image
@@ -406,26 +464,43 @@ footer
   max-width: 100%
   margin: 16px 0
 
-// Product cards on collection pages: 4 per row on desktop, then 3, 2, and 1 on
-// phones (breakpoints below). A flex row rather than a grid so that a row that
-// isn't full (e.g. 3 products with room for 4) sits in the middle.
-.product-grid
+// Collection page: heading, sort and product cards share one centred column,
+// so the heading lines up with the first card. 4 cards per row on desktop, then
+// 3, 2, and 1 on phones (breakpoints below).
+.collection
   --columns: 4
-  --gap: 40px
-  // Wider than the 900px text column (up to 1080px) on large screens, and the
-  // normal content width on small ones. The margin below keeps it centred.
-  // 100vw includes the scrollbar, hence the generous 64px.
-  --grid-width: max(100%, min(1080px, 100vw - 64px))
+  // Grows with the screen (40px at 1000px wide, up to 72px at 1800px)
+  --gap: clamp(40px, 4vw, 72px)
+  // Room for a full row: wider than the 900px text column on large screens, the
+  // normal content width on small ones. The row grows with the gap so the cards
+  // keep their 240px width. 100vw includes the scrollbar, hence the generous 64px.
+  --row-width: max(100%, min(960px + 3 * var(--gap), 100vw - 64px))
+  // Columns actually used: fewer when the collection has fewer products than fit
+  // in a row (--count is set by the page), so the section narrows to the cards
+  --shown: min(var(--count, var(--columns)), var(--columns))
+  --card-width: calc((var(--row-width) - (var(--columns) - 1) * var(--gap)) / var(--columns))
+  --width: calc(var(--shown) * var(--card-width) + (var(--shown) - 1) * var(--gap))
+  width: var(--width)
+  // Centred, extending past the text column equally on both sides
+  margin-left: calc((100% - var(--width)) / 2)
+
+// Brushes: 3 cards in the top row and 2 below on wide screens, instead of 4 + 1.
+// Same card size as the other collections, only fewer per row.
+@media (min-width: 1101px)
+  .collection--brushes
+    --shown: min(var(--count, 3), 3)
+
+// A flex row rather than a grid so that a last row that isn't full sits in the middle
+.product-grid
   display: flex
   flex-wrap: wrap
   justify-content: center
   gap: 48px var(--gap)
-  width: var(--grid-width)
-  margin: 0 0 32px calc((100% - var(--grid-width)) / 2)
+  margin-bottom: 32px
 
   // Every card is one column wide
   > *
-    width: calc((100% - (var(--columns) - 1) * var(--gap)) / var(--columns))
+    width: calc((100% - (var(--shown) - 1) * var(--gap)) / var(--shown))
 
 // Stacked: photo, name, price, button. The button sits at the bottom so the
 // buttons line up across a row even when a name wraps onto two lines.
@@ -450,14 +525,16 @@ footer
 
 // Tablets (an iPad is 1024px wide in landscape)
 @media (max-width: 1100px)
-  .product-grid
+  .collection
     --columns: 3
     --gap: 32px
 
 @media (max-width: 760px)
-  .product-grid
+  .collection
     --columns: 2
     --gap: 24px
+
+  .product-grid
     row-gap: 40px
 
 // Phones: bigger corner flowers, since a quarter of a narrow screen is very small
@@ -468,8 +545,10 @@ footer
 // Phones: one card per row. Capped in width so the photo doesn't fill the whole
 // screen height, and the button spans the card for an easier tap.
 @media (max-width: 560px)
-  .product-grid
+  .collection
     --columns: 1
+
+  .product-grid
     row-gap: 40px
 
   .product-card

@@ -1,21 +1,101 @@
 "use client";
 
-import { addToCart, useCart } from "@/lib/cart";
-import type { Product } from "@/lib/products";
+import { useState } from "react";
+import {
+  addToCart,
+  canAdd,
+  cartKey,
+  countInCart,
+  isSoldOut,
+  setQuantity,
+  stockLeft,
+  useCart,
+  type Cart,
+} from "@/lib/cart";
+import type { Product, ProductOptions } from "@/lib/products";
+import Dropdown from "./Dropdown";
 
+// The add button (a − / + stepper once it's in the cart), plus the option picker (e.g. brush sizes in a set) for products
+// that have options. Returned as siblings so the button can still sit at the
+// bottom of a product card.
 export default function AddToCartButton({ product }: { product: Product }) {
-  const inCart = useCart()[product.slug] ?? 0;
-  const soldOut = product.stock === 0;
-  const maxed = inCart >= product.stock;
+  const { options } = product;
+  const names = options ? Object.keys(options.values) : [];
+  // Start with different values (Small, Medium, ...) so a set is mixed by default
+  const [choices, setChoices] = useState(() =>
+    options ? Array.from({ length: options.count }, (_, i) => names[i % names.length]) : [],
+  );
+  // Same order as the list, so Small + Large and Large + Small share one cart line
+  const sorted = choices.toSorted((a, b) => names.indexOf(a) - names.indexOf(b));
+
+  const cart = useCart();
+  const inCart = countInCart(cart, product.slug);
+  const soldOut = isSoldOut(product);
+  const available = canAdd(cart, product.slug, sorted);
+  // The cart line for these picks: a set with different picks is a separate line
+  const key = cartKey(product.slug, sorted);
+  const qty = cart[key] ?? 0;
 
   return (
-    <button
-      type="button"
-      disabled={soldOut || maxed}
-      onClick={() => addToCart(product.slug, 1, product.stock)}
-    >
-      {soldOut ? "Sold out" : maxed ? "All in your cart" : "Add to cart"}
-      {inCart > 0 && !soldOut && ` (${inCart} in cart)`}
-    </button>
+    <>
+      {options && !soldOut && (
+        <OptionPicker options={options} cart={cart} choices={choices} onChange={setChoices} />
+      )}
+      {qty > 0 ? (
+        <div className="cart-stepper" role="group" aria-label={`${product.name} in your cart`}>
+          <button type="button" aria-label="Remove one" onClick={() => setQuantity(key, qty - 1)}>
+            −
+          </button>
+          <span aria-live="polite">{qty} in your cart</span>
+          <button
+            type="button"
+            aria-label="Add one more"
+            title={available ? undefined : "No more in stock"}
+            disabled={!available}
+            onClick={() => addToCart(product.slug, sorted)}
+          >
+            +
+          </button>
+        </div>
+      ) : (
+        <button type="button" className="add-to-cart" disabled={soldOut || !available} onClick={() => addToCart(product.slug, sorted)}>
+          {soldOut ? "Sold out" : available ? "Add to cart" : options ? "Not enough in stock" : "All in your cart"}
+          {/* Other picks of a set already in the cart */}
+          {inCart > 0 && !soldOut && ` (${inCart} in your cart)`}
+        </button>
+      )}
+    </>
+  );
+}
+
+function OptionPicker({
+  options,
+  cart,
+  choices,
+  onChange,
+}: {
+  options: ProductOptions;
+  cart: Cart;
+  choices: string[];
+  onChange: (choices: string[]) => void;
+}) {
+  return (
+    <div className="option-picker">
+      {choices.map((choice, index) => (
+        <Dropdown
+          key={index}
+          className="option-picker__pick"
+          label={`${options.label} ${index + 1}`}
+          value={choice}
+          onChange={(value) => onChange(choices.with(index, value))}
+          options={Object.keys(options.values).map((value) => {
+            // Not enough of that brush left for these picks (after what's in the cart)
+            const picks = choices.with(index, value);
+            const tooMany = picks.filter((p) => p === value).length > stockLeft(cart, options.values[value]);
+            return { value, label: value, disabled: value !== choice && tooMany };
+          })}
+        />
+      ))}
+    </div>
   );
 }

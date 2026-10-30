@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { clearCart, setQuantity, useCart } from "@/lib/cart";
+import { canAdd, clearCart, parseCartKey, setQuantity, useCart } from "@/lib/cart";
 import { formatPrice, getProduct, productUrl } from "@/lib/products";
 
 export default function CartView() {
   const cart = useCart();
-  const items = Object.entries(cart).flatMap(([slug, qty]) => {
+  const items = Object.entries(cart).flatMap(([key, qty]) => {
+    const { slug, choices } = parseCartKey(key);
     const product = getProduct(slug);
-    return product ? [{ product, qty }] : [];
+    return product ? [{ key, product, choices, qty }] : [];
   });
 
   if (items.length === 0) {
@@ -34,17 +35,18 @@ export default function CartView() {
           </tr>
         </thead>
         <tbody>
-          {items.map(({ product, qty }) => (
-            <tr key={product.slug}>
+          {items.map(({ key, product, choices, qty }) => (
+            <tr key={key}>
               <td>
-                <Link href={productUrl(product)}>{product.name}</Link>
+                <Link href={productUrl(product)} prefetch>{product.name}</Link>
+                {choices.length > 0 && <span className="cart-choices">{choices.join(", ")}</span>}
               </td>
               <td>{formatPrice(product.price)}</td>
               <td>
                 <button
                   type="button"
                   aria-label="Decrease quantity"
-                  onClick={() => setQuantity(product.slug, qty - 1)}
+                  onClick={() => setQuantity(key, qty - 1)}
                 >
                   −
                 </button>{" "}
@@ -52,15 +54,15 @@ export default function CartView() {
                 <button
                   type="button"
                   aria-label="Increase quantity"
-                  disabled={qty >= product.stock}
-                  onClick={() => setQuantity(product.slug, qty + 1)}
+                  disabled={!canAdd(cart, product.slug, choices)}
+                  onClick={() => setQuantity(key, qty + 1)}
                 >
                   +
                 </button>
               </td>
               <td>{formatPrice(product.price * qty)}</td>
               <td>
-                <button type="button" onClick={() => setQuantity(product.slug, 0)}>
+                <button type="button" onClick={() => setQuantity(key, 0)}>
                   Remove
                 </button>
               </td>

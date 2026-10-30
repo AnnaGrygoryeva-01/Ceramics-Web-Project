@@ -1,99 +1,93 @@
+import brushProducts from '@/data/products/brushes.json'
+import christmasProducts from '@/data/products/christmas-collection.json'
+import floralProducts from '@/data/products/floral-collection.json'
+
 export type Collection = {
-  slug: string;
-  name: string;
-  description: string;
-};
+  slug: string
+  name: string
+  description: string
+  image?: string // Card photo on the Shop page, a path inside /public
+  snow?: boolean // Show the falling snow background on this collection's pages
+}
 
 export type Product = {
-  slug: string;
-  collection: string; // Collection slug
-  name: string;
-  price: number; // in cents
-  description: string;
-  stock: number;
-};
+  slug: string
+  collection: string // Collection slug
+  name: string
+  price: number // in pence (4800 = £48.00)
+  description: string
+  stock?: number // Leave out for products with options, see ProductOptions
+  image?: string // Path inside /public, e.g. "/products/brushes/brush-set.jpg"
+  options?: ProductOptions
+}
+
+// Lets the customer pick other products several times, e.g. the size of each
+// brush in a set. Such a product has no stock of its own: each pick uses up the
+// stock of the product it names. In the JSON:
+// "options": {
+//   "label": "Brush",
+//   "count": 2,
+//   "values": { "Small": "small-brush", "Medium": "medium-brush", "Large": "large-brush" }
+// }
+export type ProductOptions = {
+  label: string // Each pick is shown as "Brush 1", "Brush 2", ...
+  count: number // How many picks
+  values: Record<string, string> // Name shown -> slug of the product it uses up
+}
 
 export const collections: Collection[] = [
   {
-    slug: "christmas-collection",
-    name: "Christmas Collection",
-    description: "Handmade ornaments, mugs and festive pieces for the holiday season.",
+    slug: 'christmas-collection',
+    name: 'Christmas Collection',
+    description:
+      'Hand-painted Christmas tree ornaments, made one at a time. Every piece has its own small differences, so yours will be truly one of a kind.',
+    snow: true
   },
   {
-    slug: "brushes",
-    name: "Brushes",
-    description: "Brushes with handmade ceramic handles.",
+    slug: 'floral-collection',
+    name: 'Floral Collection',
+    description:
+      'Ceramic pieces decorated with hand-painted flowers inspired by Petrykivka art. Each piece carries its own small differences, so no two are exactly the same.'
   },
-];
+  {
+    slug: 'brushes',
+    name: 'Brushes',
+    description:
+      'Experience the authentic soul of Ukrainian folk art with the traditional Koshashka brush. Hand-bound by master artisans and crafted from ethically gathered, ultra-soft cat fur, this indispensable tool is the secret behind the fluid, mesmerizing strokes of UNESCO-recognized Petrykivka painting.'
+  }
+]
 
-// Placeholder products, replace with the real pieces
-export const products: Product[] = [
-  {
-    slug: "snowflake-ornament",
-    collection: "christmas-collection",
-    name: "Snowflake Ornament",
-    price: 1800,
-    description: "Hand-cut porcelain snowflake with a gold ribbon for hanging.",
-    stock: 12,
-  },
-  {
-    slug: "festive-red-mug",
-    collection: "christmas-collection",
-    name: "Festive Red Mug",
-    price: 3600,
-    description: "Wheel-thrown stoneware mug in a deep holiday red glaze.",
-    stock: 5,
-  },
-  {
-    slug: "star-candle-holder",
-    collection: "christmas-collection",
-    name: "Star Candle Holder",
-    price: 2900,
-    description: "Star-shaped tealight holder with cut-outs that cast a warm glow.",
-    stock: 3,
-  },
-  {
-    slug: "large-brush",
-    collection: "brushes",
-    name: "Large Brush",
-    price: 2400,
-    description: "Large brush with a speckled glazed ceramic handle.",
-    stock: 8,
-  },
-  {
-    slug: "small-brush",
-    collection: "brushes",
-    name: "Small Brush",
-    price: 1900,
-    description: "Small brush with a matte white ceramic handle.",
-    stock: 6,
-  },
-  {
-    slug: "brush-set",
-    collection: "brushes",
-    name: "Brush Set",
-    price: 5500,
-    description: "Set of three brushes in different sizes with matching handles.",
-    stock: 2,
-  },
-];
-
-export function getCollection(slug: string) {
-  return collections.find((c) => c.slug === slug);
+// Placeholder products, replace with the real pieces. Each collection's products
+// live in their own file in src/data/products; the file decides the collection.
+const productsByCollection: Record<string, Omit<Product, 'collection'>[]> = {
+  'christmas-collection': christmasProducts,
+  'floral-collection': floralProducts,
+  brushes: brushProducts
 }
 
-export function getCollectionProducts(collection: string) {
-  return products.filter((p) => p.collection === collection);
+export const products: Product[] = Object.entries(productsByCollection).flatMap(
+  ([collection, items]) => items.map(item => ({ ...item, collection }))
+)
+
+export function getCollection (slug: string) {
+  return collections.find(c => c.slug === slug)
 }
 
-export function getProduct(slug: string) {
-  return products.find((p) => p.slug === slug);
+export function getCollectionProducts (collection: string) {
+  return products.filter(p => p.collection === collection)
 }
 
-export function productUrl(product: Product) {
-  return `/shop/${product.collection}/${product.slug}`;
+export function getProduct (slug: string) {
+  return products.find(p => p.slug === slug)
 }
 
-export function formatPrice(cents: number) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(cents / 100);
+export function productUrl (product: Product) {
+  return `/shop/${product.collection}/${product.slug}`
+}
+
+export function formatPrice (pence: number) {
+  return new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP'
+  }).format(pence / 100)
 }

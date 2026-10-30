@@ -1,19 +1,40 @@
-// Colours sampled from the design assets
-$background: #cfe1fe
-$ink: #00478c
-
-// Inner box of top-bar.png, as a fraction of the image size (2865 x 206)
-$box-left: 15.2%
-$box-right: 15.5%
-$box-top: 15%
-$box-bottom: 15.5%
-
-// Shared so the cart icon can line up with the top bar and the corner flowers
+// Colours, sampled from the design mockups. The theme is set on <html> as
+// data-theme="day" or "night" (see src/lib/theme.ts and ThemeToggle).
 :root
-  --bar-width: min(1000px, 100vw - 32px)
-  --bar-top: 24px
-  --corner-width: clamp(90px, 14vw, 200px)
-  --corner-inset: 8px
+  --sky-top: #c2dcff
+  --sky-bottom: #7690a2
+  // The Christmas collection keeps the original, bluer gradient
+  --christmas-sky-top: #c9ddfd
+  --christmas-sky-bottom: #7590b5
+  --ink: #0d2d5e
+  // Nav link of the page being viewed: a warm clay colour against the blue
+  --nav-current: #7f320b
+  --badge-text: var(--sky-top)
+  // Background for pop-up panels such as the dropdowns
+  --surface: #eaf2ff
+  color-scheme: light
+
+:root[data-theme="night"]
+  --sky-top: #0d406b
+  --sky-bottom: #0a1020
+  // No separate Christmas sky at night: the snow shows up well on the dark blue
+  --christmas-sky-top: var(--sky-top)
+  --christmas-sky-bottom: var(--sky-bottom)
+  --ink: #dce6f5
+  --nav-current: #e59a6f
+  --badge-text: var(--sky-bottom)
+  --surface: #12294a
+  // Dark form controls and scrollbars
+  color-scheme: dark
+
+// Shared so the cart icon can line up with the nav and the corner flowers
+:root
+  --nav-top: 24px
+  --nav-height: 48px
+  // Space at the bottom of every page, see main
+  --page-bottom: 160px
+  // Corner images are about 2:3; fit them to the width but keep them under ~65% of the screen height
+  --corner-width: min(24.5vw, 43vh)
 
 *, *::before, *::after
   box-sizing: border-box
@@ -27,10 +48,37 @@ body
   flex-direction: column
   min-height: 100vh
   min-height: 100dvh
-  background: $background
-  color: $ink
+  background: var(--sky-bottom)
+  color: var(--ink)
   font-family: Georgia, "Times New Roman", serif
   line-height: 1.5
+
+  // Gradients fixed to the screen so they look the same however long the page is.
+  // Gradients can't be animated, so the Christmas one sits on top and fades in.
+  &::before,
+  &::after
+    content: ""
+    position: fixed
+    inset: 0
+    z-index: -1
+
+  &::before
+    background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom))
+
+  &::after
+    background: linear-gradient(to bottom, var(--christmas-sky-top), var(--christmas-sky-bottom))
+    opacity: 0
+    // Fades both ways when moving to or from a Christmas page. Transitions
+    // don't run on the first paint, so a direct page load shows no fade.
+    transition: opacity 4s ease
+
+// Pages that show the snow (the Christmas collection). Ignore snow left behind
+// on a hidden page after navigating away (see SnowBackground).
+body:has(.snow:not(.snow--hidden))
+  background: var(--christmas-sky-bottom)
+
+  &::after
+    opacity: 1
 
 a
   color: inherit
@@ -48,51 +96,127 @@ main
   flex: 1
   padding-top: 32px
   // Leave room so the bottom of the page isn't hidden behind the corner flowers
-  padding-bottom: clamp(100px, 15vw, 210px)
+  padding-bottom: var(--page-bottom)
 
 footer
   padding-bottom: 24px
   text-align: center
   font-size: 0.875rem
 
-// Top bar
-.top-bar
-  // No z-index here: it would isolate the frame and stop the white from blending away
+// Header: logo on the left, nav centred. The side columns are equal so the nav
+// stays in the middle of the page; the cart is positioned separately.
+.site-header
   position: relative
-  width: var(--bar-width)
-  margin: var(--bar-top) auto 0
+  z-index: 2
+  display: grid
+  grid-template-columns: 1fr auto 1fr
+  // Line everything up with the row of links, not the brace hanging below it
+  align-items: start
+  min-height: var(--nav-height)
+  margin-top: var(--nav-top)
+  padding: 0 clamp(16px, 3vw, 40px)
+  // Header icons (cart, theme switch)
+  --icon-size: 2.25rem
+  // The cart sits about 8% in from the right edge of the corner image, based on
+  // the vine of the bottom-right corner flower, then nudged a little further left
+  --cart-right: calc(max(8px, var(--corner-width) * 0.083 - var(--icon-size) / 2) + 24px)
 
-.top-bar__frame
+.logo
+  justify-self: start
+  display: flex
+  flex-direction: column
+  justify-content: center
+  min-height: var(--nav-height)
+  line-height: 1.2
+
+// public/logo-mark.png is a transparent cut-out of public/mainLogo.png, used as
+// a mask so the logo is drawn in the ink colour (dark by day, light at night)
+.logo__mark
   display: block
-  width: 100%
-  height: auto
-  mix-blend-mode: multiply
-  pointer-events: none
+  height: 56px
+  aspect-ratio: 452 / 240
+  background: var(--ink)
+  mask: url("/logo-mark.png") center / contain no-repeat
 
-.top-bar__nav
-  position: absolute
-  inset: $box-top $box-right $box-bottom $box-left
+// Navigation: the row of links with the brace underneath
+.top-bar
+  // Space between links, and between the outer links and the ends of the brace
+  --nav-gap: clamp(18px, 3vw, 48px)
+  display: flex
+  flex-direction: column
+  align-items: center
+
+.top-bar__links
   display: flex
   align-items: center
-  justify-content: space-evenly
-  gap: 8px
-  font-size: clamp(0.75rem, 1.6vw, 1.125rem)
+  justify-content: center
+  gap: var(--nav-gap)
+  min-height: var(--nav-height)
+  font-size: 1.25rem
   letter-spacing: 0.05em
 
   a
     white-space: nowrap
 
-// Top right of the page: vertically centred on the top bar,
-// horizontally centred on the bottom-right corner flower
+  // The page being viewed (Header sets aria-current)
+  a[aria-current="page"]
+    color: var(--nav-current)
+
+// One gap wider than the links on each side, so its curled ends sit as far from
+// the outer links as the links are from each other. `width: 0` stops the image's
+// natural size from stretching the nav; min-width then sets the real width.
+// Pulled up so the links sit inside it, just above its horizontal line.
+.top-bar__brace
+  width: 0
+  min-width: calc(100% + 2 * var(--nav-gap))
+  max-width: calc(100vw - 32px)
+  height: auto
+  margin-top: -43px
+  pointer-events: none
+
+  // The brace is drawn in a dark line; turn it light against the night sky
+  :root[data-theme="night"] &
+    filter: invert(1) brightness(0.9)
+
+// Vertically centred on the nav, horizontally on the vine of the bottom-right corner flower.
+// Positioned against .site-header, which spans the full page width.
 .cart-link
-  --icon-size: 2rem
   position: absolute
-  // Top bar image is 2865 x 206
-  top: calc(var(--bar-top) + var(--bar-width) * 206 / 2865 / 2 - var(--icon-size) / 2)
-  right: calc(var(--corner-inset) + var(--corner-width) / 2 - var(--icon-size) / 2)
+  top: calc(var(--nav-height) / 2 - var(--icon-size) / 2)
+  right: var(--cart-right)
   z-index: 2
   display: inline-flex
   font-size: 1.125rem
+
+// Day/night switch, just left of the cart and lined up with it
+.theme-toggle
+  position: absolute
+  top: calc(var(--nav-height) / 2 - var(--icon-size) / 2)
+  right: calc(var(--cart-right) + var(--icon-size) + 20px)
+  z-index: 2
+  display: inline-flex
+  padding: 0
+  border: 0
+  background: none
+  color: inherit
+  cursor: pointer
+
+  svg
+    width: var(--icon-size)
+    height: var(--icon-size)
+    fill: none
+    stroke: currentColor
+    stroke-width: 1.5
+    stroke-linecap: round
+    stroke-linejoin: round
+
+// Show the moon by day (switch to night) and the sun at night (switch to day)
+.theme-toggle__sun,
+:root[data-theme="night"] .theme-toggle__moon
+  display: none
+
+:root[data-theme="night"] .theme-toggle__sun
+  display: block
 
 .cart-link__icon
   width: var(--icon-size)
@@ -105,44 +229,824 @@ footer
   min-width: 1.5em
   padding: 0 0.3em
   border-radius: 999px
-  background: $ink
-  color: $background
+  background: var(--ink)
+  color: var(--badge-text)
   font-size: 0.65em
   line-height: 1.5em
   text-align: center
 
-// On narrow screens the box in the image is too small to hold the links,
-// so swap it for a plain outlined box in the same colour.
+// Not enough room for the logo beside the nav: stack them
+@media (max-width: 1100px)
+  .site-header
+    grid-template-columns: 1fr
+    justify-items: center
+    gap: 16px
+    padding: 0 56px
+
+  .logo
+    justify-self: center
+    align-items: center
+    text-align: center
+
+  // The logo now fills the middle of the top row: mirror the cart on the left
+  .theme-toggle
+    right: auto
+    left: var(--cart-right)
+
+// Hamburger menu button: phones only
+.menu-button
+  display: none
+
+// The copy of the theme switch inside the phone menu
+.theme-toggle--menu
+  display: none
+
+// Phones: logo in the middle with the menu button and cart either side. The nav
+// becomes a full-screen menu opened by the button.
 @media (max-width: 700px)
-  .top-bar__frame
+  .site-header
+    padding: 0 16px
+
+  .logo
+    position: relative
+    z-index: 2
+
+  .logo__mark
+    height: 44px
+
+  // Where the theme switch was, mirroring the cart
+  .menu-button
+    position: absolute
+    top: calc(var(--nav-height) / 2 - var(--icon-size) / 2)
+    left: var(--cart-right)
+    z-index: 2
+    display: inline-flex
+    padding: 0
+    border: 0
+    background: none
+    color: inherit
+    cursor: pointer
+
+  .menu-button__icon
+    width: var(--icon-size)
+    height: var(--icon-size)
+
+  .menu-button__line
+    transform-origin: center
+    transition: transform 0.25s ease
+
+  .menu-button[aria-expanded="true"]
+    .menu-button__line--top
+      transform: rotate(45deg) translateY(4px)
+
+    .menu-button__line--bottom
+      transform: rotate(-45deg) translateY(-4px)
+
+  // The header's switch moves into the menu
+  .theme-toggle:not(.theme-toggle--menu)
     display: none
 
-  .top-bar__nav
-    position: static
-    flex-wrap: wrap
-    padding: 10px 12px
-    border: 2px solid $ink
-    font-size: 0.95rem
-
-  // The bar fills the full width here, so drop it below the cart icon
+  // Full-screen menu, behind the logo, menu button and cart so they stay usable
   .top-bar
-    margin-top: 64px
+    position: fixed
+    inset: 0
+    z-index: 1
+    justify-content: center
+    gap: 40px
+    background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom))
+    visibility: hidden
+    opacity: 0
+    transition: opacity 0.25s ease, visibility 0s 0.25s
 
-  .cart-link
-    top: 16px
+    &[data-open]
+      visibility: visible
+      opacity: 1
+      transition: opacity 0.25s ease
 
-// Corner flowers
-.corner
+  .top-bar__links
+    flex-direction: column
+    gap: 24px
+    font-size: 1.5rem
+
+  // Made for a row of links, so it doesn't suit the stacked menu
+  .top-bar__brace
+    display: none
+
+  .theme-toggle--menu
+    position: static
+    display: inline-flex
+
+  // Don't scroll the page behind the open menu
+  body:has(.top-bar[data-open])
+    overflow: hidden
+
+// Decorations
+.corner,
+.snow
   position: fixed
-  bottom: var(--corner-inset)
   z-index: 0
-  width: var(--corner-width)
   height: auto
-  mix-blend-mode: multiply
   pointer-events: none
+ 
+
+.corner
+  bottom: 0
+  width: var(--corner-width)
 
 .corner--left
-  left: var(--corner-inset)
+  left: 0
 
 .corner--right
-  right: var(--corner-inset)
+  right: 0
+
+// Christmas collection only. On narrow screens keep it tall and crop the sides
+// instead of letting it shrink to a thin strip (image is 4269 x 1269).
+.snow
+  top: 0
+  left: 0
+  width: 100%
+  height: max(100vw * 1269 / 4269, 45vh)
+  object-fit: cover
+  object-position: top
+  opacity: 50%
+
+// Added by SnowBackground when arriving from another page, in step with the gradient
+.snow--fade-in
+  animation: snow-fade-in 4s ease
+
+@keyframes snow-fade-in
+  from
+    opacity: 0
+
+// Sort control on collection pages, plus the collection filter on Shop All
+// (see SortedProductList). Side by side, wrapping onto two lines on phones.
+.list-controls
+  display: flex
+  flex-wrap: wrap
+  gap: 12px 32px
+  margin-bottom: 16px
+
+.sort
+  display: inline-flex
+  align-items: center
+  gap: 8px
+
+// Dropdowns (see Dropdown): sorting, and the brushes in a set
+.dropdown
+  position: relative
+
+.dropdown__button
+  display: inline-flex
+  align-items: center
+  justify-content: space-between
+  gap: 12px
+  min-width: 190px
+  padding: 4px 8px 4px 12px
+  border: 1px solid currentColor
+  cursor: pointer
+  user-select: none
+
+  &:focus-visible
+    outline: 2px solid var(--nav-current)
+    outline-offset: 2px
+
+.dropdown__chevron
+  width: 1em
+  height: 1em
+  fill: none
+  stroke: currentColor
+  stroke-width: 2
+  stroke-linecap: round
+  stroke-linejoin: round
+  transition: transform 0.2s ease
+
+  [aria-expanded="true"] &
+    transform: rotate(180deg)
+
+.dropdown__list
+  position: absolute
+  top: calc(100% + 4px)
+  left: 0
+  z-index: 5
+  min-width: 100%
+  margin: 0
+  padding: 4px
+  list-style: none
+  border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent)
+  background: var(--surface)
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18)
+
+  &[hidden]
+    display: none
+
+.dropdown__option
+  padding: 6px 10px
+  white-space: nowrap
+  cursor: pointer
+
+  // Highlighted with the mouse or arrow keys
+  &[data-active]
+    background: color-mix(in srgb, var(--ink) 10%, transparent)
+
+  // The current choice, in the same colour as the current page in the nav
+  &[aria-selected="true"]
+    color: var(--nav-current)
+
+  // Not enough of that one left
+  &[aria-disabled]
+    opacity: 0.4
+    text-decoration: line-through
+    cursor: not-allowed
+
+// Product photos (see ProductImage)
+.product-image
+  position: relative
+  width: 100%
+  aspect-ratio: 4 / 5
+  overflow: hidden
+  border-radius: 6px
+  // Shown when there's no photo yet
+  background: color-mix(in srgb, var(--ink) 10%, transparent)
+
+  img
+    object-fit: cover
+
+.product-image--large
+  width: 420px
+  max-width: 100%
+  margin: 16px 0
+
+// Collection page: heading, sort and product cards share one centred column,
+// so the heading lines up with the first card. 4 cards per row on desktop, then
+// 3, 2, and 1 on phones (breakpoints below).
+.collection
+  --columns: 4
+  // Grows with the screen (40px at 1000px wide, up to 72px at 1800px)
+  --gap: clamp(40px, 4vw, 72px)
+  // Room for a full row: wider than the 900px text column on large screens, the
+  // normal content width on small ones. The row grows with the gap so the cards
+  // keep their 240px width. 100vw includes the scrollbar, hence the generous 64px.
+  --row-width: max(100%, min(960px + 3 * var(--gap), 100vw - 64px))
+  // Columns actually used: fewer when the collection has fewer products than fit
+  // in a row (--count is set by the page), so the section narrows to the cards
+  --shown: min(var(--count, var(--columns)), var(--columns))
+  --card-width: calc((var(--row-width) - (var(--columns) - 1) * var(--gap)) / var(--columns))
+  --width: calc(var(--shown) * var(--card-width) + (var(--shown) - 1) * var(--gap))
+  width: var(--width)
+  // Centred, extending past the text column equally on both sides
+  margin-left: calc((100% - var(--width)) / 2)
+
+// Brushes: 3 cards in the top row and 2 below on wide screens, instead of 4 + 1.
+// Same card size as the other collections, only fewer per row.
+@media (min-width: 1101px)
+  .collection--brushes
+    --shown: min(var(--count, 3), 3)
+
+// A flex row rather than a grid so that a last row that isn't full sits in the middle
+.product-grid
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
+  gap: 48px var(--gap)
+  margin-bottom: 32px
+
+  // Every card is one column wide
+  > *
+    width: calc((100% - (var(--shown) - 1) * var(--gap)) / var(--shown))
+
+// Stacked: photo, name, price, button. The button sits at the bottom so the
+// buttons line up across a row even when a name wraps onto two lines.
+.product-card
+  display: flex
+  flex-direction: column
+  gap: 8px
+
+  h3,
+  p
+    margin: 0
+
+  h3
+    margin-top: 4px
+    font-size: 1.1rem
+    font-weight: normal
+    line-height: 1.3
+
+  > .add-to-cart,
+  > .cart-stepper
+    margin-top: auto
+    align-self: start
+
+// Add to cart (see AddToCartButton) and other buttons (.button, e.g. the
+// contact form): outlined like the dropdowns, filling with the ink colour on hover
+.add-to-cart,
+.button
+  padding: 8px 18px
+  border: 1px solid currentColor
+  border-radius: 0
+  background: transparent
+  color: var(--ink)
+  font: inherit
+  font-size: 0.95rem
+  letter-spacing: 0.02em
+  cursor: pointer
+  transition: background-color 0.2s ease, color 0.2s ease
+
+  &:hover:not(:disabled)
+    background: var(--ink)
+    color: var(--badge-text)
+
+  &:active:not(:disabled)
+    transform: translateY(1px)
+
+  &:focus-visible
+    outline: 2px solid var(--nav-current)
+    outline-offset: 2px
+
+  // Sold out or all in the cart
+  &:disabled
+    opacity: 0.5
+    border-style: dashed
+    cursor: not-allowed
+
+// Replaces Add to cart once it's in the cart: − 3 in cart +, in one outline
+.cart-stepper
+  display: inline-flex
+  align-items: stretch
+  border: 1px solid currentColor
+  color: var(--ink)
+  font-size: 0.95rem
+
+  span
+    flex: 1
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 0 12px
+    white-space: nowrap
+
+  button
+    padding: 8px 14px
+    border: 0
+    background: transparent
+    color: inherit
+    font: inherit
+    cursor: pointer
+    transition: background-color 0.2s ease, color 0.2s ease
+
+    &:hover:not(:disabled)
+      background: var(--ink)
+      color: var(--badge-text)
+
+    &:focus-visible
+      outline: 2px solid var(--nav-current)
+      outline-offset: -2px
+
+    &:disabled
+      opacity: 0.35
+      cursor: not-allowed
+
+// Contact page: heading, intro and form in one 600px column, centred on the page
+.contact-page
+  max-width: 600px
+  margin-inline: auto
+
+// Contact form (see src/app/contact/ContactForm.tsx): fields outlined like the
+// dropdowns, Name and Email side by side, one column on phones
+.contact-form
+  display: flex
+  flex-direction: column
+  align-items: start
+  gap: 20px
+  max-width: 600px
+  margin-top: 32px
+
+.contact-form__row
+  display: grid
+  grid-template-columns: 1fr 1fr
+  gap: 20px
+  width: 100%
+
+.field
+  display: flex
+  flex-direction: column
+  gap: 6px
+  width: 100%
+
+  // Small capitals, like the old tagline under the logo
+  label
+    font-size: 0.75rem
+    letter-spacing: 0.15em
+    text-transform: uppercase
+
+  input,
+  textarea
+    width: 100%
+    padding: 10px 12px
+    border: 1px solid color-mix(in srgb, var(--ink) 45%, transparent)
+    border-radius: 0
+    background: color-mix(in srgb, var(--surface) 35%, transparent)
+    color: var(--ink)
+    font: inherit
+    transition: border-color 0.2s ease, background-color 0.2s ease
+
+    &:hover
+      border-color: var(--ink)
+
+    &:focus
+      border-color: var(--ink)
+      background: color-mix(in srgb, var(--surface) 60%, transparent)
+      outline: 2px solid var(--nav-current)
+      outline-offset: 2px
+
+  textarea
+    min-height: 160px
+    resize: vertical
+
+// The honeypot field. Off-screen rather than display: none, which some bots
+// know to skip.
+.contact-form__trap
+  position: absolute
+  left: -10000px
+  width: 1px
+  height: 1px
+  overflow: hidden
+
+.contact-form__error
+  margin: 0
+  color: var(--nav-current)
+
+.contact-form__sent
+  margin-top: 32px
+  padding: 16px 20px
+  max-width: 600px
+  border: 1px solid currentColor
+
+@media (max-width: 560px)
+  .contact-form__row
+    grid-template-columns: 1fr
+
+// Gallery on the home page (see src/app/page.tsx): a mosaic of photos in
+// different sizes. Each tile is placed on a 13 × 12 grid by the page, leaving
+// some cells empty so the outer edges are uneven.
+.gallery
+  // Wider than the 900px text column on large screens (up to 1200px), leaving
+  // 80px each side for the corner flowers; the normal width on smaller screens
+  --width: max(100%, min(1200px, 100vw - 160px))
+  display: grid
+  grid-template-columns: repeat(13, 1fr)
+  grid-template-rows: repeat(12, 1fr)
+  // Grows a little with the mosaic
+  gap: clamp(10px, 1vw, 16px)
+  aspect-ratio: 13 / 11
+  width: var(--width)
+  // Centred, extending past the text column equally on both sides
+  margin: 40px 0 0 calc((100% - var(--width)) / 2)
+  padding: 0
+  list-style: none
+
+.gallery__tile
+  position: relative
+  grid-column: var(--col) / span var(--cols)
+  grid-row: var(--row) / span var(--rows)
+  overflow: hidden
+  // Shown until the tile has a photo
+  background: color-mix(in srgb, var(--ink) 14%, transparent)
+  // A little shade under the frame
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.3), 0 1px 3px rgb(0 0 0 / 0.25)
+  transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease
+
+  img
+    object-fit: cover
+
+// Thin brushed-silver frame on the gallery tiles and the enlarged picture: soft
+// greys with only a slight sheen at the corners. A gradient cut down to a 3px
+// ring by the mask; drawn over the photo, and clicks pass through it.
+.gallery__tile::after,
+.lightbox__frame::after
+  content: ""
+  position: absolute
+  inset: 0
+  z-index: 1
+  padding: 3px
+  background: conic-gradient(#a9adb3 0deg, #c3c6ca 45deg, #aeb2b8 90deg, #c3c6ca 135deg, #a9adb3 180deg, #c3c6ca 225deg, #aeb2b8 270deg, #c3c6ca 315deg, #a9adb3 360deg)
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)
+  -webkit-mask-composite: xor
+  mask-composite: exclude
+  pointer-events: none
+
+// The whole tile is a button that opens the enlarged view (see Gallery)
+.gallery__open
+  position: absolute
+  inset: 0
+  padding: 0
+  border: 0
+  background: none
+  cursor: zoom-in
+
+  &:focus-visible
+    outline: 2px solid var(--nav-current)
+    outline-offset: -2px
+
+// Hovered (or reached with the keyboard): the tile grows a little and lifts
+// above its neighbours, which soften. Not while a picture is enlarged, and
+// only with a mouse, so a tap on a phone just opens the picture.
+@media (hover: hover)
+  .gallery:not(.gallery--dimmed)
+    .gallery__tile:hover,
+    .gallery__tile:has(.gallery__open:focus-visible)
+      z-index: 2
+      transform: scale(1.08)
+      box-shadow: 0 16px 40px rgb(0 0 0 / 0.4), 0 3px 8px rgb(0 0 0 / 0.3)
+
+    &:has(.gallery__tile:hover) .gallery__tile:not(:hover)
+      opacity: 0.7
+      filter: blur(1.5px)
+
+// While a picture is enlarged
+.gallery--dimmed .gallery__tile
+  filter: blur(6px)
+  opacity: 0.4
+
+// Enlarged picture: a see-through dialog covering the screen, with the picture
+// in the middle. Clicking beside it, the × or Esc closes it.
+.lightbox
+  width: 100vw
+  height: 100dvh
+  max-width: none
+  max-height: none
+  margin: 0
+  padding: 64px 24px
+  border: 0
+  background: transparent
+  color: var(--ink)
+
+  &[open]
+    display: flex
+    align-items: center
+    justify-content: center
+
+  // No dark overlay: the blurred, faded mosaic is the backdrop
+  &::backdrop
+    background: transparent
+
+// Stop the page scrolling behind it
+html:has(.lightbox[open])
+  overflow: hidden
+
+.lightbox__frame
+  position: relative
+  // Placeholders keep their tile's shape, as large as fits on screen
+  aspect-ratio: var(--ratio)
+  width: min(90vw, 1000px, (100dvh - 128px) * var(--ratio))
+  background: color-mix(in srgb, var(--ink) 22%, var(--surface))
+  box-shadow: 0 20px 60px rgb(0 0 0 / 0.3), 0 2px 6px rgb(0 0 0 / 0.25)
+  animation: lightbox-in 0.3s ease
+
+// Photos are shown whole, as large as fits, whatever their shape. The frame
+// shrinks to the photo so the silver edge sits right on it.
+.lightbox__frame--photo
+  aspect-ratio: auto
+  width: auto
+  background: none
+
+  img
+    display: block
+    width: auto
+    height: auto
+    max-width: min(90vw, 1100px)
+    max-height: calc(100dvh - 128px)
+
+.lightbox__close
+  position: fixed
+  top: 20px
+  right: 20px
+  width: 44px
+  height: 44px
+  padding: 0
+  border: 1px solid currentColor
+  background: var(--surface)
+  color: inherit
+  font: inherit
+  font-size: 1.5rem
+  line-height: 1
+  cursor: pointer
+  transition: background-color 0.2s ease, color 0.2s ease
+
+  &:hover
+    background: var(--ink)
+    color: var(--badge-text)
+
+  &:focus-visible
+    outline: 2px solid var(--nav-current)
+    outline-offset: 2px
+
+@keyframes lightbox-in
+  from
+    opacity: 0
+    transform: scale(0.96)
+
+@media (prefers-reduced-motion: reduce)
+  .gallery__tile
+    transition: none
+
+  .lightbox__frame
+    animation: none
+
+// Phones: too narrow for the mosaic, so the tiles flow in 2 columns instead,
+// still in a mix of sizes, with gaps filled in where they fit
+@media (max-width: 560px)
+  .gallery
+    grid-template-columns: repeat(2, 1fr)
+    grid-template-rows: none
+    grid-auto-rows: 80px
+    grid-auto-flow: dense
+    gap: 8px
+    aspect-ratio: auto
+
+  .gallery__tile
+    grid-column: span var(--phone-cols)
+    grid-row: span var(--phone-rows)
+
+// Collections on the Shop page (see src/app/shop/page.tsx): one row of cards,
+// a single column on phones. The picture flips over to the description on
+// hover, or when the card is reached with the keyboard.
+.collection-cards
+  display: grid
+  grid-template-columns: repeat(3, 1fr)
+  gap: 64px
+  margin: 32px 0 0
+  padding: 0
+  list-style: none
+
+.collection-card
+  display: flex
+  flex-direction: column
+  gap: 12px
+
+  &:focus-visible
+    outline: 2px solid var(--nav-current)
+    outline-offset: 4px
+
+.collection-card__flip
+  position: relative
+  aspect-ratio: 4 / 5
+  transform-style: preserve-3d
+  transition: transform 0.6s ease
+  // Perspective in the transform, so each card flips around its own centre
+  transform: perspective(1000px) rotateY(0)
+
+  &:hover,
+  .collection-card:focus-visible &
+    transform: perspective(1000px) rotateY(180deg)
+
+.collection-card__front,
+.collection-card__back
+  position: absolute
+  inset: 0
+  overflow: hidden
+  border-radius: 6px
+  backface-visibility: hidden
+
+.collection-card__front
+  // Shown until the collection has a photo
+  background: color-mix(in srgb, var(--ink) 10%, transparent)
+
+  img
+    object-fit: cover
+
+.collection-card__back
+  display: flex
+  align-items: center
+  padding: 20px
+  overflow-y: auto
+  background: var(--ink)
+  color: var(--badge-text)
+  font-size: 0.95rem
+  transform: rotateY(180deg)
+
+  p
+    margin: auto 0
+
+.collection-card__name
+  margin: 0
+  font-size: 1.3rem
+  text-align: center
+
+// Without motion: fade between the two sides instead of turning
+@media (prefers-reduced-motion: reduce)
+  .collection-card__flip
+    transition: none
+
+    &:hover,
+    .collection-card:focus-visible &
+      transform: none
+
+      .collection-card__back
+        opacity: 1
+
+  .collection-card__back
+    transform: none
+    opacity: 0
+    transition: opacity 0.3s ease
+
+@media (max-width: 700px)
+  .collection-cards
+    grid-template-columns: 1fr
+    max-width: 320px
+    // Centred on the page, like the product cards on phones
+    margin-inline: auto
+
+// Care guide at the end of the Brushes page (see BrushCare)
+.brush-care
+  // Centred between the products and the footer: the same space as below it
+  // (the page's bottom space + the footer's top margin), less the product
+  // grid's own 32px bottom margin
+  margin-top: calc(var(--page-bottom) + 0.875rem - 32px)
+
+  > :last-child
+    margin-bottom: 0
+
+  ul
+    padding-left: 1.25em
+    line-height: 1.6
+
+.brush-care__note
+  font-size: 0.9rem
+  opacity: 0.8
+
+// Picks for products with options, e.g. "Brush 1 [Small]" for each brush in a
+// set: the label, then a dropdown
+.option-picker
+  display: flex
+  flex-direction: column
+  gap: 6px
+  // As wide as the photo: the card's on a card, the large one on a product page
+  max-width: 420px
+  margin-bottom: 4px
+
+.option-picker__pick
+  display: flex
+  align-items: center
+  gap: 8px
+  font-size: 0.9rem
+
+  // Same width for every label, so the dropdowns line up
+  > span
+    min-width: 4em
+
+  // The dropdown fills the rest of the row, up to the edge of the photo
+  .dropdown
+    flex: 1
+
+  .dropdown__button
+    display: flex
+    min-width: 0
+    padding: 2px 6px 2px 10px
+
+// The picked options under a product's name in the cart
+.cart-choices
+  display: block
+  font-size: 0.85rem
+  opacity: 0.8
+
+// Tablets (an iPad is 1024px wide in landscape)
+@media (max-width: 1100px)
+  .collection
+    --columns: 3
+    --gap: 32px
+
+@media (max-width: 760px)
+  .collection
+    --columns: 2
+    --gap: 24px
+
+  .product-grid
+    row-gap: 40px
+
+// Phones: bigger corner flowers, since a quarter of a narrow screen is very small
+@media (max-width: 560px)
+  :root
+    --corner-width: min(32vw, 43vh)
+
+// Phones: one card per row. Capped in width so the photo doesn't fill the whole
+// screen height, and the button spans the card for an easier tap.
+@media (max-width: 560px)
+  .collection
+    --columns: 1
+
+  .product-grid
+    row-gap: 40px
+
+  .product-card
+    width: 100%
+    max-width: 320px
+
+    > .add-to-cart,
+    > .cart-stepper
+      align-self: stretch
+
+    > .add-to-cart
+      padding: 10px
+
+    .cart-stepper button
+      padding: 10px 16px

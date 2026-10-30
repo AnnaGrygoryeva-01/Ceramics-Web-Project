@@ -1,7 +1,6 @@
 import Image from "next/image";
-// The file names are swapped relative to the artwork: right-corner.png is the bottom-left piece
-import bottomLeft from "./UI/right-corner.png";
-import bottomRight from "./UI/left-corner.png";
+import bottomLeft from "./UI/left-bottom-corner.png";
+import bottomRight from "./UI/bottom-right-corner.png";
 
 export default function CornerDecorations() {
   return (

@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "snowflake-ornament",
+    "name": "Snowflake Ornament",
+    "price": 1800,
+    "description": "Hand-cut porcelain snowflake with a gold ribbon for hanging.",
+    "stock": 12,
+    "image": "/products/christmas-collection/white-background.jpg"
+  },
+  {
+    "slug": "festive-red-mug",
+    "name": "Festive Red Mug",
+    "price": 3600,
+    "description": "Wheel-thrown stoneware mug in a deep holiday red glaze.",
+    "stock": 5,
+    "image": "/products/christmas-collection/white-background.jpg"
+  },
+  {
+    "slug": "star-candle-holder",
+    "name": "Star Candle Holder",
+    "price": 2900,
+    "description": "Star-shaped tealight holder with cut-outs that cast a warm glow.",
+    "stock": 3,
+    "image": "/products/christmas-collection/white-background.jpg"
+  },
+  {
+    "slug": "festive-red-mug-2",
+    "name": "Festive Red Mug",
+    "price": 3600,
+    "description": "Wheel-thrown stoneware mug in a deep holiday red glaze.",
+    "stock": 5,
+    "image": "/products/christmas-collection/white-background.jpg"
+  },
+  {
+    "slug": "festive-red-mug-3",
+    "name": "Festive Red Mug",
+    "price": 3600,
+    "description": "Wheel-thrown stoneware mug in a deep holiday red glaze.",
+    "stock": 5,
+    "image": "/products/christmas-collection/white-background.jpg"
+  },
+  {
+    "slug": "festive-red-mug-4",
+    "name": "Festive Red Mug",
+    "price": 3600,
+    "description": "Wheel-thrown stoneware mug in a deep holiday red glaze.",
+    "stock": 5,
+    "image": "/products/christmas-collection/white-background.jpg"
+  }
+]

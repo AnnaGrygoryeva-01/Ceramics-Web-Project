@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "publish": "./build-push.sh",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
   },

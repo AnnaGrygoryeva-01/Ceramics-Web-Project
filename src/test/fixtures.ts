@@ -1,45 +1,48 @@
+import type { ProductLookup } from "@/lib/cart-stock";
 import type { Collection, Product } from "@/lib/products";
+import type { Customer } from "@/server/domain/order";
 
-// Fixed products for tests, so they don't break when the real stock or prices in
-// src/data/products change. Use with mockProducts (see below).
+// Fixed data for tests, so they don't depend on the real stock or prices in the
+// database.
 export const fixtureCollections: Collection[] = [
-  { slug: "floral", name: "Floral", description: "" },
-  { slug: "brushes", name: "Brushes", description: "" },
+  { id: "id-floral", slug: "floral", name: "Floral", description: "" },
+  { id: "id-brushes", slug: "brushes", name: "Brushes", description: "" },
 ];
 
+const brush = { collection: "brushes", description: "" };
+const floral = { collection: "floral", description: "" };
+
 export const fixtureProducts: Product[] = [
-  { slug: "vase", collection: "floral", name: "Vase", price: 4800, description: "", stock: 3 },
-  { slug: "bowl", collection: "floral", name: "Bowl", price: 1500, description: "", stock: 1 },
-  { slug: "mug", collection: "floral", name: "Mug", price: 2500, description: "", stock: 0 },
-  { slug: "small-brush", collection: "brushes", name: "Small Brush", price: 1900, description: "", stock: 2 },
-  { slug: "medium-brush", collection: "brushes", name: "Medium Brush", price: 1900, description: "", stock: 5 },
-  { slug: "large-brush", collection: "brushes", name: "Large Brush", price: 2400, description: "", stock: 1 },
+  { id: "id-vase", slug: "vase", name: "Vase", price: 4800, stock: 3, ...floral },
+  { id: "id-bowl", slug: "bowl", name: "Bowl", price: 1500, stock: 1, ...floral },
+  { id: "id-mug", slug: "mug", name: "Mug", price: 2500, stock: 0, ...floral },
+  { id: "id-small-brush", slug: "small-brush", name: "Small Brush", price: 1900, stock: 2, ...brush },
+  { id: "id-medium-brush", slug: "medium-brush", name: "Medium Brush", price: 1900, stock: 5, ...brush },
+  { id: "id-large-brush", slug: "large-brush", name: "Large Brush", price: 2400, stock: 1, ...brush },
   {
+    id: "id-brush-set",
     slug: "brush-set",
-    collection: "brushes",
     name: "Brush Set",
     price: 5500,
-    description: "",
     options: {
       label: "Brush",
       count: 2,
       values: { Small: "small-brush", Medium: "medium-brush", Large: "large-brush" },
     },
+    ...brush,
   },
 ];
 
-export const fixture = (slug: string) => fixtureProducts.find((p) => p.slug === slug)!;
+export const lookup: ProductLookup = (slug) => fixtureProducts.find((p) => p.slug === slug);
 
-// For vi.mock("@/lib/products", ...) (see cart.test.ts for how to call it): keeps the real helpers
-// (formatPrice, productUrl, ...) but swaps in the fixture products
-export async function mockProducts(importOriginal: () => Promise<typeof import("@/lib/products")>) {
-  const actual = await importOriginal();
-  return {
-    ...actual,
-    collections: fixtureCollections,
-    products: fixtureProducts,
-    getProduct: (slug: string) => fixtureProducts.find((p) => p.slug === slug),
-    getCollection: (slug: string) => fixtureCollections.find((c) => c.slug === slug),
-    getCollectionProducts: (collection: string) => fixtureProducts.filter((p) => p.collection === collection),
-  };
-}
+export const fixture = (slug: string) => lookup(slug)!;
+
+export const fixtureCustomer: Customer = {
+  name: "Ada Potter",
+  email: "ada@example.com",
+  address: { line1: "1 Kiln Lane", city: "Stoke", postcode: "ST1 1AA", country: "United Kingdom" },
+};
+
+// For vi.mock("@/lib/catalogue-store", ...) (see cart page tests for how to call
+// it): the products are there straight away, no fetching
+export const mockCatalogueStore = () => ({ useProductLookup: () => lookup });

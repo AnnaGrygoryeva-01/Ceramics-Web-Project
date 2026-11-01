@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { clearCart, setQuantity } from "@/lib/cart";
 import CartView from "./CartView";
 
-vi.mock("@/lib/products", async (importOriginal) => (await import("@/test/fixtures")).mockProducts(importOriginal));
+vi.mock("@/lib/catalogue-store", async () => (await import("@/test/fixtures")).mockCatalogueStore());
 
 const stored = () => JSON.parse(localStorage.getItem("cart") ?? "{}");
 const row = (name: string) => screen.getByRole("link", { name }).closest("tr")!;

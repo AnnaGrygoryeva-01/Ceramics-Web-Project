@@ -4,7 +4,7 @@ import { describe, expect, test, vi } from "vitest";
 import { fixture, fixtureCollections } from "@/test/fixtures";
 import SortedProductList from "./SortedProductList";
 
-vi.mock("@/lib/products", async (importOriginal) => (await import("@/test/fixtures")).mockProducts(importOriginal));
+vi.mock("@/lib/catalogue-store", async () => (await import("@/test/fixtures")).mockCatalogueStore());
 
 const list = ["vase", "small-brush", "bowl", "large-brush"].map(fixture);
 const names = () => screen.getAllByRole("heading", { level: 3 }).map((h) => h.textContent);

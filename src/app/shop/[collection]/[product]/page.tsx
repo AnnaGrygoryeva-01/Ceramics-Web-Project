@@ -5,21 +5,20 @@ import { Suspense } from "react";
 import AddToCartButton from "@/components/AddToCartButton";
 import ProductImage from "@/components/ProductImage";
 import SnowBackground from "@/components/SnowBackground";
-import { formatPrice, getCollection, getProduct, products } from "@/lib/products";
-
-export function generateStaticParams() {
-  return products.map((p) => ({ collection: p.collection, product: p.slug }));
-}
+import { formatPrice, hasSnow } from "@/lib/products";
+import { getCatalogue } from "@/server/catalogue";
 
 export async function generateMetadata({
   params,
 }: PageProps<"/shop/[collection]/[product]">): Promise<Metadata> {
   const { product } = await params;
-  return { title: getProduct(product)?.name ?? "Not found" };
+  const catalogue = await getCatalogue();
+  return { title: (await catalogue.getProduct(product))?.name ?? "Not found" };
 }
 
-// Reading the URL (params) has to happen inside <Suspense> so navigations can start
-// instantly. Links here use `prefetch`, so the content is usually ready before the click.
+// Reading the URL (params) and the database has to happen inside <Suspense> so
+// navigations can start instantly. Links here use `prefetch`, so the content is
+// usually ready before the click.
 export default function ProductPage({ params }: PageProps<"/shop/[collection]/[product]">) {
   return (
     <Suspense fallback={<p>Loading…</p>}>
@@ -30,13 +29,16 @@ export default function ProductPage({ params }: PageProps<"/shop/[collection]/[p
 
 async function Product({ params }: Pick<PageProps<"/shop/[collection]/[product]">, "params">) {
   const { collection: collectionSlug, product: productSlug } = await params;
-  const product = getProduct(productSlug);
-  const collection = getCollection(collectionSlug);
+  const catalogue = await getCatalogue();
+  const [product, collection] = await Promise.all([
+    catalogue.getProduct(productSlug),
+    catalogue.getCollection(collectionSlug),
+  ]);
   if (!product || !collection || product.collection !== collection.slug) notFound();
 
   return (
     <article>
-      {collection.snow && <SnowBackground />}
+      {hasSnow(collection) && <SnowBackground />}
       <Link href={`/shop/${collection.slug}`} prefetch>&larr; Back to {collection.name}</Link>
       <ProductImage product={product} sizes="(max-width: 480px) 100vw, 420px" className="product-image--large" priority />
       <h1>{product.name}</h1>

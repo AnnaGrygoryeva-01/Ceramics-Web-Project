@@ -1,0 +1,17 @@
+# The image is public. Next copies .env files into standalone output, so they must
+# never enter the build context.
+**/.env*
+
+.git
+.next
+node_modules
+coverage
+*.tsbuildinfo
+.DS_Store
+
+.do
+.dockerignore
+AGENTS.md
+Dockerfile
+README.md
+deploy.sh

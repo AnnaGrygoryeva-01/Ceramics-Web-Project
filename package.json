@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest",
-    "test:run": "vitest run"
+    "test": "vitest run"
   },
   "dependencies": {
     "next": "16.4.2",

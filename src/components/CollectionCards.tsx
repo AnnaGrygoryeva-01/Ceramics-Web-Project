@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Collection } from "@/lib/products";
+import PhotoOrPlaceholder from "./PhotoOrPlaceholder";
 
 // One card per collection: a picture that flips over to the description on hover
 export default function CollectionCards({ collections }: { collections: Collection[] }) {
@@ -11,14 +11,11 @@ export default function CollectionCards({ collections }: { collections: Collecti
           <Link href={`/shop/${collection.slug}`} prefetch className="collection-card">
             <div className="collection-card__flip">
               <div className="collection-card__front">
-                {collection.image && (
-                  <Image
-                    src={collection.image}
-                    alt=""
-                    fill
-                    sizes="(max-width: 700px) 100vw, 280px"
-                  />
-                )}
+                <PhotoOrPlaceholder
+                  src={collection.image}
+                  alt=""
+                  sizes="(max-width: 700px) 100vw, 280px"
+                />
               </div>
               <div className="collection-card__back">
                 <p>{collection.description}</p>

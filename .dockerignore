@@ -14,4 +14,5 @@ coverage
 AGENTS.md
 Dockerfile
 README.md
+build-push.sh
 deploy.sh

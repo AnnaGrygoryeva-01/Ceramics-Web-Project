@@ -14,7 +14,7 @@
       "instance_count": 1,
       "image": {
         "registry_type": "DOCKER_HUB",
-        "registry": "oyrendev",
+        "registry": "vorashil",
         "repository": "anna-gry-ceramics",
         "tag": "set-by-deploy.sh"
       },

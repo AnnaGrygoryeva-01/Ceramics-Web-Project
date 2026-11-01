@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
-import { collections } from "@/lib/products";
+import { Suspense } from "react";
+import CollectionCards from "@/components/CollectionCards";
+import { getCatalogue } from "@/server/catalogue";
 
 export const metadata: Metadata = { title: "Shop" };
 
@@ -16,31 +17,14 @@ export default function ShopPage() {
         <p>A mix of everything from every collection</p>
       </section>
 
-      {/* One card per collection: a picture that flips over to the description on hover */}
-      <ul className="collection-cards">
-        {collections.map((collection) => (
-          <li key={collection.slug}>
-            <Link href={`/shop/${collection.slug}`} prefetch className="collection-card">
-              <div className="collection-card__flip">
-                <div className="collection-card__front">
-                  {collection.image && (
-                    <Image
-                      src={collection.image}
-                      alt=""
-                      fill
-                      sizes="(max-width: 700px) 100vw, 280px"
-                    />
-                  )}
-                </div>
-                <div className="collection-card__back">
-                  <p>{collection.description}</p>
-                </div>
-              </div>
-              <h2 className="collection-card__name">{collection.name}</h2>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <Suspense fallback={<p>Loading…</p>}>
+        <Collections />
+      </Suspense>
     </>
   );
+}
+
+async function Collections() {
+  const catalogue = await getCatalogue();
+  return <CollectionCards collections={await catalogue.listCollections()} />;
 }

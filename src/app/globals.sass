@@ -1267,13 +1267,40 @@ html:has(.lightbox[open])
 
     > .add-to-cart,
     > .cart-stepper
-      align-self: center
       border-radius: 6px
 
     > .add-to-cart
       padding: 4px 16px
       font-size: 0.85rem
 
+  // The price and button share the bottom row, centred as a pair, so the pane
+  // is shorter. Everything else spans the full width. The name's row takes any
+  // spare height, so the bottom rows line up across the window.
+  .product-card
+    display: grid
+    grid-template-columns: 1fr auto auto 1fr
+    grid-template-rows: auto 1fr auto
+    column-gap: 12px
+
+    > *
+      grid-column: 1 / -1
+
+    h3
+      align-self: start
+
+    .product-card__price
+      grid-column: 2
+      align-self: center
+
+    > .add-to-cart,
+    > .cart-stepper
+      grid-column: 3
+      align-self: center
+
 @media (max-width: 560px)
   .collection.collection--christmas-collection .product-card
     max-width: none
+
+    > .add-to-cart,
+    > .cart-stepper
+      align-self: center

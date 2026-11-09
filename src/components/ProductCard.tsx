@@ -20,6 +20,8 @@ export default function ProductCard({ product }: { product: Product }) {
         {/* The photos pick the piece: swipe or use the arrows */}
         <AddToCartButton product={product} piecePicker={false} />
       </PieceChoiceProvider>
+      {/* Decoration, only shown on some collections (see .product-card__frost) */}
+      <span className="product-card__frost" aria-hidden="true" />
     </article>
   );
 }

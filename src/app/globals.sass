@@ -673,6 +673,10 @@ main:has(> .product-page:not([style*="display: none"]))
   > *
     width: calc((100% - (var(--shown) - 1) * var(--gap)) / var(--shown))
 
+// Frost over the pane, Christmas collection only (see the end of this file)
+.product-card__frost
+  display: none
+
 // Stacked: photo, name, price, button. The button sits at the bottom so the
 // buttons line up across a row even when a name wraps onto two lines.
 .product-card
@@ -1296,20 +1300,25 @@ html:has(.lightbox[open])
       padding: 4px 16px
       font-size: 0.85rem
 
-    // Frost on the glass, round the edges of the photo. On the carousel rather
-    // than each slide, so it stays put while the photos slide behind it.
-    .product-image:not(.carousel__slide),
-    .carousel
+    // Frost on the glass, the snow's colour, over the whole pane: over the photo
+    // (it stays put while carousel photos slide behind it) and down behind the
+    // name, price and button, which sit on top of it. See ProductCard.
+    .product-card__frost
+      display: block
+      position: absolute
+      inset: 0
+      z-index: 1
+      background: url("/decorations/frost-32228f9e.png") 0 0 / 100% 100% no-repeat
+      pointer-events: none
+
+    h3,
+    .product-card__price,
+    > .add-to-cart,
+    > .cart-stepper
       position: relative
+      z-index: 2
 
-      &::after
-        content: ""
-        position: absolute
-        inset: 0
-        z-index: 1
-        background: url("/decorations/frost-8f8ab78d.png") 0 0 / 100% 100% no-repeat
-        pointer-events: none
-
+    // Already positioned over the photo
     .carousel__arrow,
     .carousel__dots
       z-index: 2

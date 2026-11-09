@@ -1354,10 +1354,54 @@ html:has(.lightbox[open])
       grid-column: 3
       align-self: center
 
+// Phones: two panes a row, as in the window on wider screens. A thinner frame
+// and bars leave the panes room, and the price goes above the button, which
+// no longer fit side by side.
 @media (max-width: 560px)
-  .collection.collection--christmas-collection .product-card
-    max-width: none
+  .collection.collection--christmas-collection
+    --columns: 2
+    --gap: 10px
+    --k: calc(10 / 27)
 
-    > .add-to-cart,
-    > .cart-stepper
-      align-self: center
+    .product-card
+      max-width: none
+      grid-template-columns: minmax(0, 1fr)
+      grid-template-rows: auto 1fr auto auto
+      row-gap: 6px
+      padding-bottom: 14px
+
+      h3
+        padding: 0 6px
+        font-size: 0.9rem
+
+      .product-card__price,
+      > .add-to-cart,
+      > .cart-stepper
+        grid-column: 1
+        justify-self: center
+
+      > .add-to-cart
+        padding: 4px 12px
+        font-size: 0.8rem
+
+      // Wider than the button: spans the pane, its text wrapping if need be
+      > .cart-stepper
+        justify-self: stretch
+        margin: 0 6px
+        font-size: 0.75rem
+        line-height: 1.2
+        text-align: center
+
+        span
+          white-space: normal
+
+        button
+          padding: 4px 8px
+
+    .carousel__arrow
+      width: 24px
+      height: 24px
+
+      svg
+        width: 14px
+        height: 14px

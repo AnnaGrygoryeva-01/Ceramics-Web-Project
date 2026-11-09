@@ -32,8 +32,10 @@ export const products = sqliteTable(
     optionLabel: text("option_label"),
     optionCount: integer("option_count"),
     // One piece of a one-of-a-kind product, e.g. "Bow Ornament, No. 2". It's
-    // picked through that product's options and isn't listed on its own.
-    hidden: integer({ mode: "boolean" }).notNull().default(false),
+    // picked through that product's options and isn't listed on its own. NULL
+    // means not hidden. It's nullable because drizzle-kit 0.31.11 treats adding a
+    // NOT NULL column as needing the table emptied first, even with a default.
+    hidden: integer({ mode: "boolean" }).default(false),
     position: integer().notNull(),
   },
   (t) => [index("products_collection_id_idx").on(t.collectionId)],

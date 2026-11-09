@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, expect, test } from "vitest";
 import { fixture, fixtureCollections, fixtureProducts, listedFixtureProducts } from "@/test/fixtures";
 import { createTestDb, seedFixtures } from "@/test/test-db";
@@ -24,6 +25,12 @@ test("pieces are left out of listings unless asked for", async () => {
   expect(floral.filter((p) => p.hidden).map((p) => p.slug)).toEqual(["bauble-01", "bauble-02", "bauble-03"]);
   // Still found by slug, for the cart and orders
   expect(await reader.getProduct("bauble-02")).toEqual(fixture("bauble-02"));
+});
+
+test("a product with hidden unset (NULL) is listed", async () => {
+  await testDb.db.update(products).set({ hidden: null }).where(eq(products.slug, "vase"));
+  expect((await reader.listProducts()).map((p) => p.slug)).toContain("vase");
+  expect(await reader.getProduct("vase")).toEqual(fixture("vase"));
 });
 
 test("collections come back complete and in order", async () => {

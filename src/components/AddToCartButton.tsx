@@ -20,7 +20,9 @@ function defaultSet(options: ProductOptions) {
 // for products that have options (e.g. brush sizes in a set, or which piece of a
 // one-of-a-kind ornament). Returned as siblings so the button can still sit at
 // the bottom of a product card.
-export default function AddToCartButton({ product }: { product: Product }) {
+// piecePicker={false} leaves out the dropdown for a product with pieces, where the
+// photos pick the piece instead (see ProductCard). A set's picker always shows.
+export default function AddToCartButton({ product, piecePicker = true }: { product: Product; piecePicker?: boolean }) {
   const { options } = product;
   const names = options ? Object.keys(options.values) : [];
   const cart = useCart();
@@ -43,7 +45,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
 
   return (
     <>
-      {options && !soldOut && (
+      {options && !soldOut && (piecePicker || !pieces) && (
         <OptionPicker
           options={options}
           choices={choices}

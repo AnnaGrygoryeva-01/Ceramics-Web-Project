@@ -1197,3 +1197,72 @@ html:has(.lightbox[open])
 
     .cart-stepper button
       padding: 10px 16px
+
+// Christmas collection: the products seen through one large frosted window,
+// each in its own pane with snow on the sill. Narrow bars instead of the usual
+// gaps, and a grid rather than a flex row so empty panes at the end show the frame.
+.collection.collection--christmas-collection
+  --gap: 12px
+
+  .product-grid
+    display: grid
+    grid-template-columns: repeat(var(--shown), minmax(0, 1fr))
+    gap: var(--gap)
+    padding: var(--gap)
+    border-radius: 6px
+    // Painted wood, frosted towards the bottom
+    background: linear-gradient(#e3ebf7, #b7c9e2)
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.7), inset 0 -2px 6px rgb(13 45 94 / 0.2), 0 12px 32px rgb(13 45 94 / 0.25)
+
+    > *
+      width: auto
+
+  // A pane: photo at the top, then the name, price and button on cream paper.
+  // The same dark ink in both themes, so it reads on the paper.
+  .product-card
+    --ink: #0d2d5e
+    --badge-text: #f1eadc
+    --surface: #f1eadc
+    position: relative
+    overflow: hidden
+    gap: 4px
+    // Room for the snow along the bottom
+    padding-bottom: 26px
+    border-radius: 2px
+    background: #f1eadc
+    color: var(--ink)
+    text-align: center
+    // Set back into the frame
+    box-shadow: inset 0 0 0 1px rgb(13 45 94 / 0.25), 0 1px 0 rgb(255 255 255 / 0.6)
+
+    .product-image,
+    .carousel__track
+      border-radius: 0
+
+    h3
+      margin-top: 8px
+      padding: 0 10px
+      font-size: 1rem
+
+    > .add-to-cart,
+    > .cart-stepper
+      align-self: center
+      border-radius: 6px
+
+    > .add-to-cart
+      padding: 4px 16px
+      font-size: 0.85rem
+
+    // Snow on the sill: a lumpy white band along the bottom
+    &::after
+      content: ""
+      position: absolute
+      inset: auto 0 0
+      height: 18px
+      background: radial-gradient(circle at 50% 100%, #fff 9px, transparent 10px) 0 100% / 22px 14px repeat-x, radial-gradient(circle at 50% 100%, #fff 6px, transparent 7px) 11px 100% / 17px 16px repeat-x, linear-gradient(#fff, #fff) 0 100% / 100% 7px no-repeat
+      filter: drop-shadow(0 -1px 1px rgb(13 45 94 / 0.25))
+      pointer-events: none
+
+@media (max-width: 560px)
+  .collection.collection--christmas-collection .product-card
+    max-width: none

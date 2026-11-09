@@ -8,7 +8,8 @@ export type PlaceOrderResult = { ok: true; order: Order } | OrderFailure;
 type Deps = { catalogueReader: Pick<CatalogueReader, "listProducts">; orderStore: OrderStore };
 
 export async function placeOrder(deps: Deps, request: OrderRequest): Promise<PlaceOrderResult> {
-  const priced = priceOrder(request, await deps.catalogueReader.listProducts());
+  // Pieces too: a one-of-a-kind product's picks use up their stock
+  const priced = priceOrder(request, await deps.catalogueReader.listProducts({ includeHidden: true }));
   if (!priced.ok) return priced;
 
   const order = { ...priced.order, id: crypto.randomUUID(), createdAt: new Date() };

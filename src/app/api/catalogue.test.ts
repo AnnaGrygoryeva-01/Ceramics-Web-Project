@@ -36,12 +36,12 @@ test("GET /api/products", async () => {
   const response = await getProducts(new NextRequest("http://shop.test/api/products"));
   expect(response.status).toBe(200);
   expect(await response.json()).toHaveLength(fixtureProducts.length);
-  expect(catalogueReader.listProducts).toHaveBeenCalledWith({ collection: undefined });
+  expect(catalogueReader.listProducts).toHaveBeenCalledWith({ collection: undefined, includeHidden: true });
 });
 
 test("GET /api/products?collection=floral passes the filter on", async () => {
   await getProducts(new NextRequest("http://shop.test/api/products?collection=floral"));
-  expect(catalogueReader.listProducts).toHaveBeenCalledWith({ collection: "floral" });
+  expect(catalogueReader.listProducts).toHaveBeenCalledWith({ collection: "floral", includeHidden: true });
 });
 
 test("GET /api/products/[slug]", async () => {

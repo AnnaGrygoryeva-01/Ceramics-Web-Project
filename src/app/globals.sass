@@ -1003,6 +1003,22 @@ html:has(.lightbox[open])
     min-width: 0
     padding: 2px 6px 2px 10px
 
+// Product page: the photo of each piece of a one-of-a-kind product
+.pieces
+  display: grid
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr))
+  gap: 16px
+  max-width: 420px
+  margin: 24px 0 0
+  padding: 0
+  list-style: none
+
+  li
+    display: flex
+    flex-direction: column
+    gap: 4px
+    font-size: 0.9rem
+
 // The picked options under a product's name in the cart
 .cart-choices
   display: block

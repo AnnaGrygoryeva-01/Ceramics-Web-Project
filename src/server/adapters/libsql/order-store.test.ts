@@ -93,3 +93,26 @@ test("orders at the same moment never oversell", async () => {
   expect(await stock("bowl")).toBe(0);
   expect(await testDb.db.select().from(orders)).toHaveLength(1);
 });
+
+test("ordering a piece of a one-of-a-kind product takes that piece's stock", async () => {
+  const { placeOrder } = await import("../../application/place-order");
+  const result = await placeOrder(
+    { catalogueReader: reader, orderStore: store },
+    { customer, items: [item("bauble", 1, ["No. 3"])] },
+  );
+
+  expect(result).toMatchObject({ ok: true, order: { total: 1800 } });
+  expect(await stock("bauble-03")).toBe(0);
+  expect(await stock("bauble-01")).toBe(1);
+  const picks = await testDb.db.select().from(orderItemPicks);
+  expect(picks.map((p) => p.choice)).toEqual(["No. 3"]);
+});
+
+test("a sold piece can't be ordered", async () => {
+  const { placeOrder } = await import("../../application/place-order");
+  const result = await placeOrder(
+    { catalogueReader: reader, orderStore: store },
+    { customer, items: [item("bauble", 1, ["No. 2"])] },
+  );
+  expect(result).toMatchObject({ ok: false, code: "out-of-stock", outOfStock: ["bauble-02"] });
+});

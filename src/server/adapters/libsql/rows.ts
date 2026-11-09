@@ -25,6 +25,7 @@ export function toProduct(
     description,
     stock: row.stock ?? undefined,
     image: row.image ?? undefined,
+    hidden: row.hidden || undefined,
     options:
       optionLabel !== null && optionCount !== null
         ? { label: optionLabel, count: optionCount, values: optionValues }

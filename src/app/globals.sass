@@ -674,7 +674,8 @@ main:has(> .product-page:not([style*="display: none"]))
     width: calc((100% - (var(--shown) - 1) * var(--gap)) / var(--shown))
 
 // Frost over the pane, Christmas collection only (see the end of this file)
-.product-card__frost
+.product-card__frost,
+.product-card__drift
   display: none
 
 // Stacked: photo, name, price, button. The button sits at the bottom so the
@@ -1263,18 +1264,21 @@ html:has(.lightbox[open])
     > *
       width: auto
 
-  // A pane: photo at the top, then the name, price and button straight on the
-  // clear, frosted glass. --snow is the snow's colour, sampled from the rail
-  // picture. Dark ink, on the light sky (see below for night).
+  // A pane: photo at the top, then the name, price and button on a drift of
+  // frost. --snow is the snow's colour, sampled from the rail picture. The same
+  // dark ink in both themes, so it reads on the frost.
   .product-card
     --snow: #deeafb
     --ink: #0d2d5e
     --badge-text: var(--snow)
     --surface: var(--snow)
     position: relative
-    gap: 4px
+    // No gap under the photo, where the sky would show through the frost's edge;
+    // the text is spaced with margins instead
+    gap: 0
     // Room for the rail's snow, which covers the bottom of the pane
-    padding-bottom: 18px
+    --pane-bottom: 18px
+    padding-bottom: var(--pane-bottom)
     color: var(--ink)
     text-align: center
     // Set back into the frame
@@ -1285,7 +1289,7 @@ html:has(.lightbox[open])
       border-radius: 0
 
     h3
-      margin-top: 8px
+      margin: 8px 0 4px
       padding: 0 10px
       font-size: 1rem
 
@@ -1321,6 +1325,20 @@ html:has(.lightbox[open])
     .carousel__arrow,
     .carousel__dots
       z-index: 2
+
+    // A drift of frost behind the name, price and button, filling that part of
+    // the pane. Its jagged top edge reaches up over the bottom of the photo, so
+    // there's no hard line between them. The edge is drawn once; below it the
+    // solid frost repeats to whatever height the text needs.
+    .product-card__drift
+      display: block
+      grid-row: 2 / -1
+      z-index: 1
+      margin-top: -24px
+      margin-bottom: calc(-1 * var(--pane-bottom))
+      padding-top: 30px
+      background: url("/decorations/frost-edge-0a9b1cbe.png") 0 0 / 100% 30px no-repeat border-box, url("/decorations/frost-fill-654666c5.png") 0 0 / 100% auto repeat-y content-box var(--snow)
+      pointer-events: none
 
     // The dots sit on the photo, so a carousel takes no more height than a
     // single photo and the names line up across the window
@@ -1378,37 +1396,24 @@ html:has(.lightbox[open])
     > *
       grid-column: 1 / -1
 
+    // Every row given, so the drift (rows 2 onwards) doesn't push these aside
+    > :first-child
+      grid-row: 1
+
     h3
+      grid-row: 2
       align-self: start
 
     .product-card__price
+      grid-row: 3
       grid-column: 2
       align-self: center
 
     > .add-to-cart,
     > .cart-stepper
+      grid-row: 3
       grid-column: 3
       align-self: center
-
-// The glass is clear, so at night the names and prices sit on the dark sky:
-// they keep the night theme's light ink instead of the dark one. A dark halo and
-// a dark fill on the button keep them readable over the light frost too.
-:root[data-theme="night"] .collection.collection--christmas-collection .product-card
-  --ink: #dce6f5
-  --badge-text: #0a1020
-
-  h3
-    text-shadow: 0 0 3px rgb(10 16 32 / 0.95), 0 0 8px rgb(10 16 32 / 0.7)
-
-  // On the frost along the bottom: backed like the button
-  .product-card__price
-    padding: 0 8px
-    border-radius: 6px
-    background: rgb(10 16 32 / 0.6)
-
-  > .add-to-cart,
-  > .cart-stepper
-    background: rgb(10 16 32 / 0.6)
 
 // Tablets: still four panes a row, a little smaller, with a thinner frame and bars
 @media (max-width: 1100px)
@@ -1427,18 +1432,26 @@ html:has(.lightbox[open])
     max-width: none
     grid-template-columns: minmax(0, 1fr)
     grid-template-rows: auto 1fr auto auto
-    row-gap: 6px
-    padding-bottom: 14px
+    row-gap: 0
+    --pane-bottom: 14px
 
     h3
+      margin-bottom: 6px
       padding: 0 6px
       font-size: 0.9rem
+
+    .product-card__price
+      margin-bottom: 6px
 
     .product-card__price,
     > .add-to-cart,
     > .cart-stepper
       grid-column: 1
       justify-self: center
+
+    > .add-to-cart,
+    > .cart-stepper
+      grid-row: 4
 
     > .add-to-cart
       padding: 4px 12px

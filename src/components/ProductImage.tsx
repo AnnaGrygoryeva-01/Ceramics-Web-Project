@@ -1,5 +1,5 @@
-import Image from "next/image";
 import type { Product } from "@/lib/products";
+import PhotoOrPlaceholder from "./PhotoOrPlaceholder";
 
 type Props = {
   product: Product;
@@ -9,11 +9,11 @@ type Props = {
 };
 
 // Product photo in a fixed 4:5 frame, cropped to fit, so photos of different
-// shapes line up. Products without a photo get an empty frame.
+// shapes line up. Products without a photo get the placeholder.
 export default function ProductImage({ product, sizes, className, priority }: Props) {
   return (
     <div className={["product-image", className].filter(Boolean).join(" ")}>
-      {product.image && <Image src={product.image} alt={product.name} fill sizes={sizes} priority={priority} />}
+      <PhotoOrPlaceholder src={product.image} alt={product.name} sizes={sizes} priority={priority} />
     </div>
   );
 }

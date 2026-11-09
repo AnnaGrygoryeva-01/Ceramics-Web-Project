@@ -359,6 +359,21 @@ footer
 .corner--right
   right: 0
 
+// Christmas pages have the snow instead, so the flowers fade out quickly as the
+// page opens. An animation rather than a transition, so it also runs on a direct
+// page load. They come straight back when leaving.
+body:has(.snow:not(.snow--hidden)) .corner
+  animation: corner-fade-out 0.5s ease forwards
+
+@keyframes corner-fade-out
+  to
+    opacity: 0
+
+@media (prefers-reduced-motion: reduce)
+  body:has(.snow:not(.snow--hidden)) .corner
+    animation: none
+    opacity: 0
+
 // Christmas collection only. On narrow screens keep it tall and crop the sides
 // instead of letting it shrink to a thin strip (image is 4269 x 1269).
 .snow

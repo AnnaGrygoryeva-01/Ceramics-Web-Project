@@ -462,14 +462,15 @@ footer
 .product-image
   position: relative
   width: 100%
-  aspect-ratio: 4 / 5
+  aspect-ratio: 1
   overflow: hidden
   border-radius: 6px
-  // Shown when there's no photo yet
+  // Shown when there's no photo yet, and beside a photo that isn't square
   background: color-mix(in srgb, var(--ink) 10%, transparent)
 
+  // The whole photo, never cropped
   img
-    object-fit: cover
+    object-fit: contain
 
 .product-image--large
   width: 420px

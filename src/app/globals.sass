@@ -685,11 +685,6 @@ main:has(> .product-page:not([style*="display: none"]))
   > *
     width: calc((100% - (var(--shown) - 1) * var(--gap)) / var(--shown))
 
-// Frost over the pane, Christmas collection only (see the end of this file)
-.product-card__frost,
-.product-card__drift
-  display: none
-
 // Stacked: photo, name, price, button. The button sits at the bottom so the
 // buttons line up across a row even when a name wraps onto two lines.
 .product-card
@@ -1276,17 +1271,16 @@ html:has(.lightbox[open])
     > *
       width: auto
 
-  // A pane: photo at the top, then the name, price and button on a drift of
-  // frost. --snow is the snow's colour, sampled from the rail picture. The same
-  // dark ink in both themes, so it reads on the frost.
+  // A pane: photo at the top, then the name, price and button on the clear
+  // glass. --snow is the snow's colour, sampled from the rail picture. Dark ink
+  // on the light sky (see below for night).
   .product-card
     --snow: #deeafb
     --ink: #0d2d5e
     --badge-text: var(--snow)
     --surface: var(--snow)
     position: relative
-    // No gap under the photo, where the sky would show through the frost's edge;
-    // the text is spaced with margins instead
+    // The text is spaced with margins
     gap: 0
     // Room for the rail's snow, which covers the bottom of the pane
     --pane-bottom: 18px
@@ -1312,45 +1306,6 @@ html:has(.lightbox[open])
     > .add-to-cart
       padding: 4px 16px
       font-size: 0.85rem
-
-    // Frost on the glass, the snow's colour, over the whole pane: over the photo
-    // (it stays put while carousel photos slide behind it) and down behind the
-    // name, price and button, which sit on top of it. See ProductCard.
-    .product-card__frost
-      display: block
-      position: absolute
-      inset: 0
-      z-index: 1
-      // Drawn a little taller than the pane and lined up with its bottom, so the
-      // heavy top band of frost is trimmed to about the depth of the sides
-      background: url("/decorations/frost-32228f9e.png") 0 100% / 100% 107% no-repeat
-      pointer-events: none
-
-    h3,
-    .product-card__price,
-    > .add-to-cart,
-    > .cart-stepper
-      position: relative
-      z-index: 2
-
-    // Already positioned over the photo
-    .carousel__arrow,
-    .carousel__dots
-      z-index: 2
-
-    // A drift of frost behind the name, price and button, filling that part of
-    // the pane. Its jagged top edge reaches up over the bottom of the photo, so
-    // there's no hard line between them. The edge is drawn once; below it the
-    // solid frost repeats to whatever height the text needs.
-    .product-card__drift
-      display: block
-      grid-row: 2 / -1
-      z-index: 1
-      margin-top: -24px
-      margin-bottom: calc(-1 * var(--pane-bottom))
-      padding-top: 30px
-      background: url("/decorations/frost-edge-0a9b1cbe.png") 0 0 / 100% 30px no-repeat border-box, url("/decorations/frost-fill-654666c5.png") 0 0 / 100% auto repeat-y content-box var(--snow)
-      pointer-events: none
 
     // The dots sit on the photo, so a carousel takes no more height than a
     // single photo and the names line up across the window
@@ -1408,7 +1363,7 @@ html:has(.lightbox[open])
     > *
       grid-column: 1 / -1
 
-    // Every row given, so the drift (rows 2 onwards) doesn't push these aside
+    // Every row given
     > :first-child
       grid-row: 1
 
@@ -1426,6 +1381,12 @@ html:has(.lightbox[open])
       grid-row: 3
       grid-column: 3
       align-self: center
+
+// The glass is clear, so at night the names and prices sit on the dark sky:
+// they keep the night theme's light ink instead of the dark one
+:root[data-theme="night"] .collection.collection--christmas-collection .product-card
+  --ink: #dce6f5
+  --badge-text: #0a1020
 
 // Tablets: still four panes a row, a little smaller, with a thinner frame and bars
 @media (max-width: 1100px)

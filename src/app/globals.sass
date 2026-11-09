@@ -1198,11 +1198,34 @@ html:has(.lightbox[open])
     .cart-stepper button
       padding: 10px 16px
 
-// Christmas collection: the products seen through one large frosted window,
-// each in its own pane with snow on the sill. Narrow bars instead of the usual
-// gaps, and a grid rather than a flex row so empty panes at the end show the frame.
+// Christmas collection: the title and description centred at the top, then the
+// products seen through one large frosted window, each in its own white pane.
+// Narrow bars instead of the usual gaps, and a grid rather than a flex row so
+// empty panes at the end show the frame.
 .collection.collection--christmas-collection
   --gap: 12px
+  display: flex
+  flex-direction: column
+
+  // As a flex item the link would stretch across the row, clickable all the way
+  > a
+    align-self: flex-start
+
+  .collection__header
+    order: -1
+    margin-bottom: 16px
+    text-align: center
+
+    h1
+      margin: 0
+      font-size: clamp(2.2rem, 5vw, 3.2rem)
+      font-weight: normal
+
+    p
+      max-width: 60em
+      margin: 4px auto 0
+      font-style: italic
+      font-size: 1.05rem
 
   .product-grid
     display: grid
@@ -1217,19 +1240,17 @@ html:has(.lightbox[open])
     > *
       width: auto
 
-  // A pane: photo at the top, then the name, price and button on cream paper.
-  // The same dark ink in both themes, so it reads on the paper.
+  // A pane: photo at the top, then the name, price and button on white.
+  // The same dark ink in both themes, so it reads on the white.
   .product-card
     --ink: #0d2d5e
-    --badge-text: #f1eadc
-    --surface: #f1eadc
-    position: relative
+    --badge-text: #fff
+    --surface: #fff
     overflow: hidden
     gap: 4px
-    // Room for the snow along the bottom
-    padding-bottom: 26px
+    padding-bottom: 14px
     border-radius: 2px
-    background: #f1eadc
+    background: #fff
     color: var(--ink)
     text-align: center
     // Set back into the frame
@@ -1252,16 +1273,6 @@ html:has(.lightbox[open])
     > .add-to-cart
       padding: 4px 16px
       font-size: 0.85rem
-
-    // Snow on the sill: a lumpy white band along the bottom
-    &::after
-      content: ""
-      position: absolute
-      inset: auto 0 0
-      height: 18px
-      background: radial-gradient(circle at 50% 100%, #fff 9px, transparent 10px) 0 100% / 22px 14px repeat-x, radial-gradient(circle at 50% 100%, #fff 6px, transparent 7px) 11px 100% / 17px 16px repeat-x, linear-gradient(#fff, #fff) 0 100% / 100% 7px no-repeat
-      filter: drop-shadow(0 -1px 1px rgb(13 45 94 / 0.25))
-      pointer-events: none
 
 @media (max-width: 560px)
   .collection.collection--christmas-collection .product-card

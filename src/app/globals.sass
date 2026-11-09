@@ -487,10 +487,124 @@ body:has(.snow:not(.snow--hidden)) .corner
   img
     object-fit: contain
 
-.product-image--large
-  width: 420px
-  max-width: 100%
-  margin: 16px 0
+// Product page: photos on the left, name, price, description and options on
+// the right. One above the other on phones.
+.product
+  display: grid
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)
+  gap: 40px
+  align-items: start
+  margin-top: 16px
+
+  h1
+    margin-top: 0
+
+  .option-picker
+    margin-bottom: 12px
+
+.product__price
+  font-size: 1.15rem
+
+@media (max-width: 700px)
+  .product
+    grid-template-columns: minmax(0, 1fr)
+    gap: 16px
+
+// Photos of a product with pieces, one at a time (see ProductPhotos). The track
+// scrolls sideways, snapping to each photo, so it can be swiped on phones.
+.carousel
+  position: relative
+
+.carousel__track
+  display: flex
+  overflow-x: auto
+  scroll-snap-type: x mandatory
+  scrollbar-width: none
+  border-radius: 6px
+
+  &::-webkit-scrollbar
+    display: none
+
+.carousel__slide
+  flex: 0 0 100%
+  scroll-snap-align: start
+  // The track rounds the corners, so the slides line up edge to edge
+  border-radius: 0
+
+// Over the photo, at its sides; faded out at either end
+.carousel__arrow
+  position: absolute
+  // Centred on the photo, which is square: half its width down
+  top: 50%
+  translate: 0 -50%
+  display: grid
+  place-items: center
+  width: 32px
+  height: 32px
+  padding: 0
+  border: 0
+  border-radius: 50%
+  background: color-mix(in srgb, var(--surface) 85%, transparent)
+  color: var(--ink)
+  cursor: pointer
+
+  svg
+    width: 18px
+    height: 18px
+    fill: none
+    stroke: currentColor
+    stroke-width: 2
+    stroke-linecap: round
+    stroke-linejoin: round
+
+  &:disabled
+    opacity: 0
+    pointer-events: none
+
+.carousel__arrow--prev
+  left: 8px
+
+  svg
+    rotate: 180deg
+
+.carousel__arrow--next
+  right: 8px
+
+// The dots sit below the photo, so the arrows are centred on the photo alone
+.carousel:has(.carousel__dots) .carousel__arrow
+  top: calc(50% - 11px)
+
+.carousel__dots
+  display: flex
+  justify-content: center
+  gap: 6px
+  margin-top: 8px
+
+  button
+    width: 8px
+    height: 8px
+    padding: 0
+    border: 1px solid var(--ink)
+    border-radius: 50%
+    background: transparent
+    cursor: pointer
+
+    &[aria-current]
+      background: var(--ink)
+
+.carousel__sold
+  position: absolute
+  top: 8px
+  left: 8px
+  padding: 2px 8px
+  background: var(--surface)
+  color: var(--ink)
+  font-size: 0.8rem
+  letter-spacing: 0.02em
+
+@media (prefers-reduced-motion: reduce)
+  .carousel__track
+    scroll-behavior: auto
 
 // Collection page: heading, sort and product cards share one centred column,
 // so the heading lines up with the first card. 4 cards per row on desktop, then
@@ -1018,22 +1132,6 @@ html:has(.lightbox[open])
     display: flex
     min-width: 0
     padding: 2px 6px 2px 10px
-
-// Product page: the photo of each piece of a one-of-a-kind product
-.pieces
-  display: grid
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr))
-  gap: 16px
-  max-width: 420px
-  margin: 24px 0 0
-  padding: 0
-  list-style: none
-
-  li
-    display: flex
-    flex-direction: column
-    gap: 4px
-    font-size: 0.9rem
 
 // The picked options under a product's name in the cart
 .cart-choices

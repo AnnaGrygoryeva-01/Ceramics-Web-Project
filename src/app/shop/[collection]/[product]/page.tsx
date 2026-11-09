@@ -39,10 +39,11 @@ async function Product({ params }: Pick<PageProps<"/shop/[collection]/[product]"
   if (!product || product.hidden || !collection || product.collection !== collection.slug) notFound();
 
   return (
-    <article>
+    <article className="product-page">
       {hasSnow(collection) && <SnowBackground />}
       <Link href={`/shop/${collection.slug}`} prefetch>&larr; Back to {collection.name}</Link>
-      {/* Photos on the left, the rest on the right; one above the other on phones */}
+      {/* Photos on the left, the rest on the right; one above the other on phones.
+          In the middle of the page, below the back link (see .product-page) */}
       <div className="product">
         <PieceChoiceProvider>
           <div className="product__photos">

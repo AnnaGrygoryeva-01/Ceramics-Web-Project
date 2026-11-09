@@ -487,14 +487,31 @@ body:has(.snow:not(.snow--hidden)) .corner
   img
     object-fit: contain
 
-// Product page: photos on the left, name, price, description and options on
-// the right. One above the other on phones.
+// Product page: the back link at the top, then the product in the middle of
+// the space left down to the footer. main becomes a column so the page can fill
+// it, only while a product page shows: other pages rely on their margins
+// collapsing, which a flex container stops. Next keeps a page you've left in the
+// DOM with an inline display: none, hence the :not().
+main:has(> .product-page:not([style*="display: none"]))
+  display: flex
+  flex-direction: column
+
+.product-page
+  flex: 1
+  display: flex
+  flex-direction: column
+  gap: 16px
+
+  > .product
+    margin-block: auto
+
+// Photos on the left, name, price, description and options on the right. One
+// above the other on phones.
 .product
   display: grid
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)
   gap: 40px
   align-items: start
-  margin-top: 16px
 
   h1
     margin-top: 0

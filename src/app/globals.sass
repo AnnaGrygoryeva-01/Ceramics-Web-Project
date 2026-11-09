@@ -1206,9 +1206,9 @@ html:has(.lightbox[open])
 // than a flex row, so empty panes at the end still sit in the window.
 .collection.collection--christmas-collection
   // Bar width. The frame pieces are drawn at --k times their size so the outer
-  // frame stays in proportion to bars this wide (the bar picture is 31px wide).
-  --gap: 16px
-  --k: calc(16 / 31)
+  // frame stays in proportion to bars this wide (the bar picture is 27px wide).
+  --gap: 18px
+  --k: calc(18 / 27)
   display: flex
   flex-direction: column
 
@@ -1239,8 +1239,8 @@ html:has(.lightbox[open])
     // The outer frame, stretched around the panes. Slice sizes are in the
     // picture's pixels: top rail, right post, sill, left post.
     border: solid transparent
-    border-width: calc(85px * var(--k)) calc(62px * var(--k)) calc(80px * var(--k)) calc(60px * var(--k))
-    border-image: url("/decorations/window-frame.png") 85 62 80 60 stretch
+    border-width: calc(89px * var(--k)) calc(78px * var(--k)) calc(52px * var(--k)) calc(83px * var(--k))
+    border-image: url("/decorations/window-frame.png") 89 78 52 83 stretch
     // Frosted glass, seen in any empty panes at the end
     background: linear-gradient(rgb(255 255 255 / 0.55), rgb(205 220 240 / 0.55)) padding-box
     // Clips the bars and rails of the last column and row, so the frame shows instead
@@ -1258,7 +1258,7 @@ html:has(.lightbox[open])
     position: relative
     gap: 4px
     // Room for the rail's snow, which covers the bottom of the pane
-    padding-bottom: 16px
+    padding-bottom: 18px
     background: #fff
     color: var(--ink)
     text-align: center
@@ -1300,7 +1300,7 @@ html:has(.lightbox[open])
     .carousel .carousel__arrow
       top: 50%
 
-    // The bar to the right, down past the rail so the crossing is covered
+    // The bar to the right, down past the rail and over the crossing
     &::before
       content: ""
       position: absolute
@@ -1308,20 +1308,22 @@ html:has(.lightbox[open])
       bottom: calc(-1 * var(--gap))
       left: 100%
       width: var(--gap)
+      z-index: 2
       background: url("/decorations/window-bar.png") 0 0 / 100% auto repeat-y
       pointer-events: none
 
-    // The rail below, with its snow over the bottom of the pane. The picture is
-    // 38px tall, of which the wood is the bottom 24.5px.
+    // The rail below, with this pane's mound of snow over its bottom edge. One
+    // pane's worth, stretched to the pane's width. The picture is 41px tall, of
+    // which the wood is the bottom 24px.
     &::after
       content: ""
       position: absolute
       left: 0
-      right: calc(-1 * var(--gap))
+      right: 0
       bottom: calc(-1 * var(--gap))
-      height: calc(var(--gap) * 38 / 24.5)
+      height: calc(var(--gap) * 41 / 24)
       z-index: 1
-      background: url("/decorations/window-rail.png") 0 0 / auto 100% repeat-x
+      background: url("/decorations/window-rail.png") 0 0 / 100% 100% no-repeat
       pointer-events: none
 
   // The price and button share the bottom row, centred as a pair, so the pane

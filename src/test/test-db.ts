@@ -2,9 +2,7 @@ import { execFileSync } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createDatabase, type Database } from "@/server/adapters/libsql/client";
-import { collections, productOptionValues, products } from "@/server/adapters/libsql/schema";
-import { fixtureCollections, fixtureProducts } from "./fixtures";
+import { createDatabase } from "@/server/adapters/libsql/client";
 
 let schemaSql: string | undefined;
 
@@ -33,33 +31,4 @@ export async function createTestDb() {
       rmSync(directory, { recursive: true, force: true });
     },
   };
-}
-
-const collectionId = (slug: string) => fixtureCollections.find((c) => c.slug === slug)!.id;
-const productId = (slug: string) => fixtureProducts.find((p) => p.slug === slug)!.id;
-
-export async function seedFixtures(db: Database) {
-  await db.insert(collections).values(fixtureCollections.map((collection, position) => ({ ...collection, position })));
-
-  await db.insert(products).values(
-    fixtureProducts.map(({ collection, price, options, ...product }, position) => ({
-      ...product,
-      collectionId: collectionId(collection),
-      pricePence: price,
-      optionLabel: options?.label,
-      optionCount: options?.count,
-      position,
-    })),
-  );
-
-  await db.insert(productOptionValues).values(
-    fixtureProducts.flatMap(({ id, options }) =>
-      Object.entries(options?.values ?? {}).map(([name, target], position) => ({
-        productId: id,
-        name,
-        targetProductId: productId(target),
-        position,
-      })),
-    ),
-  );
 }

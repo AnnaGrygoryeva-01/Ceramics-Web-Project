@@ -1,6 +1,7 @@
 import type { NewOrder } from "../domain/order";
 
 export interface OrderStore {
-  // Saves the order and takes its stock as one step: either both happen or neither
-  place(order: NewOrder): Promise<"placed" | "out-of-stock">;
+  // Saves the order. Stock lives in the product files, so nothing is taken: the
+  // stock check in priceOrder is all there is for now.
+  place(order: NewOrder): Promise<void>;
 }

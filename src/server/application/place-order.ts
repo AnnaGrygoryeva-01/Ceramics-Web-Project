@@ -14,10 +14,7 @@ export async function placeOrder(deps: Deps, request: OrderRequest): Promise<Pla
 
   const order = { ...priced.order, id: crypto.randomUUID(), createdAt: new Date() };
 
-  // The stock read above can be out of date by now, so the store has the final say
-  if ((await deps.orderStore.place(order)) === "out-of-stock") {
-    return { ok: false, code: "out-of-stock", message: "Some items just sold out.", outOfStock: [] };
-  }
+  await deps.orderStore.place(order);
 
   const { id, createdAt, customer, lines, total } = order;
   return { ok: true, order: { id, createdAt, customer, lines, total, status: "pending" } };

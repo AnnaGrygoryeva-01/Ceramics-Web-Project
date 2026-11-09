@@ -15,7 +15,7 @@ function resolvePicks(product: Product, choices: string[], bySlug: Map<string, P
   for (const choice of choices) {
     const target = bySlug.get(options.values[choice]);
     if (!target) return null;
-    picks.push({ choice, productId: target.id });
+    picks.push({ choice, productSlug: target.slug });
   }
   return picks;
 }
@@ -25,15 +25,15 @@ function resolvePicks(product: Product, choices: string[], bySlug: Map<string, P
 function stockDemand(lines: OrderLine[]): StockDemand[] {
   const demand = new Map<string, number>();
   for (const line of lines) {
-    const ids = line.picks.length > 0 ? line.picks.map((pick) => pick.productId) : [line.productId];
-    for (const id of ids) demand.set(id, (demand.get(id) ?? 0) + line.quantity);
+    const slugs = line.picks.length > 0 ? line.picks.map((pick) => pick.productSlug) : [line.productSlug];
+    for (const slug of slugs) demand.set(slug, (demand.get(slug) ?? 0) + line.quantity);
   }
-  return [...demand].map(([productId, quantity]) => ({ productId, quantity }));
+  return [...demand].map(([productSlug, quantity]) => ({ productSlug, quantity }));
 }
 
 function shortSlugs(demand: StockDemand[], products: Product[]) {
-  return demand.flatMap(({ productId, quantity }) => {
-    const product = products.find((p) => p.id === productId);
+  return demand.flatMap(({ productSlug, quantity }) => {
+    const product = products.find((p) => p.slug === productSlug);
     return product && (product.stock ?? 0) < quantity ? [product.slug] : [];
   });
 }
@@ -50,7 +50,7 @@ export function priceOrder(request: OrderRequest, products: Product[]): PricingR
     const picks = resolvePicks(product, choices, bySlug);
     if (!picks) return invalid(`The choices for "${slug}" are not valid.`);
 
-    lines.push({ productId: product.id, productName: product.name, unitPrice: product.price, quantity, picks });
+    lines.push({ productSlug: product.slug, productName: product.name, unitPrice: product.price, quantity, picks });
   }
 
   const demand = stockDemand(lines);

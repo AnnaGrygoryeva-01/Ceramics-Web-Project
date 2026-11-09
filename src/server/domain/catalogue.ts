@@ -1,5 +1,4 @@
 export type Collection = {
-  id: string
   slug: string
   name: string
   description: string
@@ -18,7 +17,6 @@ export type ProductOptions = {
 }
 
 export type Product = {
-  id: string
   slug: string
   collection: string // Collection slug
   name: string

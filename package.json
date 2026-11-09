@@ -10,8 +10,7 @@
     "test": "vitest run",
     "publish": "./build-push.sh",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
-    "db:import": "tsx --env-file-if-exists=.env scripts/import-products.mts"
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
@@ -34,7 +33,6 @@
     "eslint-config-next": "16.4.2",
     "jsdom": "^29.1.1",
     "sass": "^1.105.2",
-    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^5.0.5"
   }

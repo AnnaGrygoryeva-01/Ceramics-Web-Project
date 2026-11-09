@@ -12,29 +12,30 @@ export type Address = {
 export type Customer = { name: string; email: string; address: Address };
 
 // What a customer asks for. Items name products by slug, as the cart does, and
-// carry no prices: those always come from the database.
+// carry no prices: those always come from the product files.
 export type OrderRequestItem = { slug: string; quantity: number; choices: string[] };
 export type OrderRequest = { customer: Customer; items: OrderRequestItem[] };
 
 // One pick of a set, e.g. "Small", and the product whose stock it uses up
-export type OrderPick = { choice: string; productId: string };
+export type OrderPick = { choice: string; productSlug: string };
 
-// Name and price are copied from the product, so later edits don't change past orders
+// Products live in JSON files rather than the database, so lines name them by
+// slug. Name and price are copied too, so later edits don't change past orders.
 export type OrderLine = {
-  productId: string;
+  productSlug: string;
   productName: string;
   unitPrice: number; // in pence
   quantity: number;
   picks: OrderPick[];
 };
 
-export type StockDemand = { productId: string; quantity: number };
+export type StockDemand = { productSlug: string; quantity: number };
 
 export type PricedOrder = {
   customer: Customer;
   lines: OrderLine[];
   total: number; // in pence
-  stockDemand: StockDemand[]; // What the order uses up, one entry per product
+  stockDemand: StockDemand[]; // What the order uses up, one entry per product, checked against the stock in the files
 };
 
 export type NewOrder = PricedOrder & { id: string; createdAt: Date };

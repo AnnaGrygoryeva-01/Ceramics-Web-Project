@@ -16,7 +16,7 @@ export async function generateMetadata({
   return { title: (await catalogue.getCollection(collection))?.name ?? "Not found" };
 }
 
-// Reading the URL (params) and the database has to happen inside <Suspense> so
+// Reading the URL (params) and the catalogue has to happen inside <Suspense> so
 // navigations can start instantly. Links here use `prefetch`, so the content is
 // usually ready before the click.
 export default function CollectionPage({ params }: PageProps<"/shop/[collection]">) {

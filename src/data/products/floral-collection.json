@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "wildflower-vase",
+    "name": "Wildflower Vase",
+    "price": 4800,
+    "description": "Tall stoneware vase with hand-painted wildflowers on a cream glaze.",
+    "stock": 4,
+    "image": "/products/floral-collection/white-background.jpg"
+  },
+  {
+    "slug": "pressed-daisy-plate",
+    "name": "Pressed Daisy Plate",
+    "price": 3200,
+    "description": "Side plate with real daisies pressed into the clay before firing.",
+    "stock": 7,
+    "image": "/products/floral-collection/white-background.jpg"
+  },
+  {
+    "slug": "rose-teacup",
+    "name": "Rose Teacup",
+    "price": 2600,
+    "description": "Porcelain teacup with a delicate painted rose and a soft pink rim.",
+    "stock": 9,
+    "image": "/products/floral-collection/white-background.jpg"
+  }
+]

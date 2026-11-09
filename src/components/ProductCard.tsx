@@ -17,7 +17,8 @@ export default function ProductCard({ product }: { product: Product }) {
           <Link href={productUrl(product)} prefetch>{product.name}</Link>
         </h3>
         <p className="product-card__price">{formatPrice(product.price)}</p>
-        <AddToCartButton product={product} />
+        {/* The photos pick the piece: swipe or use the arrows */}
+        <AddToCartButton product={product} piecePicker={false} />
       </PieceChoiceProvider>
     </article>
   );

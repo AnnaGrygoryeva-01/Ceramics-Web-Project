@@ -83,3 +83,16 @@ describe("a one-of-a-kind product", () => {
     expect(screen.getByRole("option", { name: "No. 2" })).toHaveAttribute("aria-disabled", "true");
   });
 });
+
+test("on a card the photos pick the piece, so there's no dropdown", async () => {
+  const user = userEvent.setup();
+  render(<AddToCartButton product={fixture("bauble")} piecePicker={false} />);
+  expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
+  await user.click(screen.getByRole("button", { name: "Add to cart" }));
+  expect(stored()).toEqual({ "bauble|No. 1": 1 });
+});
+
+test("a set's picker shows even then", () => {
+  render(<AddToCartButton product={fixture("brush-set")} piecePicker={false} />);
+  expect(screen.getAllByRole("combobox")).toHaveLength(2);
+});

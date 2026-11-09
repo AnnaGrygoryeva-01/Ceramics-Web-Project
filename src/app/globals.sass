@@ -1296,6 +1296,24 @@ html:has(.lightbox[open])
       padding: 4px 16px
       font-size: 0.85rem
 
+    // Frost on the glass, round the edges of the photo. On the carousel rather
+    // than each slide, so it stays put while the photos slide behind it.
+    .product-image:not(.carousel__slide),
+    .carousel
+      position: relative
+
+      &::after
+        content: ""
+        position: absolute
+        inset: 0
+        z-index: 1
+        background: url("/decorations/frost-8f8ab78d.png") 0 0 / 100% 100% no-repeat
+        pointer-events: none
+
+    .carousel__arrow,
+    .carousel__dots
+      z-index: 2
+
     // The dots sit on the photo, so a carousel takes no more height than a
     // single photo and the names line up across the window
     .carousel__dots

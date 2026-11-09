@@ -5,19 +5,14 @@ import { addToCart, setQuantity, useCart } from "@/lib/cart";
 import { canAdd, cartKey, countInCart, isSoldOut, stockLeft } from "@/lib/cart-stock";
 import { useProductLookup } from "@/lib/catalogue-store";
 import type { Product, ProductOptions } from "@/lib/products";
-import type { ProductLookup } from "@/lib/cart-stock";
 import AddToCartControls from "./AddToCartControls";
 import OptionPicker from "./OptionPicker";
+import { hasPieces, usePiece } from "./PieceChoice";
 
-// The picks before the customer changes any
-function defaultChoices(options: ProductOptions | undefined, getProduct: ProductLookup | null) {
-  if (!options) return [];
+// A set's picks before the customer changes any: different values (Small,
+// Medium, ...) so it's mixed by default
+function defaultSet(options: ProductOptions) {
   const names = Object.keys(options.values);
-  // One piece: the first that isn't sold, once stock is known
-  if (options.count === 1) {
-    return [names.find((name) => getProduct?.(options.values[name])?.stock) ?? names[0]];
-  }
-  // Start with different values (Small, Medium, ...) so a set is mixed by default
   return Array.from({ length: options.count }, (_, i) => names[i % names.length]);
 }
 
@@ -31,9 +26,12 @@ export default function AddToCartButton({ product }: { product: Product }) {
   const cart = useCart();
   // Null until the products load. Stock depends on them, so nothing can be added yet.
   const getProduct = useProductLookup();
-  // Null until the customer picks something
-  const [picked, setChoices] = useState<string[] | null>(null);
-  const choices = picked ?? defaultChoices(options, getProduct);
+  // A piece is shared with the photos (see PieceChoice); a set's picks are kept here
+  const [piece, setPiece] = usePiece(options);
+  const [setPicks, setSetPicks] = useState<string[] | null>(null);
+  const pieces = hasPieces(options);
+  const choices = pieces ? [piece!] : (setPicks ?? (options ? defaultSet(options) : []));
+  const setChoices = pieces ? ([name]: string[]) => setPiece(name) : setSetPicks;
   // Same order as the list, so Small + Large and Large + Small share one cart line
   const sorted = choices.toSorted((a, b) => names.indexOf(a) - names.indexOf(b));
 
@@ -60,7 +58,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
         loading={getProduct === null}
         soldOut={soldOut}
         available={available}
-        hasOptions={options !== undefined}
+        unavailable={!options ? "All in your cart" : pieces ? "Sold" : "Not enough in stock"}
         onAdd={() => {
           if (getProduct) addToCart(getProduct, product.slug, sorted);
         }}

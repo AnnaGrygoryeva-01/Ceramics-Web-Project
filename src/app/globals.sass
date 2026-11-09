@@ -1271,9 +1271,9 @@ html:has(.lightbox[open])
     > *
       width: auto
 
-  // A pane: photo at the top, then the name, price and button on the clear
-  // glass. --snow is the snow's colour, sampled from the rail picture. Dark ink
-  // on the light sky (see below for night).
+  // A pane: photo at the top, then the name, price and button on the colour of
+  // the snow below (sampled from the rail picture), so they read as one drift.
+  // The same dark ink in both themes, so it reads on the snow.
   .product-card
     --snow: #deeafb
     --ink: #0d2d5e
@@ -1285,6 +1285,7 @@ html:has(.lightbox[open])
     // Room for the rail's snow, which covers the bottom of the pane
     --pane-bottom: 18px
     padding-bottom: var(--pane-bottom)
+    background: var(--snow)
     color: var(--ink)
     text-align: center
     // Set back into the frame
@@ -1348,7 +1349,9 @@ html:has(.lightbox[open])
       bottom: calc(-1 * var(--gap))
       height: calc(var(--gap) * 41 / 24)
       z-index: 1
-      background: url("/decorations/window-rail-0b11ec9a.png") 0 0 / 100% 100% no-repeat
+      // The panel's colour fades into the top of the mound, hiding its outline,
+      // so the panel and the snow read as one drift
+      background: linear-gradient(var(--snow) 15%, transparent 38%), url("/decorations/window-rail-0b11ec9a.png") 0 0 / 100% 100% no-repeat
       pointer-events: none
 
   // The price and button share the bottom row, centred as a pair, so the pane
@@ -1381,12 +1384,6 @@ html:has(.lightbox[open])
       grid-row: 3
       grid-column: 3
       align-self: center
-
-// The glass is clear, so at night the names and prices sit on the dark sky:
-// they keep the night theme's light ink instead of the dark one
-:root[data-theme="night"] .collection.collection--christmas-collection .product-card
-  --ink: #dce6f5
-  --badge-text: #0a1020
 
 // Tablets: still four panes a row, a little smaller, with a thinner frame and bars
 @media (max-width: 1100px)

@@ -40,8 +40,10 @@ async function Collection({ params }: Pick<PageProps<"/shop/[collection]">, "par
     <div className={`collection collection--${collection.slug}`} style={{ "--count": products.length } as CSSProperties}>
       {hasSnow(collection) && <SnowBackground />}
       <Link href="/shop">&larr; Back to shop</Link>
-      <h1>{collection.name}</h1>
-      <p>{collection.description}</p>
+      <header className="collection__header">
+        <h1>{collection.name}</h1>
+        <p>{collection.description}</p>
+      </header>
       <SortedProductList products={products} />
       {collection.slug === "brushes" && <BrushCare />}
     </div>

@@ -487,6 +487,18 @@ body:has(.snow:not(.snow--hidden)) .corner
   img
     object-fit: contain
 
+// On a card, hovering a photo zooms in on it, within its frame
+.product-card .product-image img
+  transition: transform 0.4s ease
+
+@media (hover: hover)
+  .product-card .product-image:hover img
+    transform: scale(1.12)
+
+@media (prefers-reduced-motion: reduce)
+  .product-card .product-image img
+    transition: none
+
 // Product page: the back link at the top, then the product in the middle of
 // the space left down to the footer. main becomes a column so the page can fill
 // it, only while a product page shows: other pages rely on their margins

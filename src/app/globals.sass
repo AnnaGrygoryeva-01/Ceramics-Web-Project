@@ -1265,9 +1265,9 @@ html:has(.lightbox[open])
     > *
       width: auto
 
-  // A pane: photo at the top, then the name, price and button on the colour of
-  // the snow below (sampled from the rail picture), so they read as one drift.
-  // The same dark ink in both themes, so it reads on the snow.
+  // A pane: photo at the top, then the name, price and button straight on the
+  // frosted glass. --snow is the snow's colour, sampled from the rail picture.
+  // The same dark ink in both themes, so it reads on the frost.
   .product-card
     --snow: #deeafb
     --ink: #0d2d5e
@@ -1277,7 +1277,6 @@ html:has(.lightbox[open])
     gap: 4px
     // Room for the rail's snow, which covers the bottom of the pane
     padding-bottom: 18px
-    background: var(--snow)
     color: var(--ink)
     text-align: center
     // Set back into the frame
@@ -1308,7 +1307,9 @@ html:has(.lightbox[open])
       position: absolute
       inset: 0
       z-index: 1
-      background: url("/decorations/frost-32228f9e.png") 0 0 / 100% 100% no-repeat
+      // Drawn a little taller than the pane and lined up with its bottom, so the
+      // heavy top band of frost is trimmed to about the depth of the sides
+      background: url("/decorations/frost-32228f9e.png") 0 100% / 100% 107% no-repeat
       pointer-events: none
 
     h3,
@@ -1364,9 +1365,7 @@ html:has(.lightbox[open])
       bottom: calc(-1 * var(--gap))
       height: calc(var(--gap) * 41 / 24)
       z-index: 1
-      // The panel's colour fades into the top of the mound, hiding its outline,
-      // so the panel and the snow read as one drift
-      background: linear-gradient(var(--snow) 15%, transparent 38%), url("/decorations/window-rail-0b11ec9a.png") 0 0 / 100% 100% no-repeat
+      background: url("/decorations/window-rail-0b11ec9a.png") 0 0 / 100% 100% no-repeat
       pointer-events: none
 
   // The price and button share the bottom row, centred as a pair, so the pane
@@ -1392,6 +1391,11 @@ html:has(.lightbox[open])
     > .cart-stepper
       grid-column: 3
       align-self: center
+
+// At night the dark sky would show through the glass behind the names and
+// prices, so the glass is more opaque to keep them readable
+:root[data-theme="night"] .collection.collection--christmas-collection .product-grid
+  background: linear-gradient(rgb(255 255 255 / 0.75), rgb(205 220 240 / 0.75)) padding-box
 
 // Tablets: still four panes a row, a little smaller, with a thinner frame and bars
 @media (max-width: 1100px)

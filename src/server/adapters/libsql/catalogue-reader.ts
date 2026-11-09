@@ -1,4 +1,4 @@
-import { and, asc, eq, inArray, type SQL } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, or, type SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 import type { CatalogueReader } from "../../ports/catalogue";
 import type { Database } from "./client";
@@ -57,7 +57,7 @@ export function createCatalogueReader(db: Database): CatalogueReader {
         db,
         and(
           filter?.collection ? eq(collections.slug, filter.collection) : undefined,
-          filter?.includeHidden ? undefined : eq(products.hidden, false),
+          filter?.includeHidden ? undefined : or(isNull(products.hidden), eq(products.hidden, false)),
         ),
       );
     },

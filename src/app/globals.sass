@@ -1257,8 +1257,6 @@ html:has(.lightbox[open])
     border: solid transparent
     border-width: calc(89px * var(--k)) calc(78px * var(--k)) calc(52px * var(--k)) calc(83px * var(--k))
     border-image: url("/decorations/window-frame-52be7aaf.png") 89 78 52 83 stretch
-    // Frosted glass, seen in any empty panes at the end
-    background: linear-gradient(rgb(255 255 255 / 0.55), rgb(205 220 240 / 0.55)) padding-box
     // Clips the bars and rails of the last column and row, so the frame shows instead
     overflow: hidden
 
@@ -1266,8 +1264,8 @@ html:has(.lightbox[open])
       width: auto
 
   // A pane: photo at the top, then the name, price and button straight on the
-  // frosted glass. --snow is the snow's colour, sampled from the rail picture.
-  // The same dark ink in both themes, so it reads on the frost.
+  // clear, frosted glass. --snow is the snow's colour, sampled from the rail
+  // picture. Dark ink, on the light sky (see below for night).
   .product-card
     --snow: #deeafb
     --ink: #0d2d5e
@@ -1392,10 +1390,25 @@ html:has(.lightbox[open])
       grid-column: 3
       align-self: center
 
-// At night the dark sky would show through the glass behind the names and
-// prices, so the glass is more opaque to keep them readable
-:root[data-theme="night"] .collection.collection--christmas-collection .product-grid
-  background: linear-gradient(rgb(255 255 255 / 0.75), rgb(205 220 240 / 0.75)) padding-box
+// The glass is clear, so at night the names and prices sit on the dark sky:
+// they keep the night theme's light ink instead of the dark one. A dark halo and
+// a dark fill on the button keep them readable over the light frost too.
+:root[data-theme="night"] .collection.collection--christmas-collection .product-card
+  --ink: #dce6f5
+  --badge-text: #0a1020
+
+  h3
+    text-shadow: 0 0 3px rgb(10 16 32 / 0.95), 0 0 8px rgb(10 16 32 / 0.7)
+
+  // On the frost along the bottom: backed like the button
+  .product-card__price
+    padding: 0 8px
+    border-radius: 6px
+    background: rgb(10 16 32 / 0.6)
+
+  > .add-to-cart,
+  > .cart-stepper
+    background: rgb(10 16 32 / 0.6)
 
 // Tablets: still four panes a row, a little smaller, with a thinner frame and bars
 @media (max-width: 1100px)

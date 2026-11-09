@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, test } from "vitest";
-import { fixture, fixtureCollections, fixtureProducts } from "@/test/fixtures";
+import { fixture, fixtureCollections, fixtureProducts, listedFixtureProducts } from "@/test/fixtures";
 import { createTestDb, seedFixtures } from "@/test/test-db";
 import { createCatalogueReader } from "./catalogue-reader";
 import { products } from "./schema";
@@ -15,7 +15,15 @@ beforeEach(async () => {
 afterEach(() => testDb.cleanup());
 
 test("products come back complete and in order", async () => {
-  expect(await reader.listProducts()).toEqual(fixtureProducts);
+  expect(await reader.listProducts({ includeHidden: true })).toEqual(fixtureProducts);
+});
+
+test("pieces are left out of listings unless asked for", async () => {
+  expect(await reader.listProducts()).toEqual(listedFixtureProducts);
+  const floral = await reader.listProducts({ collection: "floral", includeHidden: true });
+  expect(floral.filter((p) => p.hidden).map((p) => p.slug)).toEqual(["bauble-01", "bauble-02", "bauble-03"]);
+  // Still found by slug, for the cart and orders
+  expect(await reader.getProduct("bauble-02")).toEqual(fixture("bauble-02"));
 });
 
 test("collections come back complete and in order", async () => {

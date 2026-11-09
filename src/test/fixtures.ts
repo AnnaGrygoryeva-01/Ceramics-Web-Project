@@ -31,7 +31,21 @@ export const fixtureProducts: Product[] = [
     },
     ...brush,
   },
+  // A one-of-a-kind product: pick one piece, each a hidden product with its own stock
+  {
+    id: "id-bauble",
+    slug: "bauble",
+    name: "Bauble",
+    price: 1800,
+    options: { label: "Piece", count: 1, values: { "No. 1": "bauble-01", "No. 2": "bauble-02", "No. 3": "bauble-03" } },
+    ...floral,
+  },
+  { id: "id-bauble-01", slug: "bauble-01", name: "Bauble, No. 1", price: 1800, stock: 1, hidden: true, ...floral },
+  { id: "id-bauble-02", slug: "bauble-02", name: "Bauble, No. 2", price: 1800, stock: 0, hidden: true, ...floral },
+  { id: "id-bauble-03", slug: "bauble-03", name: "Bauble, No. 3", price: 1800, stock: 1, hidden: true, ...floral },
 ];
+
+export const listedFixtureProducts = fixtureProducts.filter((p) => !p.hidden);
 
 export const lookup: ProductLookup = (slug) => fixtureProducts.find((p) => p.slug === slug);
 

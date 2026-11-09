@@ -31,6 +31,9 @@ export const products = sqliteTable(
     stock: integer(), // NULL for products with options, which use up the stock of their picks
     optionLabel: text("option_label"),
     optionCount: integer("option_count"),
+    // One piece of a one-of-a-kind product, e.g. "Bow Ornament, No. 2". It's
+    // picked through that product's options and isn't listed on its own.
+    hidden: integer({ mode: "boolean" }).notNull().default(false),
     position: integer().notNull(),
   },
   (t) => [index("products_collection_id_idx").on(t.collectionId)],

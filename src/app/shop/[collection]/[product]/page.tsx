@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import AddToCartButton from "@/components/AddToCartButton";
 import ProductImage from "@/components/ProductImage";
 import SnowBackground from "@/components/SnowBackground";
-import { formatPrice, hasSnow } from "@/lib/products";
+import { formatPrice, hasSnow, type Product as ProductData } from "@/lib/products";
 import { getCatalogue } from "@/server/catalogue";
 
 export async function generateMetadata({
@@ -34,7 +34,9 @@ async function Product({ params }: Pick<PageProps<"/shop/[collection]/[product]"
     catalogue.getProduct(productSlug),
     catalogue.getCollection(collectionSlug),
   ]);
-  if (!product || !collection || product.collection !== collection.slug) notFound();
+  // A piece is reached through its product's page
+  if (!product || product.hidden || !collection || product.collection !== collection.slug) notFound();
+  const pieces = await getPieces(product);
 
   return (
     <article>
@@ -47,6 +49,33 @@ async function Product({ params }: Pick<PageProps<"/shop/[collection]/[product]"
       {/* Sets have no stock of their own, it depends on the brushes picked */}
       {!product.options && <p>{product.stock ? `${product.stock} in stock` : "Sold out"}</p>}
       <AddToCartButton product={product} />
+      {/* Every piece is a little different, so show them all to pick from */}
+      {pieces.length > 0 && (
+        <ul className="pieces">
+          {pieces.map(({ name, piece }) => (
+            <li key={name}>
+              <ProductImage product={piece} sizes="200px" />
+              <span>
+                {name}
+                {!piece.stock && " (sold)"}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
     </article>
   );
+}
+
+// The pieces of a one-of-a-kind product (a single pick from hidden products), by
+// the name the picker shows. None for other products, including sets.
+async function getPieces(product: ProductData) {
+  const { options } = product;
+  if (options?.count !== 1) return [];
+  const catalogue = await getCatalogue();
+  const all = await catalogue.listProducts({ collection: product.collection, includeHidden: true });
+  return Object.entries(options.values).flatMap(([name, slug]) => {
+    const piece = all.find((p) => p.slug === slug);
+    return piece?.hidden ? [{ name, piece }] : [];
+  });
 }

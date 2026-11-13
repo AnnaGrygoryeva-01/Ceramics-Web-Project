@@ -552,7 +552,8 @@ main:has(> .product-page:not([style*="display: none"]))
 .product__photos
   .product-image:not(.carousel__slide),
   .carousel__track
-    border: 6px solid #deeafb
+    // As thick as the frame of the enlarged photo
+    border: 3px solid #deeafb
     border-radius: 2px
     box-shadow: 0 6px 18px rgb(13 45 94 / 0.25)
 
@@ -563,6 +564,11 @@ main:has(> .product-page:not([style*="display: none"]))
   .product
     grid-template-columns: minmax(0, 1fr)
     gap: 16px
+
+    // Sized to the screen so the name fits on one line: the longest,
+    // "Christmas Tree Ornament", is about 13.5 times the font size wide
+    h1
+      font-size: min(2rem, (100vw - 32px) / 14)
 
 // Photos of a product with pieces, one at a time (see ProductPhotos). The track
 // scrolls sideways, snapping to each photo, so it can be swiped on phones.
@@ -973,6 +979,32 @@ main:has(> .product-page:not([style*="display: none"]))
   &::backdrop
     background: transparent
 
+// iPads and computers: a product photo enlarged to half the size a phone gets,
+// so it doesn't fill the screen
+@media (min-width: 561px)
+  .lightbox--blur .lightbox__frame--photo img
+    max-width: min(45vw, 550px)
+    max-height: calc((100dvh - 128px) / 2)
+
+// On a product page the page itself blurs behind the photo
+.lightbox--blur::backdrop
+  background: rgb(13 45 94 / 0.25)
+  // No -webkit- copy: the build adds it for Safari, and with both it kept only that
+  backdrop-filter: blur(8px)
+
+// A photo on the product page, clicked to show it large (see ProductPhotos)
+.photo-enlarge
+  display: block
+  width: 100%
+  padding: 0
+  border: 0
+  background: none
+  cursor: zoom-in
+
+  &:focus-visible
+    outline: 2px solid var(--nav-current)
+    outline-offset: -2px
+
 // Stop the page scrolling behind it
 html:has(.lightbox[open])
   overflow: hidden
@@ -1000,29 +1032,44 @@ html:has(.lightbox[open])
     max-width: min(90vw, 1100px)
     max-height: calc(100dvh - 128px)
 
+// A round, frosted button with a thin drawn ×, the same in both themes
 .lightbox__close
   position: fixed
   top: 20px
   right: 20px
+  display: grid
+  place-items: center
   width: 44px
   height: 44px
   padding: 0
-  border: 1px solid currentColor
-  background: var(--surface)
-  color: inherit
-  font: inherit
-  font-size: 1.5rem
-  line-height: 1
+  border: 1px solid rgb(255 255 255 / 0.7)
+  border-radius: 50%
+  background: rgb(255 255 255 / 0.8)
+  backdrop-filter: blur(6px)
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.25)
+  color: #0d2d5e
   cursor: pointer
-  transition: background-color 0.2s ease, color 0.2s ease
+  transition: background-color 0.2s ease, transform 0.2s ease
+
+  svg
+    width: 18px
+    height: 18px
+    fill: none
+    stroke: currentColor
+    stroke-width: 1.75
+    stroke-linecap: round
 
   &:hover
-    background: var(--ink)
-    color: var(--badge-text)
+    background: #fff
+    transform: rotate(90deg)
 
   &:focus-visible
     outline: 2px solid var(--nav-current)
     outline-offset: 2px
+
+@media (prefers-reduced-motion: reduce)
+  .lightbox__close:hover
+    transform: none
 
 @keyframes lightbox-in
   from

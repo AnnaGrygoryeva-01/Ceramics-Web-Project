@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useProductLookup } from "@/lib/catalogue-store";
 import type { Product } from "@/lib/products";
 import { getPieces, usePiece } from "./PieceChoice";
@@ -13,11 +14,12 @@ type Props = {
   sizes: string;
   priority?: boolean;
   href?: string; // Makes the photos a link, e.g. to the product page from a card
+  enlarge?: boolean; // Clicking a photo shows it large, over the blurred page
 };
 
 // The product's photo, or for a product with pieces a carousel of every piece,
 // in step with the piece picker. Arrows, dots, or swiping move between them.
-export default function ProductPhotos({ product, sizes, priority, href }: Props) {
+export default function ProductPhotos({ product, sizes, priority, href, enlarge }: Props) {
   const getProduct = useProductLookup();
   const [picked, setPicked] = usePiece(product.options);
   const pieces = getPieces(product, getProduct);
@@ -52,17 +54,61 @@ export default function ProductPhotos({ product, sizes, priority, href }: Props)
     }, 120);
   }
 
-  const linked = (photo: ReactNode) =>
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const [enlarged, setEnlarged] = useState<{ src: string; alt: string }>();
+  function show(src: string | undefined, alt: string) {
+    if (!src) return;
+    setEnlarged({ src, alt });
+    dialogRef.current?.showModal();
+  }
+
+  const linked = (photo: ReactNode, src: string | undefined, alt: string) =>
     href ? (
       // The product name next to the photos is the link for keyboards and screen readers
       <Link href={href} prefetch tabIndex={-1} aria-hidden="true">
         {photo}
       </Link>
+    ) : enlarge && src ? (
+      <button type="button" className="photo-enlarge" aria-label={`Enlarge: ${alt}`} onClick={() => show(src, alt)}>
+        {photo}
+      </button>
     ) : (
       photo
     );
 
-  if (pieces.length < 2) return linked(<ProductImage product={product} sizes={sizes} priority={priority} />);
+  // Esc or a click beside the photo closes it (built into <dialog>), and focus
+  // goes back to the photo
+  const lightbox = enlarge && (
+    <dialog
+      ref={dialogRef}
+      className="lightbox lightbox--blur"
+      aria-label={enlarged?.alt ?? "Enlarged photo"}
+      onClose={() => setEnlarged(undefined)}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) dialogRef.current?.close();
+      }}
+    >
+      {enlarged && (
+        <div className="lightbox__frame lightbox__frame--photo">
+          <Image src={enlarged.src} alt={enlarged.alt} width={0} height={0} sizes="90vw" />
+        </div>
+      )}
+      <button type="button" className="lightbox__close" aria-label="Close" onClick={() => dialogRef.current?.close()}>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+    </dialog>
+  );
+
+  if (pieces.length < 2) {
+    return (
+      <>
+        {linked(<ProductImage product={product} sizes={sizes} priority={priority} />, product.image, product.name)}
+        {lightbox}
+      </>
+    );
+  }
 
   const go = (i: number) => setPicked(pieces[i].name);
 
@@ -77,7 +123,11 @@ export default function ProductPhotos({ product, sizes, priority, href }: Props)
             aria-roledescription="slide"
             aria-label={`${name}, ${i + 1} of ${pieces.length}`}
           >
-            {linked(<PhotoOrPlaceholder src={piece.image} alt={piece.name} sizes={sizes} priority={priority && i === 0} />)}
+            {linked(
+              <PhotoOrPlaceholder src={piece.image} alt={piece.name} sizes={sizes} priority={priority && i === 0} />,
+              piece.image,
+              piece.name,
+            )}
             {!piece.stock && <span className="carousel__sold">Sold</span>}
           </div>
         ))}
@@ -111,6 +161,7 @@ export default function ProductPhotos({ product, sizes, priority, href }: Props)
           />
         ))}
       </div>
+      {lightbox}
     </div>
   );
 }

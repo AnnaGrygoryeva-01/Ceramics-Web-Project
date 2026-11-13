@@ -38,6 +38,24 @@ describe("ProductPhotos", () => {
     expect(document.querySelector("a")).toHaveAttribute("href", "/shop/floral/vase");
   });
 
+  test("on the product page, clicking the photo shows it large, until closed", async () => {
+    const user = userEvent.setup();
+    render(<ProductPhotos product={{ ...fixture("vase"), image: "/vase.jpg" }} sizes="300px" enlarge />);
+    const dialog = document.querySelector("dialog")!;
+
+    await user.click(screen.getByRole("button", { name: "Enlarge: Vase" }));
+    expect(dialog.open).toBe(true);
+    expect(dialog.querySelector("img")).toHaveAttribute("src", expect.stringContaining("vase.jpg"));
+
+    await user.click(screen.getByRole("button", { name: "Close", hidden: true }));
+    expect(dialog.open).toBe(false);
+  });
+
+  test("without a photo there is nothing to enlarge", () => {
+    render(<ProductPhotos product={fixture("vase")} sizes="300px" enlarge />);
+    expect(screen.queryByRole("button", { name: /Enlarge/ })).not.toBeInTheDocument();
+  });
+
   test("a set keeps a single photo too", () => {
     render(<ProductPhotos product={fixture("brush-set")} sizes="300px" />);
     expect(screen.queryByRole("group", { name: /Photos of/ })).not.toBeInTheDocument();

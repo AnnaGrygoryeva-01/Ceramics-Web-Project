@@ -49,7 +49,7 @@ async function Product({ params }: Pick<PageProps<"/shop/[collection]/[product]"
       <div className="product">
         <PieceChoiceProvider>
           <div className="product__photos">
-            <ProductPhotos product={product} sizes="(max-width: 700px) 100vw, 420px" priority />
+            <ProductPhotos product={product} sizes="(max-width: 700px) 100vw, 420px" priority enlarge />
           </div>
           <div className="product__details">
             <h1>{product.name}</h1>

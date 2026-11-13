@@ -88,13 +88,9 @@ describe("CartView", () => {
     expect(screen.getByText(/Your cart is empty/)).toBeInTheDocument();
   });
 
-  test("checkout isn't built yet", async () => {
-    const user = userEvent.setup();
-    const alert = vi.spyOn(window, "alert").mockImplementation(() => {});
+  test("links to the checkout", () => {
     setQuantity("vase", 1);
     render(<CartView />);
-    await user.click(screen.getByRole("button", { name: "Checkout" }));
-    expect(alert).toHaveBeenCalledWith("Checkout is not implemented yet.");
-    alert.mockRestore();
+    expect(screen.getByRole("link", { name: "Checkout" })).toHaveAttribute("href", "/checkout");
   });
 });

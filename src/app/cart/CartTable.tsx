@@ -1,33 +1,25 @@
 import Link from "next/link";
-import { formatPrice, productUrl, type Product } from "@/lib/products";
-
-type Line = {
-  key: string;
-  product: Product;
-  choices: string[];
-  price: number; // Each, in pence: a piece's own price
-  qty: number;
-  canIncrease: boolean;
-};
+import { cartTotal, type CartLine } from "@/lib/cart-lines";
+import { formatPrice, productUrl } from "@/lib/products";
 
 type Props = {
-  lines: Line[];
+  lines: CartLine[];
   onSetQuantity: (key: string, qty: number) => void;
   onClear: () => void;
 };
 
 export default function CartTable({ lines, onSetQuantity, onClear }: Props) {
-  const total = lines.reduce((sum, { price, qty }) => sum + price * qty, 0);
+  const total = cartTotal(lines);
 
   return (
     <>
-      <table>
+      <table className="cart-table">
         <thead>
           <tr>
             <th>Item</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Subtotal</th>
+            <th className="cart-table__number cart-table__price">Price</th>
+            <th className="cart-table__qty">Quantity</th>
+            <th className="cart-table__number cart-table__subtotal">Subtotal</th>
             <th></th>
           </tr>
         </thead>
@@ -38,8 +30,8 @@ export default function CartTable({ lines, onSetQuantity, onClear }: Props) {
                 <Link href={productUrl(product)} prefetch>{product.name}</Link>
                 {choices.length > 0 && <span className="cart-choices">{choices.join(", ")}</span>}
               </td>
-              <td>{formatPrice(price)}</td>
-              <td>
+              <td className="cart-table__number cart-table__price">{formatPrice(price)}</td>
+              <td className="cart-table__qty">
                 <div className="cart-stepper cart-stepper--small">
                   <button
                     type="button"
@@ -59,7 +51,7 @@ export default function CartTable({ lines, onSetQuantity, onClear }: Props) {
                   </button>
                 </div>
               </td>
-              <td>{formatPrice(price * qty)}</td>
+              <td className="cart-table__number cart-table__subtotal">{formatPrice(price * qty)}</td>
               <td>
                 <button type="button" className="button button--small" onClick={() => onSetQuantity(key, 0)}>
                   Remove
@@ -77,9 +69,9 @@ export default function CartTable({ lines, onSetQuantity, onClear }: Props) {
         <button type="button" className="button" onClick={onClear}>
           Clear cart
         </button>
-        <button type="button" className="button" onClick={() => alert("Checkout is not implemented yet.")}>
+        <Link href="/checkout" className="button" prefetch>
           Checkout
-        </button>
+        </Link>
       </div>
     </>
   );

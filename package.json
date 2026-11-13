@@ -10,14 +10,18 @@
     "test": "vitest run",
     "publish": "./build-push.sh",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "stock": "tsx --env-file=.env scripts/stock.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
+    "@stripe/react-stripe-js": "^7.1.0",
+    "@stripe/stripe-js": "^10.3.0",
     "drizzle-orm": "^0.45.4",
     "next": "16.4.2",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "stripe": "^23.1.0"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.2",
@@ -33,6 +37,7 @@
     "eslint-config-next": "16.4.2",
     "jsdom": "^29.1.1",
     "sass": "^1.105.2",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^5.0.5"
   }

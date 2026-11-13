@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import { formatPrice } from "@/lib/products";
+import { FREE_SHIPPING_FROM, STANDARD_SHIPPING } from "@/lib/shipping";
 
 export const metadata: Metadata = { title: "FAQ" };
 
-const faqs = [
+// An answer is one paragraph, or several. Delivery prices come from
+// src/data/shipping.json, so they match checkout.
+const faqs: { q: string; a: string | string[] }[] = [
   {
     q: "Are your pieces food safe?",
     a: "Yes. All functional pieces are glazed with lead-free, food-safe glazes and fired to stoneware temperatures.",
@@ -16,8 +20,19 @@ const faqs = [
     a: "Every piece is made by hand, so small variations in shape, size and glaze are part of the charm. No two are identical.",
   },
   {
-    q: "How long does shipping take?",
-    a: "Orders ship within 3–5 business days. Every piece is carefully wrapped to arrive safely.",
+    q: "How much is delivery?",
+    a: [
+      `UK delivery is ${formatPrice(STANDARD_SHIPPING)}, and free on orders of ${formatPrice(FREE_SHIPPING_FROM)} or more.`,
+      "We deliver anywhere in the UK, but not to Jersey, Guernsey or the Isle of Man at the moment.",
+    ],
+  },
+  {
+    q: "How long does delivery take?",
+    a: [
+      "Dispatch: orders are packed and posted within 1–3 working days (Mon–Fri). Every piece is carefully wrapped to arrive safely.",
+      "Delivery: sent by Royal Mail Tracked 48, which aims to deliver in 2–3 working days after dispatch. You’ll receive a tracking link by email.",
+      "So please allow around 3–6 working days in total. Remote areas may take a little longer.",
+    ],
   },
   {
     q: "What if my order arrives broken?",
@@ -36,7 +51,9 @@ export default function FaqPage() {
       {faqs.map(({ q, a }) => (
         <details key={q}>
           <summary>{q}</summary>
-          <p>{a}</p>
+          {(Array.isArray(a) ? a : [a]).map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
         </details>
       ))}
     </>

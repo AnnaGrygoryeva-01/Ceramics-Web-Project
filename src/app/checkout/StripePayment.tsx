@@ -43,6 +43,9 @@ async function quoteShipping(checkoutId: string, postcode: string) {
 function PaymentForm({ checkoutId }: { checkoutId: string }) {
   const result = useCheckoutForm();
   const [error, setError] = useState<string>();
+  // Why the address can't be delivered to, e.g. a Jersey postcode. Paying is
+  // blocked until it changes.
+  const [addressProblem, setAddressProblem] = useState<string>();
   const quoted = useRef<string>(undefined); // The postcode delivery was last worked out for
   const changeAppearance = result.type === "success" ? result.checkout.changeAppearance : undefined;
 
@@ -63,17 +66,18 @@ function PaymentForm({ checkoutId }: { checkoutId: string }) {
     const postcode = value.shippingAddress?.address.postal_code?.trim();
     if (!status.shippingAddress?.complete || !postcode || postcode === quoted.current) return;
     quoted.current = postcode;
+    setError(undefined);
     const update = await checkout.runServerUpdate(() => quoteShipping(checkoutId, postcode));
-    if (update.type === "error") {
-      quoted.current = undefined;
-      setError(update.error.message);
-    } else {
-      setError(undefined);
-    }
+    setAddressProblem(update.type === "error" ? update.error.message : undefined);
   }
 
-  // Stripe sends the customer to /checkout/complete once it's paid
+  // Stripe sends the customer to /checkout/complete once it's paid. Without a
+  // deliverable address nothing is charged.
   async function onConfirm(event: StripeCheckoutFormConfirmEvent) {
+    if (addressProblem) {
+      setError(addressProblem);
+      return;
+    }
     const confirmed = await checkout.confirm({ formConfirmEvent: event });
     if (confirmed.type === "error") setError(confirmed.error.message);
   }
@@ -81,9 +85,9 @@ function PaymentForm({ checkoutId }: { checkoutId: string }) {
   return (
     <>
       <CheckoutForm onChange={onChange} onConfirm={onConfirm} />
-      {error && (
+      {(error ?? addressProblem) && (
         <p className="contact-form__error" role="alert">
-          {error}
+          {error ?? addressProblem}
         </p>
       )}
     </>

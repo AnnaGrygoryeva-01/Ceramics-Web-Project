@@ -40,22 +40,25 @@ describe("CheckoutView", () => {
     render(<CheckoutView />);
     expect(screen.getByText("Bauble")).toBeInTheDocument();
     expect(screen.getByText("No. 3")).toBeInTheDocument();
-    expect(screen.getByText("£37.00")).toBeInTheDocument();
+    expect(screen.getAllByText("£37.00")).toHaveLength(2); // Subtotal and total, delivery being free
     expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Back to cart" })).toHaveAttribute("href", "/cart");
   });
 
-  test("says how far an order is from free delivery", () => {
+  test("adds UK delivery, and says how far the order is from free delivery", () => {
     setQuantity("bowl", 1);
     render(<CheckoutView />);
-    expect(screen.getByText("From your postcode")).toBeInTheDocument();
+    expect(screen.getByText("£4.95")).toBeInTheDocument();
+    expect(screen.getByText("£19.95")).toBeInTheDocument(); // £15.00 + £4.95
     expect(screen.getByText(/add £15\.00 more/)).toBeInTheDocument();
+    expect(screen.getByText(/not to Jersey, Guernsey or the Isle of Man/)).toBeInTheDocument();
   });
 
   test("delivery is free from £30", () => {
     setQuantity("bowl", 2);
     render(<CheckoutView />);
     expect(screen.getByText("Free")).toBeInTheDocument();
+    expect(screen.getAllByText("£30.00")).toHaveLength(3); // The bowls, subtotal and total
   });
 
   test("sends what's in the cart, without prices, then shows Stripe's form", async () => {

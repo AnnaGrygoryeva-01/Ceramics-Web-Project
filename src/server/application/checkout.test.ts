@@ -10,6 +10,7 @@ const shippingRates: ShippingRates = {
   freeFrom: 3000,
   standard: { name: "UK delivery", price: 495 },
   zones: [{ name: "Northern Ireland delivery", price: 895, postcodes: ["BT"] }],
+  notDelivered: ["JE"],
 };
 
 const openCheckout: Checkout = { id: "cs_test_1", orderId: "order-1", status: "open", paid: false, subtotal: 1500 };
@@ -83,6 +84,14 @@ describe("quoteShipping", () => {
     payments.getCheckout.mockResolvedValue({ ...openCheckout, subtotal: 4800 });
     await quoteShipping(deps, "cs_test_1", "BT1 5GS");
     expect(payments.setShipping).toHaveBeenCalledWith("cs_test_1", { name: "Northern Ireland delivery", price: 0 });
+  });
+
+  test("turns down an area that isn't delivered to", async () => {
+    expect(await quoteShipping(deps, "cs_test_1", "JE2 3AB")).toEqual({
+      ok: false,
+      message: "Sorry, we can't deliver to Jersey, Guernsey or the Isle of Man at the moment.",
+    });
+    expect(payments.setShipping).not.toHaveBeenCalled();
   });
 
   test("turns down a postcode outside the UK", async () => {

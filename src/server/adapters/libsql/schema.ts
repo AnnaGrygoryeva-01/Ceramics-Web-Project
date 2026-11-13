@@ -14,15 +14,21 @@ import { ORDER_STATUSES } from "../../domain/order";
 export const orders = sqliteTable("orders", {
   id: text().primaryKey(), // UUID
   status: text({ enum: ORDER_STATUSES }).notNull().default("pending"),
-  customerName: text("customer_name").notNull(),
-  customerEmail: text("customer_email").notNull(),
-  addressLine1: text("address_line1").notNull(),
+  // The customer and address come from Stripe once the order is paid, so they're
+  // empty until then
+  customerName: text("customer_name"),
+  customerEmail: text("customer_email"),
+  addressLine1: text("address_line1"),
   addressLine2: text("address_line2"),
-  city: text().notNull(),
-  postcode: text().notNull(),
-  country: text().notNull(),
+  city: text(),
+  postcode: text(),
+  country: text(),
+  // The items when the order is placed, and items plus delivery once it's paid
   totalPence: integer("total_pence").notNull(),
+  shippingPence: integer("shipping_pence"),
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+  paidAt: integer("paid_at", { mode: "timestamp_ms" }),
+  stripeCheckoutId: text("stripe_checkout_id"), // The Stripe Checkout Session, to look the payment up in Stripe
 });
 
 export const orderItems = sqliteTable(

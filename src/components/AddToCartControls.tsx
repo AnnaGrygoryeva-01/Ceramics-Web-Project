@@ -33,11 +33,18 @@ export default function AddToCartControls(props: Props) {
     );
   }
 
+  // Other picks of a set (or other pieces) already in the cart make the label longer
+  const withCount = inCart > 0 && !soldOut;
   return (
-    <button type="button" className="add-to-cart" disabled={soldOut || !available} onClick={onAdd}>
+    <button
+      type="button"
+      className={withCount ? "add-to-cart add-to-cart--with-count" : "add-to-cart"}
+      disabled={soldOut || !available}
+      onClick={onAdd}
+    >
       {soldOut ? "Sold out" : available || loading ? "Add to cart" : unavailable}
       {/* Other picks of a set already in the cart */}
-      {inCart > 0 && !soldOut && ` (${inCart} in your cart)`}
+      {withCount && ` (${inCart} in your cart)`}
     </button>
   );
 }

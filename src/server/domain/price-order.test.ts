@@ -1,11 +1,11 @@
 import { describe, expect, test } from "vitest";
-import { fixtureCustomer as customer, fixtureProducts } from "@/test/fixtures";
+import { fixtureProducts } from "@/test/fixtures";
 import type { OrderRequestItem } from "./order";
 import { priceOrder } from "./price-order";
 
 const price = (...items: Partial<OrderRequestItem>[]) =>
   priceOrder(
-    { customer, items: items.map((item) => ({ slug: "vase", quantity: 1, choices: [], ...item })) },
+    { items: items.map((item) => ({ slug: "vase", quantity: 1, choices: [], ...item })) },
     fixtureProducts,
   );
 

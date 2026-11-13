@@ -40,26 +40,28 @@ export default function CartTable({ lines, onSetQuantity, onClear }: Props) {
               </td>
               <td>{formatPrice(price)}</td>
               <td>
-                <button
-                  type="button"
-                  aria-label="Decrease quantity"
-                  onClick={() => onSetQuantity(key, qty - 1)}
-                >
-                  −
-                </button>{" "}
-                {qty}{" "}
-                <button
-                  type="button"
-                  aria-label="Increase quantity"
-                  disabled={!canIncrease}
-                  onClick={() => onSetQuantity(key, qty + 1)}
-                >
-                  +
-                </button>
+                <div className="cart-stepper cart-stepper--small">
+                  <button
+                    type="button"
+                    aria-label="Decrease quantity"
+                    onClick={() => onSetQuantity(key, qty - 1)}
+                  >
+                    −
+                  </button>
+                  <span>{qty}</span>
+                  <button
+                    type="button"
+                    aria-label="Increase quantity"
+                    disabled={!canIncrease}
+                    onClick={() => onSetQuantity(key, qty + 1)}
+                  >
+                    +
+                  </button>
+                </div>
               </td>
               <td>{formatPrice(price * qty)}</td>
               <td>
-                <button type="button" onClick={() => onSetQuantity(key, 0)}>
+                <button type="button" className="button button--small" onClick={() => onSetQuantity(key, 0)}>
                   Remove
                 </button>
               </td>
@@ -71,12 +73,14 @@ export default function CartTable({ lines, onSetQuantity, onClear }: Props) {
       <p>
         <strong>Total: {formatPrice(total)}</strong>
       </p>
-      <button type="button" onClick={onClear}>
-        Clear cart
-      </button>{" "}
-      <button type="button" onClick={() => alert("Checkout is not implemented yet.")}>
-        Checkout
-      </button>
+      <div className="cart-actions">
+        <button type="button" className="button" onClick={onClear}>
+          Clear cart
+        </button>
+        <button type="button" className="button" onClick={() => alert("Checkout is not implemented yet.")}>
+          Checkout
+        </button>
+      </div>
     </>
   );
 }

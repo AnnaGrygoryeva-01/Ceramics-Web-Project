@@ -24,5 +24,9 @@ export default defineConfig({
         test: { name: "server", environment: "node", include: SERVER_TESTS },
       },
     ],
+    coverage: {
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: ["src/**/*.test.{ts,tsx}", "src/test/**"],
+    },
   },
 });

@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { formatPrice, productUrl, type Product } from "@/lib/products";
+import { productUrl, type Product } from "@/lib/products";
 import AddToCartButton from "./AddToCartButton";
 import { PieceChoiceProvider } from "./PieceChoice";
 import ProductPhotos from "./ProductPhotos";
+import ProductPrice from "./ProductPrice";
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
@@ -16,7 +17,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <h3>
           <Link href={productUrl(product)} prefetch>{product.name}</Link>
         </h3>
-        <p className="product-card__price">{formatPrice(product.price)}</p>
+        <ProductPrice product={product} className="product-card__price" />
         {/* The photos pick the piece: swipe or use the arrows */}
         <AddToCartButton product={product} piecePicker={false} />
       </PieceChoiceProvider>

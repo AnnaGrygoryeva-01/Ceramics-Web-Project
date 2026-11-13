@@ -2,13 +2,14 @@
   {
     "slug": "floral-bauble-round",
     "name": "Floral Bauble, Round",
-    "price": 1800,
     "description": "Hand-built ceramic bauble with raised flowers, softly washed in blue. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-floral-01.jpeg",
     "variants": [
       {
         "slug": "floral-bauble-round-01",
         "label": "No. 1",
+        "price": 1500,
+        "size": "6 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-floral-01.jpeg",
         "stock": 1
       }
@@ -17,46 +18,54 @@
   {
     "slug": "small-star-ornament",
     "name": "Small Star Ornament",
-    "price": 1800,
     "description": "Hand-built ceramic star, hand-painted with blue brushstroke leaves and red dots. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-star-01.jpeg",
     "variants": [
       {
         "slug": "small-star-ornament-01",
         "label": "No. 1",
+        "price": 700,
+        "size": "4 × 4 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-star-01.jpeg",
-        "stock": 1
+        "stock": 2
       }
     ]
   },
   {
     "slug": "bow-ornament",
     "name": "Bow Ornament",
-    "price": 1800,
     "description": "Hand-built ceramic bow, hand-painted with Petrykivka-inspired leaf garlands in cobalt blue. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-bow-01.jpeg",
     "variants": [
       {
         "slug": "bow-ornament-01",
         "label": "No. 1",
+        "price": 2000,
+        "size": "6.5 × 9 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bow-01.jpeg",
         "stock": 1
       },
       {
         "slug": "bow-ornament-02",
         "label": "No. 2",
+        "price": 2000,
+        "size": "7.5 × 8 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bow-02.jpeg",
         "stock": 1
       },
       {
         "slug": "bow-ornament-03",
         "label": "No. 3",
+        "price": 2200,
+        "size": "9 × 11 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bow-03.jpeg",
         "stock": 1
       },
       {
         "slug": "bow-ornament-04",
         "label": "No. 4",
+        "price": 1800,
+        "size": "5.5 × 8.5 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bow-04.jpeg",
         "stock": 1
       }
@@ -65,13 +74,14 @@
   {
     "slug": "floral-bauble-lantern",
     "name": "Floral Bauble, Lantern",
-    "price": 1800,
     "description": "Hand-built ceramic bauble with raised flowers, softly washed in blue. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-floral-02.jpeg",
     "variants": [
       {
         "slug": "floral-bauble-lantern-01",
         "label": "No. 1",
+        "price": 1300,
+        "size": "4.5 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-floral-02.jpeg",
         "stock": 1
       }
@@ -80,43 +90,46 @@
   {
     "slug": "large-star-ornament",
     "name": "Large Star Ornament",
-    "price": 1800,
     "description": "Hand-built ceramic star, hand-painted with blue Petrykivka leaves and red accents. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-star-02.jpeg",
     "variants": [
       {
         "slug": "large-star-ornament-01",
         "label": "No. 1",
+        "price": 1400,
+        "size": "8 × 8 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-star-02.jpeg",
-        "stock": 1
+        "stock": 2
       }
     ]
   },
   {
     "slug": "painted-bauble-round",
     "name": "Painted Bauble, Round",
-    "price": 1800,
     "description": "Hand-built ceramic bauble, hand-painted with bold cobalt Petrykivka brushstrokes. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-painted-01.jpeg",
     "variants": [
       {
         "slug": "painted-bauble-round-01",
         "label": "No. 1",
+        "price": 1400,
+        "size": "6 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-painted-01.jpeg",
-        "stock": 1
+        "stock": 2
       }
     ]
   },
   {
     "slug": "floral-bauble-bulb",
     "name": "Floral Bauble, Bulb",
-    "price": 1800,
     "description": "Hand-built ceramic bauble with raised flowers, softly washed in blue. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-floral-03.jpeg",
     "variants": [
       {
         "slug": "floral-bauble-bulb-01",
         "label": "No. 1",
+        "price": 1500,
+        "size": "5 × 7.5 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-floral-03.jpeg",
         "stock": 1
       }
@@ -125,28 +138,30 @@
   {
     "slug": "blue-star-ornament",
     "name": "Blue Star Ornament",
-    "price": 1800,
     "description": "Hand-built ceramic star, hand-painted with bold cobalt Petrykivka brushstrokes. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-star-03.jpeg",
     "variants": [
       {
         "slug": "blue-star-ornament-01",
         "label": "No. 1",
+        "price": 1000,
+        "size": "6.5 × 6.5 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-star-03.jpeg",
-        "stock": 1
+        "stock": 2
       }
     ]
   },
   {
     "slug": "painted-bauble-heart",
     "name": "Painted Bauble, Heart",
-    "price": 1800,
     "description": "Hand-built ceramic bauble, hand-painted with bold cobalt Petrykivka brushstrokes. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-painted-02.jpeg",
     "variants": [
       {
         "slug": "painted-bauble-heart-01",
         "label": "No. 1",
+        "price": 1200,
+        "size": "4.5 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-painted-02.jpeg",
         "stock": 1
       }
@@ -155,13 +170,14 @@
   {
     "slug": "floral-bauble-onion",
     "name": "Floral Bauble, Onion",
-    "price": 1800,
     "description": "Hand-built ceramic bauble with raised flowers, softly washed in blue. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-floral-04.jpeg",
     "variants": [
       {
         "slug": "floral-bauble-onion-01",
         "label": "No. 1",
+        "price": 1400,
+        "size": "5 × 7.5 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-floral-04.jpeg",
         "stock": 1
       }
@@ -170,13 +186,14 @@
   {
     "slug": "red-pretzel-ornament",
     "name": "Red Pretzel Ornament",
-    "price": 1800,
     "description": "Hand-built ceramic pretzel twist in festive red with hand-painted white dots. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-pretzel-01.jpeg",
     "variants": [
       {
         "slug": "red-pretzel-ornament-01",
         "label": "No. 1",
+        "price": 700,
+        "size": "4 × 4 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-pretzel-01.jpeg",
         "stock": 1
       }
@@ -185,34 +202,38 @@
   {
     "slug": "painted-bauble-drop",
     "name": "Painted Bauble, Drop",
-    "price": 1800,
     "description": "Hand-built ceramic bauble, hand-painted with bold cobalt Petrykivka brushstrokes. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-painted-03.jpeg",
     "variants": [
       {
         "slug": "painted-bauble-drop-01",
         "label": "No. 1",
+        "price": 1200,
+        "size": "3.5 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-painted-03.jpeg",
-        "stock": 1
+        "stock": 2
       }
     ]
   },
   {
     "slug": "floral-bauble-drop",
     "name": "Floral Bauble, Drop",
-    "price": 1800,
     "description": "Hand-built ceramic drop-shaped bauble with raised flowers, softly washed in blue. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-floral-05.jpeg",
     "variants": [
       {
         "slug": "floral-bauble-drop-01",
         "label": "No. 1",
+        "price": 1300,
+        "size": "3.5 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-floral-05.jpeg",
         "stock": 1
       },
       {
         "slug": "floral-bauble-drop-02",
         "label": "No. 2",
+        "price": 1300,
+        "size": "3.5 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-floral-06.jpeg",
         "stock": 1
       }
@@ -221,13 +242,14 @@
   {
     "slug": "blue-pretzel-ornament",
     "name": "Blue Pretzel Ornament",
-    "price": 1800,
     "description": "Hand-built ceramic pretzel twist in deep blue with hand-painted white dots. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-pretzel-02.jpeg",
     "variants": [
       {
         "slug": "blue-pretzel-ornament-01",
         "label": "No. 1",
+        "price": 700,
+        "size": "4 × 5 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-pretzel-02.jpeg",
         "stock": 1
       }
@@ -236,34 +258,38 @@
   {
     "slug": "painted-bauble-finial",
     "name": "Painted Bauble, Finial",
-    "price": 1800,
     "description": "Hand-built ceramic bauble, hand-painted with bold cobalt Petrykivka brushstrokes. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-painted-04.jpeg",
     "variants": [
       {
         "slug": "painted-bauble-finial-01",
         "label": "No. 1",
+        "price": 1200,
+        "size": "5 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-painted-04.jpeg",
-        "stock": 1
+        "stock": 3
       }
     ]
   },
   {
     "slug": "mitten-ornament",
     "name": "Mitten Ornament",
-    "price": 1800,
     "description": "Hand-built ceramic mitten with a hand-painted Petrykivka flower and a dotted cuff. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-mitten-01.jpeg",
     "variants": [
       {
         "slug": "mitten-ornament-01",
         "label": "No. 1",
+        "price": 1300,
+        "size": "5.5 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-mitten-01.jpeg",
         "stock": 1
       },
       {
         "slug": "mitten-ornament-02",
         "label": "No. 2",
+        "price": 1300,
+        "size": "5.5 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-mitten-02.jpeg",
         "stock": 1
       }
@@ -272,82 +298,94 @@
   {
     "slug": "candy-cane-ornament",
     "name": "Candy Cane Ornament",
-    "price": 1800,
     "description": "Hand-built ceramic candy cane wrapped in hand-painted blue leaf garlands and little red berries. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-candy-cane-01.jpeg",
     "variants": [
       {
         "slug": "candy-cane-ornament-01",
         "label": "No. 1",
+        "price": 1000,
+        "size": "5 × 6.5 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-candy-cane-01.jpeg",
         "stock": 1
       },
       {
         "slug": "candy-cane-ornament-02",
         "label": "No. 2",
+        "price": 1000,
+        "size": "5 × 6.5 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-candy-cane-02.jpeg",
-        "stock": 1
+        "stock": 3
       }
     ]
   },
   {
     "slug": "painted-bauble-onion",
     "name": "Painted Bauble, Onion",
-    "price": 1800,
     "description": "Hand-built ceramic bauble, hand-painted with bold cobalt Petrykivka brushstrokes. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-painted-05.jpeg",
     "variants": [
       {
         "slug": "painted-bauble-onion-01",
         "label": "No. 1",
+        "price": 1200,
+        "size": "5 × 8 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-bauble-painted-05.jpeg",
-        "stock": 1
+        "stock": 3
       }
     ]
   },
   {
     "slug": "tree-ornament",
     "name": "Christmas Tree Ornament",
-    "price": 1800,
     "description": "Hand-built ceramic Christmas tree, hand-painted with blue Petrykivka leaves and red berries. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-tree-01.jpeg",
     "variants": [
       {
         "slug": "tree-ornament-01",
         "label": "No. 1",
+        "price": 1200,
+        "size": "5 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-tree-01.jpeg",
-        "stock": 1
+        "stock": 2
       }
     ]
   },
   {
     "slug": "rocking-horse-ornament",
     "name": "Rocking Horse Ornament",
-    "price": 1800,
     "description": "Hand-built ceramic rocking horse, hand-painted with blue Petrykivka leaves and small red details. Comes with a ribbon for hanging.",
     "image": "/products/christmas-collection/christmas-ornaments/xmas-horse-01.jpeg",
     "variants": [
       {
         "slug": "rocking-horse-ornament-01",
         "label": "No. 1",
+        "price": 1400,
+        "size": "6 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-horse-01.jpeg",
         "stock": 1
       },
       {
         "slug": "rocking-horse-ornament-02",
         "label": "No. 2",
+        "price": 1400,
+        "size": "6 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-horse-02.jpeg",
         "stock": 1
       },
       {
         "slug": "rocking-horse-ornament-03",
         "label": "No. 3",
+        "price": 1400,
+        "size": "6 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-horse-03.jpeg",
         "stock": 1
       },
       {
         "slug": "rocking-horse-ornament-04",
         "label": "No. 4",
+        "price": 1400,
+        "size": "6 × 7 cm",
         "image": "/products/christmas-collection/christmas-ornaments/xmas-horse-04.jpeg",
         "stock": 1
       }

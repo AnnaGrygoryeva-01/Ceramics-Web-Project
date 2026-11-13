@@ -35,7 +35,7 @@ test("saves the order with its lines and picks, naming products by slug", async 
     customerEmail: customer.email,
     addressLine1: customer.address.line1,
     addressLine2: null,
-    totalPence: 4800 * 2 + 5500 + 1800,
+    totalPence: 4800 * 2 + 5500 + 2200,
   });
   expect(saved.createdAt).toEqual(order.createdAt);
 
@@ -43,7 +43,7 @@ test("saves the order with its lines and picks, naming products by slug", async 
   expect(lines.map((l) => [l.lineNo, l.productSlug, l.productName, l.unitPricePence, l.quantity])).toEqual([
     [0, "vase", "Vase", 4800, 2],
     [1, "brush-set", "Brush Set", 5500, 1],
-    [2, "bauble", "Bauble", 1800, 1],
+    [2, "bauble", "Bauble", 2200, 1],
   ]);
 
   const picks = await testDb.db.select().from(orderItemPicks).orderBy(orderItemPicks.lineNo, orderItemPicks.pickNo);

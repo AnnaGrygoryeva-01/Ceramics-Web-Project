@@ -4,16 +4,18 @@ import type { CatalogueReader } from "../../ports/catalogue";
 // What a file in src/data/products holds: one collection's products, in the order
 // they're shown. A product has its own stock, or options (a set that uses up the
 // stock of the products picked for it), or variants: one-of-a-kind pieces with a
-// photo and stock each, which the customer picks from.
+// photo, stock and price each, which the customer picks from. A product whose
+// variants all have a price needs none of its own.
 export type ProductFileEntry = {
   slug: string;
   name: string;
-  price: number; // in pence
+  price?: number; // in pence. The variants' price when they don't have their own
   description: string;
+  size?: string; // e.g. "6 × 7 cm"
   image?: string;
   stock?: number;
   options?: ProductOptions;
-  variants?: { slug: string; label: string; image?: string; stock: number }[];
+  variants?: { slug: string; label: string; price?: number; size?: string; image?: string; stock: number }[];
 };
 
 export type CatalogueFiles = {
@@ -22,6 +24,8 @@ export type CatalogueFiles = {
 };
 
 const PIECE_LABEL = "Piece";
+
+const isPrice = (price?: number) => Number.isInteger(price) && price! > 0;
 
 // Why the files can't be used, if they can't. Checked by the tests, so mistakes
 // show up before a deploy.
@@ -36,7 +40,10 @@ export function checkCatalogue({ collections, products }: CatalogueFiles) {
     if (!collections.some((c) => c.slug === collection)) problems.push(`${collection}: no such collection`);
   }
   for (const p of entries) {
-    if (!Number.isInteger(p.price) || p.price <= 0) problems.push(`${p.slug}: price must be whole pence above 0`);
+    const variantsPriced = !!p.variants?.length && p.variants.every((v) => v.price !== undefined);
+    if (!(variantsPriced && p.price === undefined) && !isPrice(p.price)) {
+      problems.push(`${p.slug}: price must be whole pence above 0`);
+    }
     if (p.options) {
       if (p.stock !== undefined) problems.push(`${p.slug}: a set has no stock of its own`);
       for (const slug of Object.values(p.options.values)) {
@@ -46,6 +53,9 @@ export function checkCatalogue({ collections, products }: CatalogueFiles) {
     } else if (p.variants && p.variants.length > 0) {
       if (p.stock !== undefined) problems.push(`${p.slug}: stock goes on the variants`);
       for (const v of p.variants) {
+        if (v.price !== undefined && !isPrice(v.price)) {
+          problems.push(`${v.slug}: price must be whole pence above 0`);
+        }
         if (!Number.isInteger(v.stock) || v.stock < 0) problems.push(`${v.slug}: stock must be 0 or more`);
         if (/[|,]/.test(v.label)) problems.push(`${v.slug}: label can't contain | or , (cart keys use them)`);
       }
@@ -58,16 +68,20 @@ export function checkCatalogue({ collections, products }: CatalogueFiles) {
 
 // One entry as products. Several variants become hidden products, one per piece,
 // picked through a single option; a lone variant is just the product's stock.
+// The product's price is the cheapest piece's, for sorting and until one is picked.
 function toProducts(entry: ProductFileEntry, collection: string): Product[] {
-  const { slug, name, price, description, options } = entry;
-  const variants = entry.variants ?? [];
-  const product = { slug, collection, name, price, description };
+  const { slug, name, description, size, options } = entry;
+  const variants = (entry.variants ?? []).map((v) => ({ ...v, price: (v.price ?? entry.price)! }));
+  const price = variants.length > 0 ? Math.min(...variants.map((v) => v.price)) : entry.price!;
+  const product = { slug, collection, name, price, description, size };
 
   if (options) return [{ ...product, image: entry.image, options }];
 
   if (variants.length <= 1) {
     const [only] = variants;
-    return [{ ...product, image: only?.image ?? entry.image, stock: only?.stock ?? entry.stock }];
+    return [
+      { ...product, size: only?.size ?? size, image: only?.image ?? entry.image, stock: only?.stock ?? entry.stock },
+    ];
   }
 
   return [
@@ -80,6 +94,8 @@ function toProducts(entry: ProductFileEntry, collection: string): Product[] {
       ...product,
       slug: v.slug,
       name: `${name}, ${v.label}`,
+      price: v.price,
+      size: v.size ?? size,
       image: v.image,
       stock: v.stock,
       hidden: true,

@@ -40,7 +40,7 @@ export const fixtureProducts: Product[] = [
   },
   { slug: "bauble-01", name: "Bauble, No. 1", price: 1800, stock: 1, hidden: true, ...floral },
   { slug: "bauble-02", name: "Bauble, No. 2", price: 1800, stock: 0, hidden: true, ...floral },
-  { slug: "bauble-03", name: "Bauble, No. 3", price: 1800, stock: 1, hidden: true, ...floral },
+  { slug: "bauble-03", name: "Bauble, No. 3", price: 2200, stock: 1, hidden: true, ...floral },
 ];
 
 export const listedFixtureProducts = fixtureProducts.filter((p) => !p.hidden);

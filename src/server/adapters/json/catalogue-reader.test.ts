@@ -71,6 +71,33 @@ describe("createJsonCatalogueReader", () => {
     });
   });
 
+  test("variants can have their own price, and then the product needs none", async () => {
+    const priced = createJsonCatalogueReader({
+      ...files,
+      products: {
+        xmas: [{ ...pieces, price: undefined, variants: [{ ...pieces.variants![0], price: 2200 }, { ...pieces.variants![1], price: 1900 }] }],
+      },
+    });
+    expect(await priced.getProduct("star-01")).toMatchObject({ price: 2200 });
+    expect(await priced.getProduct("star-02")).toMatchObject({ price: 1900 });
+    expect(await priced.getProduct("star")).toMatchObject({ price: 1900 }); // The cheapest, for sorting
+  });
+
+  test("a variant's size goes on its piece, or on the product for a single variant", async () => {
+    const sized = createJsonCatalogueReader({
+      ...files,
+      products: {
+        xmas: [
+          { ...pieces, variants: [{ ...pieces.variants![0], size: "6 × 7 cm" }, pieces.variants![1]] },
+          { ...lone, variants: [{ ...lone.variants![0], size: "5 × 7 cm" }] },
+        ],
+      },
+    });
+    expect(await sized.getProduct("star-01")).toMatchObject({ size: "6 × 7 cm" });
+    expect(await sized.getProduct("star-02")).not.toHaveProperty("size");
+    expect(await sized.getProduct("tree")).toMatchObject({ size: "5 × 7 cm" });
+  });
+
   test("a single variant is just the product's own stock and photo", async () => {
     expect(await reader.getProduct("tree")).toMatchObject({ stock: 1, image: "/tree-01.jpg" });
     expect(await reader.getProduct("tree")).not.toHaveProperty("options");
@@ -110,7 +137,12 @@ describe("checkCatalogue", () => {
             { ...plain, slug: "no-stock", stock: undefined },
             { ...set, stock: 1, options: { label: "Jug", count: 2, values: { Big: "nope" } } },
           ],
-          xmas: [{ ...pieces, stock: 3 }, { ...lone, slug: "star", variants: [{ slug: "x", label: "A, b", stock: -1 }] }],
+          xmas: [
+            { ...pieces, stock: 3 },
+            { ...lone, slug: "star", variants: [{ slug: "x", label: "A, b", stock: -1 }] },
+            { ...lone, slug: "angel", price: undefined, variants: [{ slug: "y", label: "A", price: 0, stock: 1 }] },
+            { ...lone, slug: "bell", price: undefined },
+          ],
           garden: [],
         },
       }),
@@ -124,6 +156,8 @@ describe("checkCatalogue", () => {
       "star: stock goes on the variants",
       "x: stock must be 0 or more",
       "x: label can't contain | or , (cart keys use them)",
+      "y: price must be whole pence above 0",
+      "bell: price must be whole pence above 0",
     ]);
   });
 });

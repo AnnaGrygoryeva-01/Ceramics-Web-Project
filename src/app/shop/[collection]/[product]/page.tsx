@@ -5,8 +5,10 @@ import { Suspense } from "react";
 import AddToCartButton from "@/components/AddToCartButton";
 import { PieceChoiceProvider } from "@/components/PieceChoice";
 import ProductPhotos from "@/components/ProductPhotos";
+import ProductPrice from "@/components/ProductPrice";
+import ProductSize from "@/components/ProductSize";
 import SnowBackground from "@/components/SnowBackground";
-import { formatPrice, hasSnow } from "@/lib/products";
+import { hasSnow } from "@/lib/products";
 import { getCatalogue } from "@/server/catalogue";
 
 export async function generateMetadata({
@@ -51,10 +53,13 @@ async function Product({ params }: Pick<PageProps<"/shop/[collection]/[product]"
           </div>
           <div className="product__details">
             <h1>{product.name}</h1>
-            <p className="product__price">{formatPrice(product.price)}</p>
+            <ProductPrice product={product} className="product__price" />
             <p>{product.description}</p>
-            {/* Sets and pieces have no stock of their own, it depends on what's picked */}
-            {!product.options && <p>{product.stock ? `${product.stock} in stock` : "Sold out"}</p>}
+            <ProductSize product={product} />
+            {/* Sets and pieces have no stock of their own, it depends on what's picked.
+                Stock is only mentioned when it's the last one. */}
+            {!product.options && product.stock === 1 && <p>1 left in stock</p>}
+            {!product.options && !product.stock && <p>Sold out</p>}
             <AddToCartButton product={product} />
           </div>
         </PieceChoiceProvider>

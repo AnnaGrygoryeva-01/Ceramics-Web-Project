@@ -795,6 +795,25 @@ main:has(> .product-page:not([style*="display: none"]))
       opacity: 0.35
       cursor: not-allowed
 
+// Smaller, for buttons in a row of a table, e.g. Remove in the cart
+.button--small
+  padding: 4px 10px
+  font-size: 0.85rem
+
+.cart-stepper--small
+  font-size: 0.85rem
+
+  span
+    padding: 0 8px
+
+  button
+    padding: 4px 9px
+
+.cart-actions
+  display: flex
+  flex-wrap: wrap
+  gap: 12px
+
 // Contact page: heading, intro and form in one 600px column, centred on the page
 .contact-page
   max-width: 600px
@@ -1254,10 +1273,15 @@ html:has(.lightbox[open])
   .product-grid
     row-gap: 40px
 
-// Phones: bigger corner flowers, since a quarter of a narrow screen is very small
+// Phones: no corner flowers, so less space is kept for them at the bottom. The
+// width stays set, as the cart icon is placed by it.
 @media (max-width: 560px)
   :root
     --corner-width: min(32vw, 43vh)
+    --page-bottom: 64px
+
+  .corner
+    display: none
 
 // Phones: one card per row. Capped in width so the photo doesn't fill the whole
 // screen height, and the button spans the card for an easier tap.

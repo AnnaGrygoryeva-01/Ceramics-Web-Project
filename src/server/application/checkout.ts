@@ -36,6 +36,11 @@ export async function startCheckout(deps: Deps, request: OrderRequest, returnUrl
   }
 }
 
+const NO_DELIVERY = {
+  "not-a-uk-postcode": "Please enter a UK postcode. We only deliver within the UK.",
+  "not-delivered": "Sorry, we can't deliver to Jersey, Guernsey or the Isle of Man at the moment.",
+};
+
 export type QuoteShippingResult = { ok: true } | { ok: false; message: string };
 
 // Sets the delivery price for the postcode the customer has typed. The order's
@@ -48,10 +53,10 @@ export async function quoteShipping(
   const checkout = await deps.payments.getCheckout(checkoutId);
   if (!checkout || checkout.status !== "open") return { ok: false, message: "This payment has expired." };
 
-  const rate = shippingFor(deps.shippingRates, postcode, checkout.subtotal);
-  if (!rate) return { ok: false, message: "Please enter a UK postcode. We only deliver within the UK." };
+  const quote = shippingFor(deps.shippingRates, postcode, checkout.subtotal);
+  if (!quote.ok) return { ok: false, message: NO_DELIVERY[quote.reason] };
 
-  await deps.payments.setShipping(checkout.id, rate);
+  await deps.payments.setShipping(checkout.id, quote.rate);
   return { ok: true };
 }
 

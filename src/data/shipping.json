@@ -1,16 +1,6 @@
 {
   "freeFrom": 3000,
   "standard": { "name": "UK delivery", "price": 495 },
-  "zones": [
-    {
-      "name": "Highlands and islands delivery",
-      "price": 995,
-      "postcodes": [
-        "AB31-38", "AB44-56", "FK17-21", "HS", "IV", "KA27-28", "KW",
-        "PA20-49", "PA60-78", "PH17-26", "PH30-44", "PH49-50", "ZE",
-        "PO30-41", "TR21-25"
-      ]
-    },
-    { "name": "Northern Ireland delivery", "price": 895, "postcodes": ["BT"] }
-  ]
+  "zones": [],
+  "notDelivered": ["JE", "GY", "IM"]
 }

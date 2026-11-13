@@ -1,6 +1,7 @@
-// Delivery is UK only. Couriers charge by area rather than distance: one price
-// for most of the UK, more for the Scottish Highlands, the islands and Northern
-// Ireland. Orders of `freeFrom` or more go free. Prices in pence.
+// Delivery is UK only, at one price (Royal Mail charges the same to every UK
+// address). Zones can charge some areas more, and `notDelivered` areas get
+// nothing: Jersey, Guernsey and the Isle of Man, which need customs forms. Orders
+// of `freeFrom` or more go free. Prices in pence.
 export type ShippingRate = { name: string; price: number };
 
 export type ShippingZone = ShippingRate & {
@@ -9,7 +10,16 @@ export type ShippingZone = ShippingRate & {
   postcodes: string[];
 };
 
-export type ShippingRates = { freeFrom: number; standard: ShippingRate; zones: ShippingZone[] };
+export type ShippingRates = {
+  freeFrom: number;
+  standard: ShippingRate;
+  zones: ShippingZone[];
+  notDelivered: string[]; // Postcode areas, written like a zone's
+};
+
+export type ShippingQuote =
+  | { ok: true; rate: ShippingRate }
+  | { ok: false; reason: "not-a-uk-postcode" | "not-delivered" };
 
 const POSTCODE = /^([A-Z]{1,2})(\d{1,2})[A-Z]?\d[A-Z]{2}$/;
 const AREA = /^([A-Z]{1,2})(?:(\d{1,2})-(\d{1,2}))?$/;
@@ -27,13 +37,13 @@ function inArea(postcode: { area: string; district: number }, pattern: string) {
   return from === undefined || (postcode.district >= Number(from) && postcode.district <= Number(to));
 }
 
-// What delivery to a postcode costs for an order of `subtotal`, or null for a
-// postcode that isn't a UK one
-export function shippingFor(rates: ShippingRates, postcode: string, subtotal: number): ShippingRate | null {
+// What delivery to a postcode costs for an order of `subtotal`, or why there's none
+export function shippingFor(rates: ShippingRates, postcode: string, subtotal: number): ShippingQuote {
   const parsed = parsePostcode(postcode);
-  if (!parsed) return null;
+  if (!parsed) return { ok: false, reason: "not-a-uk-postcode" };
+  if (rates.notDelivered.some((p) => inArea(parsed, p))) return { ok: false, reason: "not-delivered" };
   const rate = rates.zones.find((zone) => zone.postcodes.some((p) => inArea(parsed, p))) ?? rates.standard;
-  return { name: rate.name, price: subtotal >= rates.freeFrom ? 0 : rate.price };
+  return { ok: true, rate: { name: rate.name, price: subtotal >= rates.freeFrom ? 0 : rate.price } };
 }
 
 const isPence = (price: unknown) => Number.isInteger(price) && (price as number) >= 0;
@@ -46,11 +56,12 @@ export function checkShippingRates(rates: ShippingRates) {
   for (const rate of [rates.standard, ...rates.zones]) {
     if (!isPence(rate.price)) problems.push(`${rate.name}: price must be whole pence`);
   }
-  for (const zone of rates.zones) {
-    for (const pattern of zone.postcodes) {
+  const lists = [...rates.zones.map((z) => [z.name, z.postcodes] as const), ["notDelivered", rates.notDelivered] as const];
+  for (const [name, postcodes] of lists) {
+    for (const pattern of postcodes) {
       const [, , from, to] = AREA.exec(pattern) ?? [];
       if (!AREA.test(pattern) || Number(from) > Number(to)) {
-        problems.push(`${zone.name}: "${pattern}" should look like "BT" or "PA20-49"`);
+        problems.push(`${name}: "${pattern}" should look like "BT" or "PA20-49"`);
       }
     }
   }

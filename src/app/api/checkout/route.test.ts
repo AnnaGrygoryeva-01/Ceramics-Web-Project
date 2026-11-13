@@ -11,7 +11,7 @@ const orderStore = {
   markCancelled: vi.fn(async () => true),
 };
 const payments = { startCheckout: vi.fn(async () => ({ id: "cs_test_1", clientSecret: "cs_test_1_secret" })) };
-const shippingRates = { freeFrom: 3000, standard: { name: "UK delivery", price: 495 }, zones: [] };
+const shippingRates = { freeFrom: 3000, standard: { name: "UK delivery", price: 495 }, zones: [], notDelivered: [] };
 
 const post = (body: string) => POST(new Request("http://shop.test/api/checkout", { method: "POST", body }));
 const postOrder = (items: object[]) => post(JSON.stringify({ items }));

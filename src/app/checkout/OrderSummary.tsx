@@ -1,10 +1,13 @@
 import { cartTotal, type CartLine } from "@/lib/cart-lines";
 import { formatPrice } from "@/lib/products";
-import { FREE_SHIPPING_FROM } from "@/lib/shipping";
+import { FREE_SHIPPING_FROM, SHIPPING_HAS_ZONES, STANDARD_SHIPPING } from "@/lib/shipping";
 
 export default function OrderSummary({ lines }: { lines: CartLine[] }) {
   const subtotal = cartTotal(lines);
   const free = subtotal >= FREE_SHIPPING_FROM;
+  const shipping = free ? 0 : STANDARD_SHIPPING;
+  // With zones, delivery is only known once the postcode is in Stripe's form
+  const shippingText = free ? "Free" : `${SHIPPING_HAS_ZONES ? "From " : ""}${formatPrice(shipping)}`;
 
   return (
     <section className="order-summary" aria-labelledby="order-summary-heading">
@@ -27,12 +30,19 @@ export default function OrderSummary({ lines }: { lines: CartLine[] }) {
       </p>
       <p className="order-summary__row">
         <span>Delivery</span>
-        <span>{free ? "Free" : "From your postcode"}</span>
+        <span>{shippingText}</span>
       </p>
+      {!SHIPPING_HAS_ZONES && (
+        <p className="order-summary__row order-summary__total">
+          <span>Total</span>
+          <span>{formatPrice(subtotal + shipping)}</span>
+        </p>
+      )}
       <p className="order-summary__note">
         {free
           ? "Your order gets free UK delivery."
-          : `UK delivery only, worked out from your postcode when you pay. Free on orders of ${formatPrice(FREE_SHIPPING_FROM)} or more: add ${formatPrice(FREE_SHIPPING_FROM - subtotal)} more to get it.`}
+          : `Free UK delivery on orders of ${formatPrice(FREE_SHIPPING_FROM)} or more: add ${formatPrice(FREE_SHIPPING_FROM - subtotal)} more to get it.`}{" "}
+        We deliver within the UK, but not to Jersey, Guernsey or the Isle of Man.
       </p>
     </section>
   );

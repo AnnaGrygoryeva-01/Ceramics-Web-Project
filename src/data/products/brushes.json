@@ -2,7 +2,7 @@
   {
     "slug": "small-brush",
     "name": "Small Brush",
-    "price": 1900,
+    "price": 2100,
     "description": "Small brush.",
     "stock": 2,
     "image": "/products/brushes/white-background.jpg"
@@ -10,7 +10,7 @@
   {
     "slug": "medium-brush",
     "name": "Medium Brush",
-    "price": 1900,
+    "price": 2100,
     "description": "Medium brush.",
     "stock": 6,
     "image": "/products/brushes/white-background.jpg"
@@ -18,7 +18,7 @@
   {
     "slug": "large-brush",
     "name": "Large Brush",
-    "price": 2400,
+    "price": 2600,
     "description": "Large brush.",
     "stock": 1,
     "image": "/products/brushes/white-background.jpg"
@@ -26,7 +26,7 @@
   {
     "slug": "brush-set-two",
     "name": "Set of Two",
-    "price": 5500,
+    "price": 5700,
     "description": "Set of two brushes in different sizes.",
     "image": "/products/brushes/white-background.jpg",
     "options": {
@@ -42,7 +42,7 @@
   {
     "slug": "brush-set-tree",
     "name": "Set of Three",
-    "price": 5500,
+    "price": 5700,
     "description": "Set of three brushes in different sizes..",
     "image": "/products/brushes/white-background.jpg",
     "options": {

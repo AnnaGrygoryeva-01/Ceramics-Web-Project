@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCartLines } from "@/lib/cart-lines";
 import { EmptyCart } from "../cart/CartView";
 import OrderSummary from "./OrderSummary";
@@ -16,7 +17,10 @@ export default function CheckoutView() {
   return (
     <div className="checkout">
       <OrderSummary lines={lines} />
-      <p>You&rsquo;ll enter your name, email and delivery address in the secure payment form.</p>
+      <p>
+        You&rsquo;ll enter your name, email and delivery address in the secure payment form. See how I use them in
+        the <Link href="/privacy">privacy notice</Link>.
+      </p>
       <PayButton lines={lines} />
     </div>
   );

@@ -814,6 +814,18 @@ main:has(> .product-page:not([style*="display: none"]))
   flex-wrap: wrap
   gap: 12px
 
+// Privacy and other text pages: one readable column, centred on the page
+.text-page
+  max-width: 680px
+  margin-inline: auto
+
+  h2
+    margin-top: 32px
+    font-size: 1.25rem
+
+  li + li
+    margin-top: 6px
+
 // Contact page: heading, intro and form in one 600px column, centred on the page
 .contact-page
   max-width: 600px

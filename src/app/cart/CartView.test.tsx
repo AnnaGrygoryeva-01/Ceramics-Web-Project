@@ -42,6 +42,13 @@ describe("CartView", () => {
     expect(screen.getByText("Total: £151.00")).toBeInTheDocument();
   });
 
+  test("a piece is priced by the one picked", () => {
+    setQuantity("bauble|No. 3", 1);
+    render(<CartView />);
+    expect(within(row("Bauble")).getAllByText("£22.00")).toHaveLength(2); // price and subtotal
+    expect(screen.getByText("Total: £22.00")).toBeInTheDocument();
+  });
+
   test("changes quantities and removes lines", async () => {
     const user = userEvent.setup();
     setQuantity("vase", 1);

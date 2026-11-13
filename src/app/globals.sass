@@ -42,6 +42,19 @@
 html, body
   margin: 0
 
+// Georgia only has old-style digits, which go up and down ("6 × 7 cm"), so the
+// digits alone come from Times New Roman, whose digits sit on one line
+@font-face
+  font-family: "Lining Digits"
+  src: local("Times New Roman"), local("TimesNewRomanPSMT")
+  unicode-range: U+0030-0039
+
+@font-face
+  font-family: "Lining Digits"
+  src: local("Times New Roman Bold"), local("TimesNewRomanPS-BoldMT")
+  font-weight: bold
+  unicode-range: U+0030-0039
+
 // Column layout so the footer is pushed to the bottom even on short pages
 body
   display: flex
@@ -50,7 +63,7 @@ body
   min-height: 100dvh
   background: var(--sky-bottom)
   color: var(--ink)
-  font-family: Georgia, "Times New Roman", serif
+  font-family: "Lining Digits", Georgia, "Times New Roman", serif
   line-height: 1.5
 
   // Gradients fixed to the screen so they look the same however long the page is.
@@ -1447,6 +1460,11 @@ html:has(.lightbox[open])
     --columns: 2
     --gap: 10px
     --k: calc(10 / 27)
+
+    // Wider than the page's text, out into most of its side padding, so the
+    // photos are bigger
+    .product-grid
+      margin-inline: -10px
 
     .carousel__arrow
       width: 24px

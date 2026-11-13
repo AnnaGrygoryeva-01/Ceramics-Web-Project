@@ -22,8 +22,16 @@ export type Product = {
   name: string
   price: number // in pence (4800 = £48.00)
   description: string
+  size?: string // e.g. "6 × 7 cm"
   stock?: number // Not set for products with options, see ProductOptions
   image?: string // Path inside /public, e.g. "/products/brushes/brush-set.jpg"
   options?: ProductOptions
   hidden?: boolean // A piece of another product, not listed on its own
+}
+
+// What one costs with these picks: the picked piece's own price for a product
+// with pieces, else the product's (a set has one price, whatever is picked)
+export function unitPrice(product: Product, choices: string[], getProduct: (slug: string) => Product | undefined) {
+  if (product.options?.count !== 1) return product.price
+  return getProduct(product.options.values[choices[0]])?.price ?? product.price
 }

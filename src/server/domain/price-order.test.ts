@@ -21,6 +21,12 @@ describe("prices", () => {
     expect(order.total).toBe(4800 * 2 + 1500);
     expect(order.lines[0]).toMatchObject({ productSlug: "vase", productName: "Vase", unitPrice: 4800 });
   });
+
+  test("a piece costs its own price", () => {
+    const order = priced({ slug: "bauble", choices: ["No. 1"] }, { slug: "bauble", choices: ["No. 3"] });
+    expect(order.lines.map((line) => line.unitPrice)).toEqual([1800, 2200]);
+    expect(order.total).toBe(1800 + 2200);
+  });
 });
 
 describe("stock demand", () => {

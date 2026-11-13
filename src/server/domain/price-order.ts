@@ -1,4 +1,4 @@
-import type { Product } from "./catalogue";
+import { unitPrice, type Product } from "./catalogue";
 import type { OrderFailure, OrderLine, OrderPick, OrderRequest, PricedOrder, StockDemand } from "./order";
 
 type PricingResult = { ok: true; order: PricedOrder } | OrderFailure;
@@ -50,7 +50,13 @@ export function priceOrder(request: OrderRequest, products: Product[]): PricingR
     const picks = resolvePicks(product, choices, bySlug);
     if (!picks) return invalid(`The choices for "${slug}" are not valid.`);
 
-    lines.push({ productSlug: product.slug, productName: product.name, unitPrice: product.price, quantity, picks });
+    lines.push({
+      productSlug: product.slug,
+      productName: product.name,
+      unitPrice: unitPrice(product, choices, (s) => bySlug.get(s)),
+      quantity,
+      picks,
+    });
   }
 
   const demand = stockDemand(lines);

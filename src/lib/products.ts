@@ -1,8 +1,9 @@
 import type { Collection, Product } from '@/server/domain/catalogue'
 
 export type { Collection, Product, ProductOptions } from '@/server/domain/catalogue'
+export { unitPrice } from '@/server/domain/catalogue'
 
-// Visual effects are the frontend's business, so this isn't in the database
+// Visual effects are the frontend's business, so this isn't in the product files
 const SNOW_COLLECTIONS = ['christmas-collection']
 
 export function hasSnow (collection: Collection) {

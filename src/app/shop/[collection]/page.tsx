@@ -16,7 +16,7 @@ export async function generateMetadata({
   return { title: (await catalogue.getCollection(collection))?.name ?? "Not found" };
 }
 
-// Reading the URL (params) and the database has to happen inside <Suspense> so
+// Reading the URL (params) and the catalogue has to happen inside <Suspense> so
 // navigations can start instantly. Links here use `prefetch`, so the content is
 // usually ready before the click.
 export default function CollectionPage({ params }: PageProps<"/shop/[collection]">) {
@@ -40,8 +40,10 @@ async function Collection({ params }: Pick<PageProps<"/shop/[collection]">, "par
     <div className={`collection collection--${collection.slug}`} style={{ "--count": products.length } as CSSProperties}>
       {hasSnow(collection) && <SnowBackground />}
       <Link href="/shop">&larr; Back to shop</Link>
-      <h1>{collection.name}</h1>
-      <p>{collection.description}</p>
+      <header className="collection__header">
+        <h1>{collection.name}</h1>
+        <p>{collection.description}</p>
+      </header>
       <SortedProductList products={products} />
       {collection.slug === "brushes" && <BrushCare />}
     </div>

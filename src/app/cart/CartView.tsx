@@ -4,6 +4,7 @@ import Link from "next/link";
 import { clearCart, setQuantity, useCart } from "@/lib/cart";
 import { canAdd, parseCartKey } from "@/lib/cart-stock";
 import { useProductLookup } from "@/lib/catalogue-store";
+import { unitPrice } from "@/lib/products";
 import CartTable from "./CartTable";
 
 function EmptyCart() {
@@ -26,7 +27,8 @@ export default function CartView() {
     const { slug, choices } = parseCartKey(key);
     const product = getProduct(slug);
     if (!product) return [];
-    return [{ key, product, choices, qty, canIncrease: canAdd(getProduct, cart, slug, choices) }];
+    const price = unitPrice(product, choices, getProduct);
+    return [{ key, product, choices, price, qty, canIncrease: canAdd(getProduct, cart, slug, choices) }];
   });
 
   if (lines.length === 0) return <EmptyCart />;

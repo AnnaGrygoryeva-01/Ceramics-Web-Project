@@ -15,7 +15,8 @@ export default function OptionPicker({ options, choices, stockLeft, onChange }: 
         <Dropdown
           key={index}
           className="option-picker__pick"
-          label={`${options.label} ${index + 1}`}
+          // Numbered only when there's more than one pick, e.g. "Brush 1" but just "Piece"
+          label={options.count > 1 ? `${options.label} ${index + 1}` : options.label}
           value={choice}
           onChange={(value) => onChange(choices.with(index, value))}
           options={Object.keys(options.values).map((value) => {

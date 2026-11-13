@@ -1,0 +1,17 @@
+[
+  {
+    "slug": "christmas-collection",
+    "name": "Christmas Collection",
+    "description": "Hand-painted Christmas tree ornaments, made one at a time. Every piece has its own small differences, so yours will be truly one of a kind."
+  },
+  {
+    "slug": "floral-collection",
+    "name": "Floral Collection",
+    "description": "Ceramic pieces decorated with hand-painted flowers inspired by Petrykivka art. Each piece carries its own small differences, so no two are exactly the same."
+  },
+  {
+    "slug": "brushes",
+    "name": "Brushes",
+    "description": "Experience the authentic soul of Ukrainian folk art with the traditional Koshashka brush. Hand-bound by master artisans and crafted from ethically gathered, ultra-soft cat fur, this indispensable tool is the secret behind the fluid, mesmerizing strokes of UNESCO-recognized Petrykivka painting."
+  }
+]

@@ -51,3 +51,48 @@ describe("a product without options", () => {
     expect(screen.getByRole("button", { name: "All in your cart" })).toBeDisabled();
   });
 });
+
+describe("a one-of-a-kind product", () => {
+  test("starts on the first piece that isn't sold and adds it", async () => {
+    const user = userEvent.setup();
+    render(<AddToCartButton product={fixture("bauble")} />);
+    // Just "Piece", not "Piece 1"
+    expect(screen.getByRole("combobox")).toHaveAccessibleName("Piece No. 1");
+
+    await user.click(screen.getByRole("button", { name: "Add to cart" }));
+    expect(stored()).toEqual({ "bauble|No. 1": 1 });
+    // There's only one of each
+    expect(screen.getByRole("button", { name: "Add one more" })).toBeDisabled();
+  });
+
+  test("another piece goes on its own line", async () => {
+    const user = userEvent.setup();
+    setQuantity("bauble|No. 1", 1);
+    render(<AddToCartButton product={fixture("bauble")} />);
+
+    await user.click(screen.getByRole("combobox"));
+    await user.click(screen.getByRole("option", { name: "No. 3" }));
+    await user.click(screen.getByRole("button", { name: "Add to cart (1 in your cart)" }));
+    expect(stored()).toEqual({ "bauble|No. 1": 1, "bauble|No. 3": 1 });
+  });
+
+  test("a sold piece can't be picked", async () => {
+    const user = userEvent.setup();
+    render(<AddToCartButton product={fixture("bauble")} />);
+    await user.click(screen.getByRole("combobox"));
+    expect(screen.getByRole("option", { name: "No. 2" })).toHaveAttribute("aria-disabled", "true");
+  });
+});
+
+test("on a card the photos pick the piece, so there's no dropdown", async () => {
+  const user = userEvent.setup();
+  render(<AddToCartButton product={fixture("bauble")} piecePicker={false} />);
+  expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
+  await user.click(screen.getByRole("button", { name: "Add to cart" }));
+  expect(stored()).toEqual({ "bauble|No. 1": 1 });
+});
+
+test("a set's picker shows even then", () => {
+  render(<AddToCartButton product={fixture("brush-set")} piecePicker={false} />);
+  expect(screen.getAllByRole("combobox")).toHaveLength(2);
+});

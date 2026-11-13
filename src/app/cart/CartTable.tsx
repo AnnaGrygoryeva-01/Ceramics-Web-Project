@@ -5,6 +5,7 @@ type Line = {
   key: string;
   product: Product;
   choices: string[];
+  price: number; // Each, in pence: a piece's own price
   qty: number;
   canIncrease: boolean;
 };
@@ -16,7 +17,7 @@ type Props = {
 };
 
 export default function CartTable({ lines, onSetQuantity, onClear }: Props) {
-  const total = lines.reduce((sum, { product, qty }) => sum + product.price * qty, 0);
+  const total = lines.reduce((sum, { price, qty }) => sum + price * qty, 0);
 
   return (
     <>
@@ -31,13 +32,13 @@ export default function CartTable({ lines, onSetQuantity, onClear }: Props) {
           </tr>
         </thead>
         <tbody>
-          {lines.map(({ key, product, choices, qty, canIncrease }) => (
+          {lines.map(({ key, product, choices, price, qty, canIncrease }) => (
             <tr key={key}>
               <td>
                 <Link href={productUrl(product)} prefetch>{product.name}</Link>
                 {choices.length > 0 && <span className="cart-choices">{choices.join(", ")}</span>}
               </td>
-              <td>{formatPrice(product.price)}</td>
+              <td>{formatPrice(price)}</td>
               <td>
                 <button
                   type="button"
@@ -56,7 +57,7 @@ export default function CartTable({ lines, onSetQuantity, onClear }: Props) {
                   +
                 </button>
               </td>
-              <td>{formatPrice(product.price * qty)}</td>
+              <td>{formatPrice(price * qty)}</td>
               <td>
                 <button type="button" onClick={() => onSetQuantity(key, 0)}>
                   Remove

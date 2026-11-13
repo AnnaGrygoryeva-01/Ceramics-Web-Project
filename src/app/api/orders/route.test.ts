@@ -5,7 +5,7 @@ import { POST } from "./route";
 
 vi.mock("@/server/composition", () => ({ getServices: vi.fn() }));
 
-const orderStore = { place: vi.fn(async () => "placed") };
+const orderStore = { place: vi.fn(async () => {}) };
 
 const post = (body: string) => POST(new Request("http://shop.test/api/orders", { method: "POST", body }));
 const postOrder = (items: object[]) => post(JSON.stringify({ customer, items }));
@@ -16,7 +16,7 @@ beforeEach(() => {
   vi.mocked(getServices).mockReturnValue({ catalogueReader, orderStore } as never);
 });
 
-test("201 with the order, priced from the database", async () => {
+test("201 with the order, priced from the product files", async () => {
   const response = await postOrder([{ slug: "vase", quantity: 2, price: 1 }]);
   expect(response.status).toBe(201);
   expect(await response.json()).toMatchObject({
@@ -52,10 +52,4 @@ test("409 naming what's out of stock", async () => {
   expect(response.status).toBe(409);
   expect(await response.json()).toMatchObject({ code: "out-of-stock", outOfStock: ["mug"] });
   expect(orderStore.place).not.toHaveBeenCalled();
-});
-
-test("409 when the store finds the stock has gone", async () => {
-  orderStore.place.mockResolvedValueOnce("out-of-stock");
-  const response = await postOrder([{ slug: "vase", quantity: 1 }]);
-  expect(response.status).toBe(409);
 });

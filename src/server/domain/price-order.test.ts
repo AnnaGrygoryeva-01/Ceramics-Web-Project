@@ -19,30 +19,36 @@ describe("prices", () => {
   test("come from the product and add up across lines", () => {
     const order = priced({ slug: "vase", quantity: 2 }, { slug: "bowl" });
     expect(order.total).toBe(4800 * 2 + 1500);
-    expect(order.lines[0]).toMatchObject({ productId: "id-vase", productName: "Vase", unitPrice: 4800 });
+    expect(order.lines[0]).toMatchObject({ productSlug: "vase", productName: "Vase", unitPrice: 4800 });
+  });
+
+  test("a piece costs its own price", () => {
+    const order = priced({ slug: "bauble", choices: ["No. 1"] }, { slug: "bauble", choices: ["No. 3"] });
+    expect(order.lines.map((line) => line.unitPrice)).toEqual([1800, 2200]);
+    expect(order.total).toBe(1800 + 2200);
   });
 });
 
 describe("stock demand", () => {
   test("a plain line uses up its own product", () => {
-    expect(priced({ slug: "vase", quantity: 2 }).stockDemand).toEqual([{ productId: "id-vase", quantity: 2 }]);
+    expect(priced({ slug: "vase", quantity: 2 }).stockDemand).toEqual([{ productSlug: "vase", quantity: 2 }]);
   });
 
   test("a set uses up its picks and never itself", () => {
     const { stockDemand, lines } = priced({ slug: "brush-set", quantity: 1, choices: ["Small", "Large"] });
     expect(stockDemand).toEqual([
-      { productId: "id-small-brush", quantity: 1 },
-      { productId: "id-large-brush", quantity: 1 },
+      { productSlug: "small-brush", quantity: 1 },
+      { productSlug: "large-brush", quantity: 1 },
     ]);
     expect(lines[0].picks).toEqual([
-      { choice: "Small", productId: "id-small-brush" },
-      { choice: "Large", productId: "id-large-brush" },
+      { choice: "Small", productSlug: "small-brush" },
+      { choice: "Large", productSlug: "large-brush" },
     ]);
   });
 
   test("picks multiply by quantity, and the same pick twice counts twice", () => {
     const { stockDemand } = priced({ slug: "brush-set", quantity: 2, choices: ["Medium", "Medium"] });
-    expect(stockDemand).toEqual([{ productId: "id-medium-brush", quantity: 4 }]);
+    expect(stockDemand).toEqual([{ productSlug: "medium-brush", quantity: 4 }]);
   });
 
   test("single items and sets share the same stock", () => {
@@ -50,7 +56,7 @@ describe("stock demand", () => {
       { slug: "small-brush" },
       { slug: "brush-set", choices: ["Small", "Medium"] },
     );
-    expect(stockDemand).toContainEqual({ productId: "id-small-brush", quantity: 2 });
+    expect(stockDemand).toContainEqual({ productSlug: "small-brush", quantity: 2 });
   });
 });
 

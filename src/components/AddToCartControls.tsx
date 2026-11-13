@@ -5,13 +5,13 @@ type Props = {
   loading: boolean; // Stock isn't known yet
   soldOut: boolean;
   available: boolean; // One more can be added
-  hasOptions: boolean;
+  unavailable: string; // Why one can't be added, e.g. "All in your cart"
   onAdd: () => void;
   onRemoveOne: () => void;
 };
 
 export default function AddToCartControls(props: Props) {
-  const { name, qty, inCart, loading, soldOut, available, hasOptions, onAdd, onRemoveOne } = props;
+  const { name, qty, inCart, loading, soldOut, available, unavailable, onAdd, onRemoveOne } = props;
 
   if (qty > 0) {
     return (
@@ -33,7 +33,6 @@ export default function AddToCartControls(props: Props) {
     );
   }
 
-  const unavailable = hasOptions ? "Not enough in stock" : "All in your cart";
   return (
     <button type="button" className="add-to-cart" disabled={soldOut || !available} onClick={onAdd}>
       {soldOut ? "Sold out" : available || loading ? "Add to cart" : unavailable}

@@ -42,6 +42,19 @@
 html, body
   margin: 0
 
+// Georgia only has old-style digits, which go up and down ("6 × 7 cm"), so the
+// digits alone come from Times New Roman, whose digits sit on one line
+@font-face
+  font-family: "Lining Digits"
+  src: local("Times New Roman"), local("TimesNewRomanPSMT")
+  unicode-range: U+0030-0039
+
+@font-face
+  font-family: "Lining Digits"
+  src: local("Times New Roman Bold"), local("TimesNewRomanPS-BoldMT")
+  font-weight: bold
+  unicode-range: U+0030-0039
+
 // Column layout so the footer is pushed to the bottom even on short pages
 body
   display: flex
@@ -50,7 +63,7 @@ body
   min-height: 100dvh
   background: var(--sky-bottom)
   color: var(--ink)
-  font-family: Georgia, "Times New Roman", serif
+  font-family: "Lining Digits", Georgia, "Times New Roman", serif
   line-height: 1.5
 
   // Gradients fixed to the screen so they look the same however long the page is.
@@ -359,6 +372,21 @@ footer
 .corner--right
   right: 0
 
+// Christmas pages have the snow instead, so the flowers fade out quickly as the
+// page opens. An animation rather than a transition, so it also runs on a direct
+// page load. They come straight back when leaving.
+body:has(.snow:not(.snow--hidden)) .corner
+  animation: corner-fade-out 0.5s ease forwards
+
+@keyframes corner-fade-out
+  to
+    opacity: 0
+
+@media (prefers-reduced-motion: reduce)
+  body:has(.snow:not(.snow--hidden)) .corner
+    animation: none
+    opacity: 0
+
 // Christmas collection only. On narrow screens keep it tall and crop the sides
 // instead of letting it shrink to a thin strip (image is 4269 x 1269).
 .snow
@@ -462,19 +490,181 @@ footer
 .product-image
   position: relative
   width: 100%
-  aspect-ratio: 4 / 5
+  aspect-ratio: 1
   overflow: hidden
   border-radius: 6px
-  // Shown when there's no photo yet
+  // Shown when there's no photo yet, and beside a photo that isn't square
   background: color-mix(in srgb, var(--ink) 10%, transparent)
 
+  // The whole photo, never cropped
   img
-    object-fit: cover
+    object-fit: contain
 
-.product-image--large
-  width: 420px
-  max-width: 100%
-  margin: 16px 0
+// On a card, hovering a photo zooms in on it, within its frame
+.product-card .product-image img
+  transition: transform 0.4s ease
+
+@media (hover: hover)
+  .product-card .product-image:hover img
+    transform: scale(1.12)
+
+@media (prefers-reduced-motion: reduce)
+  .product-card .product-image img
+    transition: none
+
+// Product page: the back link at the top, then the product in the middle of
+// the space left down to the footer. main becomes a column so the page can fill
+// it, only while a product page shows: other pages rely on their margins
+// collapsing, which a flex container stops. Next keeps a page you've left in the
+// DOM with an inline display: none, hence the :not().
+main:has(> .product-page:not([style*="display: none"]))
+  display: flex
+  flex-direction: column
+
+.product-page
+  flex: 1
+  display: flex
+  flex-direction: column
+  gap: 16px
+
+  > .product
+    margin-block: auto
+
+// Photos on the left, name, price, description and options on the right. One
+// above the other on phones.
+.product
+  display: grid
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)
+  gap: 40px
+  align-items: start
+
+  h1
+    margin-top: 0
+
+  .option-picker
+    margin-bottom: 12px
+
+.product__price
+  font-size: 1.15rem
+
+// A thin frame round the photo, or round the sliding photos of a carousel (not
+// its dots), in the bluish white of the Christmas window's snow
+.product__photos
+  .product-image:not(.carousel__slide),
+  .carousel__track
+    // As thick as the frame of the enlarged photo
+    border: 3px solid #deeafb
+    border-radius: 2px
+    box-shadow: 0 6px 18px rgb(13 45 94 / 0.25)
+
+  .carousel__slide
+    border-radius: 0
+
+@media (max-width: 700px)
+  .product
+    grid-template-columns: minmax(0, 1fr)
+    gap: 16px
+
+    // Sized to the screen so the name fits on one line: the longest,
+    // "Christmas Tree Ornament", is about 13.5 times the font size wide
+    h1
+      font-size: min(2rem, (100vw - 32px) / 14)
+
+// Photos of a product with pieces, one at a time (see ProductPhotos). The track
+// scrolls sideways, snapping to each photo, so it can be swiped on phones.
+.carousel
+  position: relative
+
+.carousel__track
+  display: flex
+  overflow-x: auto
+  scroll-snap-type: x mandatory
+  scrollbar-width: none
+  border-radius: 6px
+
+  &::-webkit-scrollbar
+    display: none
+
+.carousel__slide
+  flex: 0 0 100%
+  scroll-snap-align: start
+  // The track rounds the corners, so the slides line up edge to edge
+  border-radius: 0
+
+// Over the photo, at its sides; faded out at either end
+.carousel__arrow
+  position: absolute
+  // Centred on the photo, which is square: half its width down
+  top: 50%
+  translate: 0 -50%
+  display: grid
+  place-items: center
+  width: 32px
+  height: 32px
+  padding: 0
+  border: 0
+  border-radius: 50%
+  background: color-mix(in srgb, var(--surface) 85%, transparent)
+  color: var(--ink)
+  cursor: pointer
+
+  svg
+    width: 18px
+    height: 18px
+    fill: none
+    stroke: currentColor
+    stroke-width: 2
+    stroke-linecap: round
+    stroke-linejoin: round
+
+  &:disabled
+    opacity: 0
+    pointer-events: none
+
+.carousel__arrow--prev
+  left: 8px
+
+  svg
+    rotate: 180deg
+
+.carousel__arrow--next
+  right: 8px
+
+// The dots sit below the photo, so the arrows are centred on the photo alone
+.carousel:has(.carousel__dots) .carousel__arrow
+  top: calc(50% - 11px)
+
+.carousel__dots
+  display: flex
+  justify-content: center
+  gap: 6px
+  margin-top: 8px
+
+  button
+    width: 8px
+    height: 8px
+    padding: 0
+    border: 1px solid var(--ink)
+    border-radius: 50%
+    background: transparent
+    cursor: pointer
+
+    &[aria-current]
+      background: var(--ink)
+
+.carousel__sold
+  position: absolute
+  top: 8px
+  left: 8px
+  padding: 2px 8px
+  background: var(--surface)
+  color: var(--ink)
+  font-size: 0.8rem
+  letter-spacing: 0.02em
+
+@media (prefers-reduced-motion: reduce)
+  .carousel__track
+    scroll-behavior: auto
 
 // Collection page: heading, sort and product cards share one centred column,
 // so the heading lines up with the first card. 4 cards per row on desktop, then
@@ -789,6 +979,32 @@ footer
   &::backdrop
     background: transparent
 
+// iPads and computers: a product photo enlarged to half the size a phone gets,
+// so it doesn't fill the screen
+@media (min-width: 561px)
+  .lightbox--blur .lightbox__frame--photo img
+    max-width: min(45vw, 550px)
+    max-height: calc((100dvh - 128px) / 2)
+
+// On a product page the page itself blurs behind the photo
+.lightbox--blur::backdrop
+  background: rgb(13 45 94 / 0.25)
+  // No -webkit- copy: the build adds it for Safari, and with both it kept only that
+  backdrop-filter: blur(8px)
+
+// A photo on the product page, clicked to show it large (see ProductPhotos)
+.photo-enlarge
+  display: block
+  width: 100%
+  padding: 0
+  border: 0
+  background: none
+  cursor: zoom-in
+
+  &:focus-visible
+    outline: 2px solid var(--nav-current)
+    outline-offset: -2px
+
 // Stop the page scrolling behind it
 html:has(.lightbox[open])
   overflow: hidden
@@ -816,29 +1032,44 @@ html:has(.lightbox[open])
     max-width: min(90vw, 1100px)
     max-height: calc(100dvh - 128px)
 
+// A round, frosted button with a thin drawn ×, the same in both themes
 .lightbox__close
   position: fixed
   top: 20px
   right: 20px
+  display: grid
+  place-items: center
   width: 44px
   height: 44px
   padding: 0
-  border: 1px solid currentColor
-  background: var(--surface)
-  color: inherit
-  font: inherit
-  font-size: 1.5rem
-  line-height: 1
+  border: 1px solid rgb(255 255 255 / 0.7)
+  border-radius: 50%
+  background: rgb(255 255 255 / 0.8)
+  backdrop-filter: blur(6px)
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.25)
+  color: #0d2d5e
   cursor: pointer
-  transition: background-color 0.2s ease, color 0.2s ease
+  transition: background-color 0.2s ease, transform 0.2s ease
+
+  svg
+    width: 18px
+    height: 18px
+    fill: none
+    stroke: currentColor
+    stroke-width: 1.75
+    stroke-linecap: round
 
   &:hover
-    background: var(--ink)
-    color: var(--badge-text)
+    background: #fff
+    transform: rotate(90deg)
 
   &:focus-visible
     outline: 2px solid var(--nav-current)
     outline-offset: 2px
+
+@media (prefers-reduced-motion: reduce)
+  .lightbox__close:hover
+    transform: none
 
 @keyframes lightbox-in
   from
@@ -1050,3 +1281,242 @@ html:has(.lightbox[open])
 
     .cart-stepper button
       padding: 10px 16px
+
+// Christmas collection: the title and description centred at the top, then the
+// products seen through one large old window, each in its own white pane. The
+// window is rebuilt from pieces of one picture (public/decorations) so it fits
+// any number of panes: the grid's border is the outer frame, and each pane draws
+// the bar to its right and the snowy rail below it into the gaps. A grid rather
+// than a flex row, so empty panes at the end still sit in the window.
+.collection.collection--christmas-collection
+  // Bar width. The frame pieces are drawn at --k times their size so the outer
+  // frame stays in proportion to bars this wide (the bar picture is 27px wide).
+  --gap: 18px
+  --k: calc(18 / 27)
+  display: flex
+  flex-direction: column
+
+  // As a flex item the link would stretch across the row, clickable all the way
+  > a
+    align-self: flex-start
+
+  .collection__header
+    order: -1
+    margin-bottom: 16px
+    text-align: center
+
+    h1
+      margin: 0
+      font-size: clamp(2.2rem, 5vw, 3.2rem)
+      font-weight: normal
+
+    p
+      max-width: 60em
+      margin: 4px auto 0
+      font-style: italic
+      font-size: 1.05rem
+
+  .product-grid
+    display: grid
+    grid-template-columns: repeat(var(--shown), minmax(0, 1fr))
+    gap: var(--gap)
+    // The outer frame, stretched around the panes. Slice sizes are in the
+    // picture's pixels: top rail, right post, sill, left post.
+    border: solid transparent
+    border-width: calc(89px * var(--k)) calc(78px * var(--k)) calc(52px * var(--k)) calc(83px * var(--k))
+    border-image: url("/decorations/window-frame-52be7aaf.png") 89 78 52 83 stretch
+    // Clips the bars and rails of the last column and row, so the frame shows instead
+    overflow: hidden
+
+    > *
+      width: auto
+
+  // A pane: photo at the top, then the name, price and button on the colour of
+  // the snow below (sampled from the rail picture), so they read as one drift.
+  // The same dark ink in both themes, so it reads on the snow.
+  .product-card
+    --snow: #deeafb
+    --ink: #0d2d5e
+    --badge-text: var(--snow)
+    --surface: var(--snow)
+    position: relative
+    // The text is spaced with margins
+    gap: 0
+    // Room for the rail's snow, which covers the bottom of the pane
+    --pane-bottom: 18px
+    padding-bottom: var(--pane-bottom)
+    background: var(--snow)
+    color: var(--ink)
+    text-align: center
+    // Set back into the frame
+    box-shadow: inset 0 0 0 1px rgb(13 45 94 / 0.25), 0 1px 0 rgb(255 255 255 / 0.6)
+
+    .product-image,
+    .carousel__track
+      border-radius: 0
+
+    h3
+      margin: 8px 0 4px
+      padding: 0 10px
+      font-size: 1rem
+
+    > .add-to-cart,
+    > .cart-stepper
+      border-radius: 6px
+
+    > .add-to-cart
+      padding: 4px 16px
+      font-size: 0.85rem
+
+    // The dots sit on the photo, so a carousel takes no more height than a
+    // single photo and the names line up across the window
+    .carousel__dots
+      position: absolute
+      inset: auto 0 8px
+      margin: 0
+
+      button
+        border-color: #fff
+        background: rgb(255 255 255 / 0.35)
+        box-shadow: 0 0 2px rgb(0 0 0 / 0.5)
+
+        &[aria-current]
+          background: #fff
+
+    .carousel .carousel__arrow
+      top: 50%
+
+    // The bar to the right, down past the rail and over the crossing
+    &::before
+      content: ""
+      position: absolute
+      top: 0
+      bottom: calc(-1 * var(--gap))
+      left: 100%
+      width: var(--gap)
+      z-index: 2
+      background: url("/decorations/window-bar-75e4fdbc.png") 0 0 / 100% auto repeat-y
+      pointer-events: none
+
+    // The rail below, with this pane's mound of snow over its bottom edge. One
+    // pane's worth, stretched to the pane's width. The picture is 41px tall, of
+    // which the wood is the bottom 24px.
+    &::after
+      content: ""
+      position: absolute
+      left: 0
+      right: 0
+      bottom: calc(-1 * var(--gap))
+      height: calc(var(--gap) * 41 / 24)
+      z-index: 1
+      // The panel's colour fades into the top of the mound, hiding its outline,
+      // so the panel and the snow read as one drift
+      background: linear-gradient(var(--snow) 15%, transparent 38%), url("/decorations/window-rail-0b11ec9a.png") 0 0 / 100% 100% no-repeat
+      pointer-events: none
+
+  // The price and button share the bottom row, centred as a pair, so the pane
+  // is shorter. Everything else spans the full width. The name's row takes any
+  // spare height, so the bottom rows line up across the window.
+  .product-card
+    display: grid
+    grid-template-columns: 1fr auto auto 1fr
+    grid-template-rows: auto 1fr auto
+    column-gap: 12px
+
+    > *
+      grid-column: 1 / -1
+
+    // Every row given
+    > :first-child
+      grid-row: 1
+
+    h3
+      grid-row: 2
+      align-self: start
+
+    .product-card__price
+      grid-row: 3
+      grid-column: 2
+      align-self: center
+
+    > .add-to-cart,
+    > .cart-stepper
+      grid-row: 3
+      grid-column: 3
+      align-self: center
+
+// Tablets: still four panes a row, a little smaller, with a thinner frame and bars
+@media (max-width: 1100px)
+  .collection.collection--christmas-collection
+    --columns: 4
+    --gap: 12px
+    --k: calc(12 / 27)
+
+    .product-card h3
+      font-size: 0.95rem
+
+// Up to portrait tablets the panes are too narrow for the price and button side
+// by side, so the price goes above the button
+@media (max-width: 900px)
+  .collection.collection--christmas-collection .product-card
+    max-width: none
+    grid-template-columns: minmax(0, 1fr)
+    grid-template-rows: auto 1fr auto auto
+    row-gap: 0
+    --pane-bottom: 14px
+
+    h3
+      margin-bottom: 6px
+      padding: 0 6px
+      font-size: 0.9rem
+
+    .product-card__price
+      margin-bottom: 6px
+
+    .product-card__price,
+    > .add-to-cart,
+    > .cart-stepper
+      grid-column: 1
+      justify-self: center
+
+    > .add-to-cart,
+    > .cart-stepper
+      grid-row: 4
+
+    > .add-to-cart
+      padding: 4px 12px
+      font-size: 0.8rem
+
+    // Wider than the button: spans the pane, its text wrapping if need be
+    > .cart-stepper
+      justify-self: stretch
+      margin: 0 6px
+      font-size: 0.75rem
+      line-height: 1.2
+      text-align: center
+
+      span
+        white-space: normal
+
+      button
+        padding: 4px 8px
+
+// Phones: two panes a row, with a thinner frame still and smaller carousel arrows
+@media (max-width: 560px)
+  .collection.collection--christmas-collection
+    --columns: 2
+    --gap: 10px
+    --k: calc(10 / 27)
+
+    // Wider than the page's text, out into most of its side padding, so the
+    // photos are bigger
+    .product-grid
+      margin-inline: -10px
+
+    .carousel__arrow
+      width: 24px
+      height: 24px
+
+      svg
+        width: 14px
+        height: 14px

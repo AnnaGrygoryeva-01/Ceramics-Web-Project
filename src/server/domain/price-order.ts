@@ -66,5 +66,5 @@ export function priceOrder(request: OrderRequest, products: Product[]): PricingR
   }
 
   const total = lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
-  return { ok: true, order: { customer: request.customer, lines, total, stockDemand: demand } };
+  return { ok: true, order: { lines, total, stockDemand: demand } };
 }

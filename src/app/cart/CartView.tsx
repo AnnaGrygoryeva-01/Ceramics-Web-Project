@@ -1,13 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { clearCart, setQuantity, useCart } from "@/lib/cart";
-import { canAdd, parseCartKey } from "@/lib/cart-stock";
-import { useProductLookup } from "@/lib/catalogue-store";
-import { unitPrice } from "@/lib/products";
+import { clearCart, setQuantity } from "@/lib/cart";
+import { useCartLines } from "@/lib/cart-lines";
 import CartTable from "./CartTable";
 
-function EmptyCart() {
+export function EmptyCart() {
   return (
     <p>
       Your cart is empty. <Link href="/shop">Browse the shop</Link>
@@ -16,21 +14,9 @@ function EmptyCart() {
 }
 
 export default function CartView() {
-  const cart = useCart();
-  const getProduct = useProductLookup();
+  const { lines, count } = useCartLines();
 
-  if (!getProduct) {
-    return Object.keys(cart).length > 0 ? <p>Loading…</p> : <EmptyCart />;
-  }
-
-  const lines = Object.entries(cart).flatMap(([key, qty]) => {
-    const { slug, choices } = parseCartKey(key);
-    const product = getProduct(slug);
-    if (!product) return [];
-    const price = unitPrice(product, choices, getProduct);
-    return [{ key, product, choices, price, qty, canIncrease: canAdd(getProduct, cart, slug, choices) }];
-  });
-
+  if (!lines) return count > 0 ? <p>Loading…</p> : <EmptyCart />;
   if (lines.length === 0) return <EmptyCart />;
 
   return <CartTable lines={lines} onSetQuantity={setQuantity} onClear={clearCart} />;

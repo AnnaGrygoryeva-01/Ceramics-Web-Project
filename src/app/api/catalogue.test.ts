@@ -14,7 +14,7 @@ const catalogueReader = vi.hoisted(() => ({
   listProducts: vi.fn(),
   getProduct: vi.fn(),
 }));
-vi.mock("@/server/composition", () => ({ catalogueReader }));
+vi.mock("@/server/composition", () => ({ catalogueReader, getOrderStore: () => ({ heldStock: async () => ({}) }) }));
 
 const productRoute = (slug: string) =>
   getProduct(new NextRequest(`http://shop.test/api/products/${slug}`), { params: Promise.resolve({ slug }) });

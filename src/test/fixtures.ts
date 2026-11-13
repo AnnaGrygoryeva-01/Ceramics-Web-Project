@@ -1,6 +1,5 @@
 import type { ProductLookup } from "@/lib/cart-stock";
 import type { Collection, Product } from "@/lib/products";
-import type { Customer } from "@/server/domain/order";
 
 // Fixed data for tests, so they don't depend on the real stock or prices in
 // src/data.
@@ -48,12 +47,6 @@ export const listedFixtureProducts = fixtureProducts.filter((p) => !p.hidden);
 export const lookup: ProductLookup = (slug) => fixtureProducts.find((p) => p.slug === slug);
 
 export const fixture = (slug: string) => lookup(slug)!;
-
-export const fixtureCustomer: Customer = {
-  name: "Ada Potter",
-  email: "ada@example.com",
-  address: { line1: "1 Kiln Lane", city: "Stoke", postcode: "ST1 1AA", country: "United Kingdom" },
-};
 
 // For vi.mock("@/lib/catalogue-store", ...) (see cart page tests for how to call
 // it): the products are there straight away, no fetching

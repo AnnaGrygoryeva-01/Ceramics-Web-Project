@@ -1,28 +1,50 @@
 import { beforeEach, expect, test, vi } from "vitest";
 import { getServices } from "@/server/composition";
-import { fixtureCustomer as customer, fixtureProducts } from "@/test/fixtures";
+import { fixtureProducts } from "@/test/fixtures";
 import { POST } from "./route";
 
 vi.mock("@/server/composition", () => ({ getServices: vi.fn() }));
 
-const orderStore = { place: vi.fn(async () => {}) };
+const orderStore = {
+  place: vi.fn(async () => ({ ok: true })),
+  setCheckout: vi.fn(async () => {}),
+  markCancelled: vi.fn(async () => true),
+};
+const payments = { startCheckout: vi.fn(async () => ({ id: "cs_test_1", clientSecret: "cs_test_1_secret" })) };
+const shippingRates = { freeFrom: 3000, standard: { name: "UK delivery", price: 495 }, zones: [] };
 
-const post = (body: string) => POST(new Request("http://shop.test/api/orders", { method: "POST", body }));
-const postOrder = (items: object[]) => post(JSON.stringify({ customer, items }));
+const post = (body: string) => POST(new Request("http://shop.test/api/checkout", { method: "POST", body }));
+const postOrder = (items: object[]) => post(JSON.stringify({ items }));
 
 beforeEach(() => {
   vi.clearAllMocks();
   const catalogueReader = { listProducts: async () => fixtureProducts };
-  vi.mocked(getServices).mockReturnValue({ catalogueReader, orderStore } as never);
+  vi.mocked(getServices).mockReturnValue({
+    catalogueReader,
+    orderStore,
+    payments,
+    shippingRates,
+    publishableKey: "pk_test_1",
+  } as never);
 });
 
-test("201 with the order, priced from the product files", async () => {
+test("201 with what the payment form needs, priced from the product files", async () => {
   const response = await postOrder([{ slug: "vase", quantity: 2, price: 1 }]);
   expect(response.status).toBe(201);
-  expect(await response.json()).toMatchObject({
+  expect(await response.json()).toEqual({
     ok: true,
-    order: { status: "pending", total: 9600, lines: [{ unitPrice: 4800, quantity: 2 }] },
+    checkoutId: "cs_test_1",
+    clientSecret: "cs_test_1_secret",
+    publishableKey: "pk_test_1",
   });
+
+  const [order, , returnUrl] = payments.startCheckout.mock.calls[0] as unknown as [
+    { total: number },
+    unknown,
+    string,
+  ];
+  expect(order.total).toBe(9600);
+  expect(returnUrl).toBe("http://shop.test/checkout/complete?session_id={CHECKOUT_SESSION_ID}");
 });
 
 test("400 for a body that isn't JSON", async () => {
@@ -47,9 +69,10 @@ test("422 for a product that doesn't exist", async () => {
   expect(await response.json()).toMatchObject({ ok: false, code: "invalid-order" });
 });
 
-test("409 naming what's out of stock", async () => {
+test("409 naming what's out of stock, with no payment form", async () => {
   const response = await postOrder([{ slug: "mug", quantity: 1 }]);
   expect(response.status).toBe(409);
   expect(await response.json()).toMatchObject({ code: "out-of-stock", outOfStock: ["mug"] });
   expect(orderStore.place).not.toHaveBeenCalled();
+  expect(payments.startCheckout).not.toHaveBeenCalled();
 });
